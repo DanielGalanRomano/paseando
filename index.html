@@ -59,8 +59,8 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px soli
 /* ============ CONFIG ============
    Project Settings > API en Supabase. La clave "anon" es pública (la protege RLS).
    NUNCA pongas acá la clave service_role. */
-const SUPABASE_URL='';
-const SUPABASE_ANON_KEY='';
+const SUPABASE_URL='https://brlhcorgjnaipmokhmhj.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybGhjb3Jnam5haXBtb2tobWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MzAyMzgsImV4cCI6MjExMDIwNjIzOH0.49WI6fH9wxiYNgXo5jjaa4VwfvPOjx5Y_NLlIgx06v8';
 const TZ='America/Argentina/Buenos_Aires';
 const sb=(SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase)?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const fmt=(n,d=0)=>(+n).toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d});
