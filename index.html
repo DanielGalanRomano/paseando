@@ -59,8 +59,8 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px soli
    puntos marcados con "SUPABASE" por llamadas a supabase-js (ver supabase-schema.sql). */
 const DEMO=true;
 const fmt=(n,d=0)=>n.toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d});
-const S={u:{n:'Camila',a:'Rodríguez'},pasos:18650,meta:30000,
-dias:[['Lun',5210],['Mar',6080],['Mié',4120],['Hoy',3240]],yo:false,
+const S={u:{n:'Camila',a:'Rodríguez'},pasos:52650,meta:100000,
+dias:[['Lun',14210],['Mar',16080],['Mié',13120],['Hoy',9240]],yo:false,
 w:{t:'Vuelta al lago con picnic',f:'Sábado 21 de noviembre',hr:'10:00',lugar:'Bosques de Palermo',punto:'[Punto de encuentro]',dur:'1 h 30',inc:'Infusiones y algo dulce para compartir',cupo:10,sp:'[Sponsor]'},
 ok:['Martín G.','Lucía P.','Sofía M.','Joaquín T.','Valentina D.','Nicolás B.'],
 past:[{f:'Sábado 7 de noviembre',prom:'4,6',n:9,rated:false,rev:[['Martín G.',5,'Muy buena onda, el grupo y el chocolate caliente.'],['Lucía P.',4,'Linda caminata, volvería a ir con más tiempo.']]},
@@ -93,8 +93,8 @@ return `<div class="col"><div class="rise"><p class="mut">Hola, ${S.u.n}</p><h1 
 <div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
 <p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(S.meta-S.pasos)} de ${fmt(S.meta)} pasos para desbloquearla`}</p>
 <div>${dots()}</div>${btn}<p class="mut" style="text-align:center">Con el apoyo de ${S.w.sp}</p>
-${DEMO&&!u?'<button class="link" data-act="sim">Demo: sumar 5.000 pasos</button>':''}</div>
-<div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d=='Hoy'?800:600}">${d}</span><div class="bar s"><i data-w="${s/8000*100}"></i></div><span style="width:48px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join('')}</div></div>
+${DEMO&&!u?'<button class="link" data-act="sim">Demo: sumar 10.000 pasos</button>':''}</div>
+<div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d=='Hoy'?800:600}">${d}</span><div class="bar s"><i data-w="${Math.min(100,s/20000*100)}"></i></div><span style="width:48px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join('')}</div></div>
 <div><h2 class="rise">Caminatas anteriores</h2><div class="g12">${S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${p.f}</p><p class="mut" style="margin-top:2px">${S.w.lugar} · ${p.n} asistentes · ${p.prom} de 5</p></div>
 ${p.rev.map(r=>`<div style="border-top:1px solid #E0F2FE;padding-top:12px"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${r[0]}</b>${stars(r[1])}</div><p style="font-size:14px;margin-top:4px">${r[2]}</p></div>`).join('')}
 ${p.rated?'':`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`}</div>`).join('')}</div></div>
@@ -151,7 +151,7 @@ document.addEventListener('click',e=>{
  if(t.dataset.go){e.preventDefault();go(t.dataset.go,t.dataset.arg,['home','login'].includes(t.dataset.go)&&cur.name!=='login');return}
  const a=t.dataset.act;
  if(a==='login'){/* SUPABASE: supabase.auth.signInWithOAuth({provider:'google'}) y guardar mayor_de_18 + acepto_terminos_at */ go('home')}
- if(a==='sim'){S.pasos=Math.min(S.meta,S.pasos+5000);S.dias[3][1]+=1000;go('home');if(unlocked())toast('¡Caminata desbloqueada!')}
+ if(a==='sim'){S.pasos=Math.min(S.meta,S.pasos+10000);S.dias[3][1]+=10000;go('home');if(unlocked())toast('¡Caminata desbloqueada!')}
  if(a==='join'){/* SUPABASE: supabase.rpc('join_walk',{p_walk:id}) */ S.yo=true;toast('¡Listo! Te anotaste a la caminata');go('walk')}
  if(a==='publish'){const p=S.past[idx];p.rev.unshift([me(),RATE,$('#cm').value.trim()]);p.rated=true;toast('¡Gracias por tu reseña!');go('home',null,true)}
  if(a==='create'){const g=i=>$('#a'+i).value,d=new Date(g(2)+'T12:00');const f=d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
