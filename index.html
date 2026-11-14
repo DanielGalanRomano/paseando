@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#38BDF8">
+<title>Caminá solo, caminá en grupo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--c:#38BDF8;--c2:#0EA5E9;--c3:#0369A1;--bg:#F0F9FF;--line:#BAE6FD;--ink:#0B2A3C;--mut:#4B6B80}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#E0F2FE;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+#app{position:relative;max-width:480px;height:100%;margin:0 auto;background:var(--bg);overflow:hidden}
+.screen{position:absolute;inset:0;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 28px) 20px calc(env(safe-area-inset-bottom) + 40px)}
+.screen.tabbed{padding-bottom:calc(env(safe-area-inset-bottom) + 104px)}
+h1{margin:0;font-size:28px;font-weight:800;line-height:1.15} h2{margin:0 0 12px;font-size:18px;font-weight:800}
+p{margin:0;line-height:1.5} a{color:var(--c3)} .mut{color:var(--mut);font-size:13px} .col{display:flex;flex-direction:column;gap:20px} .g12{display:flex;flex-direction:column;gap:12px} .row{display:flex;align-items:center;gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:16px;background:var(--c);color:var(--ink);font:800 16px Inter,sans-serif;cursor:pointer;transition:transform .15s,background .2s}
+.btn:active{transform:scale(.97)} .btn.sec{background:#fff;border:1px solid var(--c3)} .btn:disabled{background:#E0F2FE;color:var(--mut);cursor:default;transform:none}
+.link{background:none;border:0;padding:8px 0;font:600 14px Inter,sans-serif;color:var(--c3);cursor:pointer;text-align:left}
+.bar{height:14px;border-radius:7px;background:var(--line);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;width:0;background:var(--c2);border-radius:7px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.bar.s{height:12px} .bar.s i{background:var(--c)}
+.gift{flex:none;width:48px;height:48px;border-radius:24px;background:var(--c);display:flex;align-items:center;justify-content:center}
+.gift.pop{animation:pop .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.rise{opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.dots{display:flex;gap:6px;flex-wrap:wrap} .dots span{width:16px;height:16px;border-radius:8px;border:2px solid var(--c2)} .dots span.on{background:var(--c2)}
+.av{width:40px;height:40px;border-radius:20px;background:var(--c);font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.free{border:2px dashed var(--c2);background:none}
+.chip{display:inline-block;background:var(--c);font-size:13px;font-weight:800;border-radius:12px;padding:6px 10px}
+.back{background:none;border:0;font:600 15px Inter,sans-serif;color:var(--c3);padding:8px 0;cursor:pointer;margin-bottom:8px}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:800}
+input[type=text],input[type=date],input[type=time],input[type=number],textarea{min-height:48px;width:100%;border:1px solid var(--c3);border-radius:12px;padding:0 12px;font:400 16px Inter,sans-serif;color:var(--ink);background:#fff}
+textarea{padding:12px;resize:none}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.chk{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.4;text-align:left} .chk input{width:24px;height:24px;flex:none;margin:0;accent-color:var(--c3)}
+.star{width:48px;height:48px;border:0;background:none;padding:0;cursor:pointer;transition:transform .15s} .star:active{transform:scale(.85)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px} .kpi b{display:block;font-size:30px;font-weight:800;margin-top:4px}
+.cols{display:flex;align-items:flex-end;gap:10px;height:150px} .cols div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;font-size:12px}
+.cols i{display:block;width:100%;height:0;background:var(--c);border-radius:6px 6px 0 0;transition:height 1s cubic-bezier(.2,.8,.2,1)}
+#tabs{position:absolute;left:0;right:0;bottom:0;display:none;background:#fff;border-top:1px solid var(--line);padding:6px 0 calc(env(safe-area-inset-bottom) + 6px);z-index:5}
+#tabs button{flex:1;min-height:48px;border:0;background:none;font:600 14px Inter,sans-serif;color:var(--mut);cursor:pointer;position:relative}
+#tabs button.on{color:var(--c3);font-weight:800} #tabs button.on::after{content:"";position:absolute;left:30%;right:30%;top:-6px;height:3px;border-radius:2px;background:var(--c2)}
+#toast{position:absolute;left:20px;right:20px;bottom:calc(env(safe-area-inset-bottom) + 90px);background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;font-size:14px;font-weight:600;transform:translateY(30px);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.8,.2,1);z-index:9}
+#toast.on{transform:none;opacity:1}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app"><nav id="tabs"></nav><div id="toast" role="status"></div></div>
+<script>
+/* ============ CONFIG ============
+   DEMO=true usa datos de ejemplo en memoria. Para producción, reemplazá los
+   puntos marcados con "SUPABASE" por llamadas a supabase-js (ver supabase-schema.sql). */
+const DEMO=true;
+const fmt=(n,d=0)=>n.toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const S={u:{n:'Camila',a:'Rodríguez'},pasos:18650,meta:30000,
+dias:[['Lun',5210],['Mar',6080],['Mié',4120],['Hoy',3240]],yo:false,
+w:{t:'Vuelta al lago con picnic',f:'Sábado 21 de noviembre',hr:'10:00',lugar:'Bosques de Palermo',punto:'[Punto de encuentro]',dur:'1 h 30',inc:'Infusiones y algo dulce para compartir',cupo:10,sp:'[Sponsor]'},
+ok:['Martín G.','Lucía P.','Sofía M.','Joaquín T.','Valentina D.','Nicolás B.'],
+past:[{f:'Sábado 7 de noviembre',prom:'4,6',n:9,rated:false,rev:[['Martín G.',5,'Muy buena onda, el grupo y el chocolate caliente.'],['Lucía P.',4,'Linda caminata, volvería a ir con más tiempo.']]},
+{f:'Sábado 31 de octubre',prom:'4,8',n:10,rated:true,rev:[['Sofía M.',5,'Conocí gente muy copada. Súper recomendable.']]}]};
+const ADM=[['Martín Gómez','martin.gomez@gmail.com','Sí'],['Lucía Pérez','lucia.perez@gmail.com','Sí'],['Sofía Martínez','sofia.martinez@gmail.com','Sí'],['Joaquín Torres','joaquin.torres@gmail.com','Sí'],['Valentina Díaz','valentina.diaz@gmail.com','Sí'],['Nicolás Benítez','nicolas.benitez@gmail.com','Sí'],['Agustina López','agustina.lopez@gmail.com','No']];
+const me=()=>`${S.u.n} ${S.u.a[0]}.`;
+const $=(s,e=document)=>e.querySelector(s);
+const star="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21.1 7 14.2 2 9.3l6.9-1z";
+const stars=(n,s=14)=>`<svg width="${s*5+8}" height="${s}" role="img" aria-label="${n} de 5">${[0,1,2,3,4].map(i=>`<path transform="translate(${i*(s+2)} 0) scale(${s/24})" d="${star}" fill="${i<n?'#0EA5E9':'none'}" stroke="#0369A1" stroke-width="1.5"/>`).join('')}</svg>`;
+const giftSvg='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8c-2.5 0-4.5-.8-4.5-2.5S9.5 3 12 8zm0 0c2.5 0 4.5-.8 4.5-2.5S14.5 3 12 8z"/></svg>';
+const logo='<div class="av" style="width:88px;height:88px;border-radius:44px"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><ellipse cx="15" cy="26" rx="7" ry="11" fill="#0B2A3C"/><ellipse cx="30" cy="18" rx="7" ry="11" fill="#0B2A3C"/></svg></div>';
+const dots=()=>{const n=S.ok.length+(S.yo?1:0);return `<div class="dots">${Array.from({length:S.w.cupo},(_,i)=>`<span class="${i<n?'on':''}"></span>`).join('')}</div><p class="mut" style="margin-top:8px">${n} de ${S.w.cupo} lugares ocupados. Si se llena, aplicás a la del finde siguiente.</p>`};
+const unlocked=()=>S.pasos>=S.meta;
+let cur=null,RATE=0,idx=0;
+
+/* ============ VISTAS ============ */
+const V={
+login:()=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:40px">
+<div class="rise">${logo}</div>
+<h1 class="rise" style="font-size:34px">Caminá solo,<br>para caminar en grupo.</h1>
+<p class="rise mut" style="font-size:16px">Sumá pasos durante la semana y desbloqueá la caminata del fin de semana en los Bosques de Palermo. Infusiones y algo dulce incluidos.</p>
+<div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-go="terms">Términos y el descargo de responsabilidad</a>.</span></label>
+<button class="btn" id="google" disabled data-act="login">Continuar con Google</button></div></div>`,
+home:()=>{const u=unlocked(),pc=Math.min(100,S.pasos/S.meta*100);
+const btn=!u?'<button class="btn" disabled>Bloqueada hasta llegar a la meta</button>':S.yo?'<button class="btn" data-go="walk">Ver mi caminata</button>':'<button class="btn" data-act="join">Anotarme a la caminata</button>';
+return `<div class="col"><div class="rise"><p class="mut">Hola, ${S.u.n}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>
+<div class="card g12 rise"><div><p class="mut">Próxima caminata</p><p style="font-size:20px;font-weight:800;margin-top:2px">${S.w.f}, ${S.w.hr}</p><p style="font-size:14px;margin-top:4px">${S.w.lugar} · ${S.w.punto}</p></div>
+<p style="font-size:14px">${S.w.t}. ${S.w.inc}.</p>
+<div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
+<p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(S.meta-S.pasos)} de ${fmt(S.meta)} pasos para desbloquearla`}</p>
+<div>${dots()}</div>${btn}<p class="mut" style="text-align:center">Con el apoyo de ${S.w.sp}</p>
+${DEMO&&!u?'<button class="link" data-act="sim">Demo: sumar 5.000 pasos</button>':''}</div>
+<div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d=='Hoy'?800:600}">${d}</span><div class="bar s"><i data-w="${s/8000*100}"></i></div><span style="width:48px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join('')}</div></div>
+<div><h2 class="rise">Caminatas anteriores</h2><div class="g12">${S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${p.f}</p><p class="mut" style="margin-top:2px">${S.w.lugar} · ${p.n} asistentes · ${p.prom} de 5</p></div>
+${p.rev.map(r=>`<div style="border-top:1px solid #E0F2FE;padding-top:12px"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${r[0]}</b>${stars(r[1])}</div><p style="font-size:14px;margin-top:4px">${r[2]}</p></div>`).join('')}
+${p.rated?'':`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`}</div>`).join('')}</div></div>
+<div class="row" style="justify-content:space-between"><button class="link" data-go="terms">Términos</button><button class="link" data-go="admin" data-arg="0">Panel admin</button></div></div>`},
+walk:()=>`<div class="col"><div><button class="back" data-go="home">← Volver</button><span class="chip rise">Desbloqueada</span><h1 class="rise" style="margin-top:10px">${S.w.t}</h1></div>
+<div class="card g12 rise">${[['Cuándo',`${S.w.f}, ${S.w.hr}`],['Dónde',`${S.w.lugar} · ${S.w.punto}`],['Duración',`${S.w.dur}. ${S.w.inc}.`],['Después','Podés quedarte con el grupo. El anfitrión se va.']].map(r=>`<div><p class="mut">${r[0]}</p><p style="font-weight:600">${r[1]}</p></div>`).join('')}</div>
+<div class="card rise"><h2>Qué llevar</h2><ul style="margin:0;padding-left:20px;line-height:1.7"><li>Ropa cómoda</li><li>Ganas de conocer gente</li></ul></div>
+<div class="card g12"><h2 style="margin:0">Quiénes van (${S.ok.length+1} de ${S.w.cupo})</h2>${[me()+' (vos)',...S.ok].map(n=>`<div class="row rise"><div class="av">${n[0]}</div><b>${n}</b></div>`).join('')}${Array.from({length:S.w.cupo-S.ok.length-1},()=>'<div class="row rise"><div class="av free"></div><span class="mut" style="font-size:16px">Lugar libre</span></div>').join('')}</div>
+<p class="mut rise" style="text-align:center">Con el apoyo de ${S.w.sp}</p></div>`,
+rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back" data-go="home">← Volver</button><p class="mut">${p.f} · ${S.w.lugar}</p><h1 style="margin-top:4px">¿Cómo estuvo la caminata?</h1></div>
+<div class="card g12 rise"><b style="font-size:14px">Tu calificación</b><div class="row" style="gap:4px" id="stars">${[1,2,3,4,5].map(i=>`<button class="star" data-star="${i}" aria-label="${i} estrellas"><svg width="44" height="44" viewBox="0 0 24 24"><path d="${star}" fill="none" stroke="#0369A1" stroke-width="1.5"/></svg></button>`).join('')}</div>
+<label class="f" for="cm">Contanos qué te pareció</label><textarea id="cm" maxlength="100" rows="3"></textarea><p class="mut" style="text-align:right" id="cnt">0/100</p></div>
+<p class="mut rise">Tu reseña se publica como <b style="color:var(--ink)">${me()}</b> (nombre y la inicial de tu apellido).</p>
+<button class="btn rise" id="pub" disabled data-act="publish">Publicar reseña</button></div>`},
+terms:()=>`<div class="col"><div><button class="back" data-go="${cur&&cur.name==='login'?'login':'home'}">← Volver</button><h1>Términos y descargo</h1></div>
+<div class="card rise mut" style="background:#E0F2FE;border:0;padding:12px;font-size:13px">Borrador de ejemplo: revisalo con un abogado antes de publicarlo.</div>
+${[['Edad','Solo pueden participar personas de 18 años o más. Podemos pedir verificación de identidad.'],['Participación voluntaria','Caminar al aire libre implica riesgos (terreno, clima, caídas). Participás bajo tu propia responsabilidad y declarás estar en condiciones físicas de hacerlo.'],['Descargo de responsabilidad','El organizador no responde por lesiones, accidentes ni pérdida de objetos, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto hacia el resto. Podemos retirar a quien no lo cumpla, sin devolución.'],['Datos personales','Usamos tu nombre y mail de Google. Quienes están anotados ven tu nombre y la inicial de tu apellido, y lo mismo en las reseñas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Fotos','Podemos sacar fotos del grupo. Avisanos si no querés aparecer.'],['Cupos','Cada caminata tiene máximo 10 lugares. Si se llena, aplicás a la del finde siguiente.']].map(t=>`<div class="rise"><h2 style="margin-bottom:4px;font-size:16px">${t[0]}</h2><p style="font-size:14px;color:#2B4A5E">${t[1]}</p></div>`).join('')}</div>`,
+admin:()=>{const t=idx;let b='';
+if(t==0)b=`<h1 class="rise">Resumen</h1><div class="grid2">${[['Usuarios',1240,0],['Activos esta semana',612,0],['Caminatas realizadas',12,0],['Calificación promedio',4.7,1]].map(k=>`<div class="card kpi rise"><span class="mut">${k[0]}</span><b data-count="${k[1]}" data-dec="${k[2]}">0</b></div>`).join('')}</div>
+<div class="card rise"><h2>Usuarios activos por día</h2><div class="cols">${[['Lun',410],['Mar',455],['Mié',430],['Jue',480],['Vie',520],['Sáb',612],['Dom',590]].map(d=>`<div>${d[1]}<i data-h="${d[1]/612*100}"></i><span class="mut">${d[0]}</span></div>`).join('')}</div></div>
+<div class="card rise"><h2>Cuándo caminan</h2><div class="cols">${[['6–10',32],['10–14',18],['14–19',34],['19–23',16]].map(d=>`<div>${d[1]}%<i data-h="${d[1]/34*100}"></i><span class="mut">${d[0]}</span></div>`).join('')}</div></div>
+<button class="btn sec rise" data-act="csv">Exportar reporte para sponsors</button><p class="mut">Datos de ejemplo. Los sponsors reciben solo cifras agregadas, sin nombres ni mails.</p>`;
+if(t==1)b=`<h1 class="rise">Crear caminata</h1><div class="card g12 rise"><label class="f">Nombre<input type="text" id="a1" value="${S.w.t}"></label><label class="f">Fecha<input type="date" id="a2" value="2026-11-21"></label><label class="f">Hora<input type="time" id="a3" value="${S.w.hr}"></label><label class="f">Punto de encuentro<input type="text" id="a4" value="${S.w.punto}"></label><label class="f">Duración<input type="text" id="a5" value="${S.w.dur}"></label><label class="f">Cupo máximo<input type="number" id="a6" value="${S.w.cupo}" min="1"></label><label class="f">Meta de pasos de la semana<input type="number" id="a7" value="${S.meta}"></label><label class="f">Sponsor<input type="text" id="a8" value="${S.w.sp}"></label></div><button class="btn rise" data-act="create">Publicar caminata</button><p class="mut">Al publicar, aparece en el Home de la app y se abre la inscripción.</p>`;
+if(t==2)b=`<h1 class="rise">Asistentes y reseñas</h1><div class="card g12 rise"><h2 style="margin:0">${S.past[0].f}</h2><p class="mut">${S.past[0].n} asistentes · ${S.past[0].prom} de 5</p>${ADM.map(a=>`<div style="border-top:1px solid #E0F2FE;padding-top:10px"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${a[0]}</b><span class="mut">Asistió: ${a[2]}</span></div><p class="mut">${a[1]}</p></div>`).join('')}<button class="btn sec" data-act="csv">Exportar CSV</button></div>
+${S.past[0].rev.map(r=>`<div class="card rise"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${r[0]}</b>${stars(r[1])}</div><p style="font-size:14px;margin-top:4px">${r[2]}</p></div>`).join('')}<p class="mut">Datos de ejemplo. Solo vos ves los datos completos.</p>`;
+return `<div class="col"><button class="back" data-go="home" style="align-self:flex-start">← Salir del panel</button>${b}</div>`}
+};
+
+/* ============ ROUTER Y ANIMACIONES ============ */
+function enhance(el){
+ el.querySelectorAll('.rise').forEach((n,i)=>n.style.animationDelay=Math.min(i*70,700)+'ms');
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  el.querySelectorAll('[data-w]').forEach(n=>n.style.width=n.dataset.w+'%');
+  el.querySelectorAll('[data-h]').forEach(n=>n.style.height=n.dataset.h+'%')}));
+ el.querySelectorAll('[data-count]').forEach(n=>{const to=+n.dataset.count,d=+(n.dataset.dec||0),t0=performance.now();
+  (function f(t){const k=Math.min(1,(t-t0)/1000),e=1-Math.pow(1-k,3);n.textContent=fmt(to*e,d);if(k<1)requestAnimationFrame(f)})(t0)});
+}
+function tabs(on){const t=$('#tabs');if(on==null){t.style.display='none';return}t.style.display='flex';
+ t.innerHTML=['Resumen','Crear','Asistentes'].map((n,i)=>`<button class="${i===on?'on':''}" data-go="admin" data-arg="${i}">${n}</button>`).join('')}
+function go(name,arg,back){
+ if(arg!=null)idx=+arg; const old=cur&&cur.el;
+ const el=document.createElement('main');el.className='screen'+(name==='admin'?' tabbed':'');el.innerHTML=V[name]();
+ $('#app').insertBefore(el,$('#tabs'));cur={name,el};tabs(name==='admin'?idx:null);RATE=0;enhance(el);
+ const dir=back?-28:28;
+ el.animate([{transform:`translateX(${dir}px)`,opacity:0},{transform:'none',opacity:1}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
+ if(old){old.style.pointerEvents='none';old.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'}).onfinish=()=>old.remove()}
+ el.scrollTop=0}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2600)}
+
+document.addEventListener('click',e=>{
+ const s=e.target.closest('[data-star]');
+ if(s){RATE=+s.dataset.star;document.querySelectorAll('#stars .star').forEach((b,i)=>{const p=b.querySelector('path');p.setAttribute('fill',i<RATE?'#0EA5E9':'none');if(i<RATE)b.animate([{transform:'scale(.7)'},{transform:'scale(1)'}],{duration:300,delay:i*40,easing:'cubic-bezier(.3,1.6,.5,1)'})});chk();return}
+ const t=e.target.closest('[data-go],[data-act]');if(!t)return;
+ if(t.dataset.go){e.preventDefault();go(t.dataset.go,t.dataset.arg,['home','login'].includes(t.dataset.go)&&cur.name!=='login');return}
+ const a=t.dataset.act;
+ if(a==='login'){/* SUPABASE: supabase.auth.signInWithOAuth({provider:'google'}) y guardar mayor_de_18 + acepto_terminos_at */ go('home')}
+ if(a==='sim'){S.pasos=Math.min(S.meta,S.pasos+5000);S.dias[3][1]+=1000;go('home');if(unlocked())toast('¡Caminata desbloqueada!')}
+ if(a==='join'){/* SUPABASE: supabase.rpc('join_walk',{p_walk:id}) */ S.yo=true;toast('¡Listo! Te anotaste a la caminata');go('walk')}
+ if(a==='publish'){const p=S.past[idx];p.rev.unshift([me(),RATE,$('#cm').value.trim()]);p.rated=true;toast('¡Gracias por tu reseña!');go('home',null,true)}
+ if(a==='create'){const g=i=>$('#a'+i).value,d=new Date(g(2)+'T12:00');const f=d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  Object.assign(S.w,{t:g(1),f:f[0].toUpperCase()+f.slice(1),hr:g(3),punto:g(4),dur:g(5),cupo:+g(6),sp:g(8)});S.meta=+g(7);S.yo=false;toast('Caminata publicada: ya aparece en la app')}
+ if(a==='csv'){const r=['nombre,mail,asistio',...ADM.map(x=>x.join(','))].join('\n'),l=document.createElement('a');l.href=URL.createObjectURL(new Blob([r],{type:'text/csv'}));l.download='asistentes.csv';l.click()}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id==='ok18')$('#google').disabled=!e.target.checked;
+ if(e.target.id==='cm'){$('#cnt').textContent=e.target.value.length+'/100';chk()}});
+function chk(){const b=$('#pub');if(b)b.disabled=!(RATE>0&&$('#cm').value.trim().length>0)}
+go('login');
+</script>
+</body>
+</html>
