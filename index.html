@@ -112,16 +112,17 @@ async function load(){
   const t=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',uid));
   S.p.mayor_de_18=true;S.p.acepto_terminos_at=t;localStorage.removeItem('consent')}
  S.admin=await q(sb.rpc('is_admin'));
- const [w]=await q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',new Date().toISOString()).order('inicia_at').limit(1));
+ /* Próxima caminata futura; si no hay, la publicada más reciente */
+ let [w]=await q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',new Date().toISOString()).order('inicia_at').limit(1));
+ if(!w)[w]=await q(sb.from('walks').select('*').eq('estado','publicada').order('inicia_at',{ascending:false}).limit(1));
  S.w=w||null;S.ok=[];S.yo=false;S.ocu=0;
  if(w){
   const [st,mine]=await Promise.all([q(sb.from('walk_stats').select('*').eq('walk_id',w.id).maybeSingle()),q(sb.from('walk_signups').select('estado').eq('walk_id',w.id).eq('user_id',uid).maybeSingle())]);
   S.ocu=st?st.ocupados:0;S.yo=!!mine&&mine.estado!=='cancelado';
   if(S.yo)S.ok=await q(sb.rpc('asistentes_caminata',{p_walk:w.id}));
  }
- /* Admin: sus caminatas próximas (activas y borradores) */
-let [w]=await q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',new Date().toISOString()).order('inicia_at').limit(1));
-if(!w)[w]=await q(sb.from('walks').select('*').eq('estado','publicada').order('inicia_at',{ascending:false}).limit(1));
+ /* Admin: sus caminatas (activas y borradores) */
+ S.mine=S.admin?await q(sb.from('walks').select('*').in('estado',['publicada','borrador']).order('inicia_at',{ascending:false})):[];
  const logs=await q(sb.from('step_logs').select('dia,pasos').gte('dia',lunes()));
  const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
  S.dias=Object.keys(by).sort().map(d=>[d,by[d]]);S.pasos=S.dias.reduce((a,b)=>a+b[1],0);
