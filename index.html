@@ -76,6 +76,8 @@ const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const TZ='America/Argentina/Buenos_Aires';
 const SYNC_URL=SUPABASE_URL+'/functions/v1/sync-steps';
 const DEF_POS=[-34.5745,-58.4150]; /* Bosques de Palermo */
+const SHORTCUT_URL='https://www.icloud.com/shortcuts/ac01fdc4038c4caa84f02f549493570a';
+const SHORTCUT_NAME='Paseando';
 const sb=(SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase)?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const fmt=(n,d=0)=>(+n).toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d});
 const $=(s,e=document)=>e.querySelector(s);
@@ -163,7 +165,7 @@ const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima camina
 <div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
 <p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(w.meta_pasos-S.pasos)} de ${fmt(w.meta_pasos)} pasos para desbloquearla`}</p>
 <div>${dots(S.ocu,w.cupo_max)}</div>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`;
-const nosync=S.pasos===0?`<div class="card g12 rise"><h2 style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Todavía no recibimos pasos tuyos. Conectalos con Atajos de iPhone para desbloquear la caminata.</p><button class="btn sm" data-go="sync">Cómo conectarlos</button></div>`:'';
+const nosync=S.pasos===0?`<div class="card g12 rise"><h2 style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Todavía no recibimos pasos tuyos. Conectalos con un toque desde tu iPhone para desbloquear la caminata.</p><button class="btn sm" data-go="sync">Conectar mis pasos</button></div>`:'';
 return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${mineCard()}${card}${nosync}
 <div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.length?S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d===hoyAR()?800:600}">${dl(d)}</span><div class="bar s"><i data-w="${s/mx*100}"></i></div><span style="width:56px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join(''):'<p class="mut">Todavía no hay pasos registrados esta semana.</p>'}</div></div>
 <div><h2 class="rise">Caminatas anteriores</h2><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>
@@ -176,18 +178,19 @@ ${w.punto_lat!=null?`<div class="card g12 rise"><h2 style="margin:0">Punto de en
 <div class="card g12"><h2 style="margin:0">Quiénes van (${S.ok.length} de ${w.cupo_max})</h2>${S.ok.map(a=>{const n=esc(a.nombre)+' '+esc(a.apellido_inicial);return `<div class="row rise"><div class="av">${esc(a.nombre[0]||'?')}</div><b>${n}${n===esc(yo)?' (vos)':''}</b></div>`}).join('')}${Array.from({length:Math.max(0,w.cupo_max-S.ok.length)},()=>'<div class="row rise"><div class="av free"></div><span class="mut" style="font-size:16px">Lugar libre</span></div>').join('')}</div>
 ${w.sponsor?`<p class="mut rise" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`},
 sync:()=>{const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
-const iosC=`<div class="card g12 rise"><h2 style="margin:0">iPhone: Atajos (funciona hoy)</h2><p class="mut">Se arma una sola vez, en unos 3 minutos.</p>
-<ol class="steps"><li>Abrí la app <b>Atajos</b> → pestaña <b>Atajos</b> → <b>+</b>.</li>
-<li>Agregá <b>Encontrar muestras de Salud</b>. Filtros: Tipo <b>es</b> Pasos · Fecha de inicio <b>es hoy</b>. Desactivá el límite.</li>
-<li>Agregá <b>Calcular estadísticas</b> → <b>Suma</b>.</li>
-<li>Agregá <b>Obtener contenido de URL</b>. Pegá la URL de arriba, Método <b>POST</b>, Cuerpo de solicitud <b>JSON</b>, con dos campos: <b>token</b> (Texto: tu clave) y <b>pasos</b> (Número: la variable <i>Estadísticas</i>).</li>
-<li>Corré el atajo una vez a mano y aceptá el permiso de <b>Salud</b>.</li>
-<li>Pestaña <b>Automatización</b> → <b>+</b> → <b>Hora del día</b> → Diariamente → <b>Ejecutar inmediatamente</b> → elegí tu atajo. Repetilo a otras horas (por ej. 10, 14, 18 y 22).</li></ol>
-<p class="mut">El total puede diferir un poco del número que muestra la app Salud. Cada envío manda el total de hoy, así que repetirlo no duplica pasos.</p></div>`;
+const back=encodeURIComponent(location.href.split('#')[0]);
+const run=`shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(S.tok)}&x-success=${back}&x-cancel=${back}&x-error=${back}`;
+const iosC=`<div class="card g12 rise"><h2 style="margin:0">iPhone</h2>
+<p style="font-size:14px">Un atajo lee tus pasos de la app Salud y los manda a Paseando. Lo instalás una sola vez.</p>
+<div class="g12"><div><p class="mut">Paso 1 · Solo la primera vez</p><a class="btn" href="${SHORTCUT_URL}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px">Instalar atajo</a></div>
+<p class="mut">Se abre la app Atajos. Tocá <b>Agregar atajo</b>.</p></div>
+<div class="g12 sep"><div><p class="mut">Paso 2 · Cada vez que quieras actualizar</p><a class="btn" href="${esc(run)}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px">Sincronizar ahora</a></div>
+<p class="mut">La primera vez, iOS te pide permiso para leer tus pasos de Salud y para conectarse a internet. Tocá <b>Permitir</b> en ambos. Después vuelve solo a Paseando.</p></div>
+<p class="mut">Si el atajo no se deja instalar, activá <b>Permitir atajos no confiables</b> en Ajustes → Atajos → Avanzado.</p></div>`;
 const andC=`<div class="card g12 rise"><h2 style="margin:0">Android</h2><p style="font-size:14px">Chrome no puede leer Health Connect y la API web de Google Fit está discontinuada, así que desde la web sola no hay forma directa de leer los pasos.</p><p style="font-size:14px">La opción que sí funciona es empaquetar esta web como app (por ejemplo con Capacitor + un plugin de Health Connect) y llamar a <b>Paseando.syncSteps()</b>, que ya está lista en este código.</p></div>`;
+const adv=`<details class="card rise"><summary style="font-weight:800;cursor:pointer">Opciones avanzadas</summary><div class="g12" style="margin-top:12px"><p class="mut">Para armar el atajo a mano o usar otra herramienta.</p><div><p class="mut">URL</p><div class="code">${esc(SYNC_URL)}</div><button class="link" data-act="copyurl">Copiar URL</button></div><div><p class="mut">Tu clave personal</p><div class="code">${esc(S.tok)}</div><div class="row"><button class="link" data-act="copytok">Copiar clave</button><button class="link" data-act="regen">Generar nueva</button></div></div><p class="mut">No la compartas: quien la tenga puede cargar pasos a tu nombre. Si generás una nueva, la vieja deja de funcionar.</p></div></details>`;
 return `<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Sincronizar pasos</h1><p class="mut" style="margin-top:6px">Un sitio web no puede leer Apple Salud por su cuenta. Los Atajos de iPhone sí pueden, y mandan tus pasos a Paseando.</p></div>
-<div class="card g12 rise"><h2 style="margin:0">Tus datos de conexión</h2><div><p class="mut">URL</p><div class="code">${esc(SYNC_URL)}</div><button class="link" data-act="copyurl">Copiar URL</button></div><div><p class="mut">Tu clave personal</p><div class="code">${esc(S.tok)}</div><div class="row"><button class="link" data-act="copytok">Copiar clave</button><button class="link" data-act="regen">Generar nueva</button></div></div><p class="mut">No la compartas: quien la tenga puede cargar pasos a tu nombre.</p></div>
-${ios?iosC+andC:andC+iosC}</div>`},
+${ios?iosC+andC:andC+iosC}${adv}</div>`},
 rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back" data-go="home">← Volver</button><p class="mut">${fecha(p.w.inicia_at)} · ${esc(p.w.lugar)}</p><h1 style="margin-top:4px">¿Cómo estuvo la caminata?</h1></div>
 <div class="card g12 rise"><b style="font-size:14px">Tu calificación</b><div class="row" style="gap:4px" id="stars">${[1,2,3,4,5].map(i=>`<button class="star" data-star="${i}" aria-label="${i} estrellas"><svg width="44" height="44" viewBox="0 0 24 24"><path d="${star}" fill="none" stroke="#0369A1" stroke-width="1.5"/></svg></button>`).join('')}</div>
 <label class="f" for="cm">Contanos qué te pareció</label><textarea id="cm" maxlength="100" rows="3"></textarea><p class="mut" style="text-align:right" id="cnt">0/100</p></div>
