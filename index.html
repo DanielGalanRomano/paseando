@@ -120,7 +120,8 @@ async function load(){
   if(S.yo)S.ok=await q(sb.rpc('asistentes_caminata',{p_walk:w.id}));
  }
  /* Admin: sus caminatas próximas (activas y borradores) */
- S.mine=S.admin?await q(sb.from('walks').select('*').in('estado',['publicada','borrador']).gte('inicia_at',new Date().toISOString()).order('inicia_at')):[];
+let [w]=await q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',new Date().toISOString()).order('inicia_at').limit(1));
+if(!w)[w]=await q(sb.from('walks').select('*').eq('estado','publicada').order('inicia_at',{ascending:false}).limit(1));
  const logs=await q(sb.from('step_logs').select('dia,pasos').gte('dia',lunes()));
  const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
  S.dias=Object.keys(by).sort().map(d=>[d,by[d]]);S.pasos=S.dias.reduce((a,b)=>a+b[1],0);
