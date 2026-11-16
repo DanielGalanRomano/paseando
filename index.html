@@ -60,11 +60,20 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 #tabs button.on{color:var(--c3);font-weight:800} #tabs button.on::after{content:"";position:absolute;left:30%;right:30%;top:-6px;height:3px;border-radius:2px;background:var(--c2)}
 #toast{position:absolute;left:20px;right:20px;bottom:calc(env(safe-area-inset-bottom) + 90px);background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;font-size:14px;font-weight:600;transform:translateY(30px);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.8,.2,1);z-index:9}
 #toast.on{transform:none;opacity:1}
+#menuBtn{position:absolute;right:4px;top:env(safe-area-inset-top,0px);width:48px;height:48px;border:0;background:none;display:none;align-items:center;justify-content:center;cursor:pointer}
+#menu{position:absolute;inset:0;z-index:8;visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s}
+#menu.on{visibility:visible;pointer-events:auto;transition:none}
+#menu .bk{position:absolute;inset:0;width:100%;border:0;padding:0;background:rgba(11,42,60,.45);opacity:0;transition:opacity .25s}
+#menu.on .bk{opacity:1}
+#menu .pn{position:absolute;top:0;right:0;bottom:0;width:min(300px,82%);background:#fff;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 16px);transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:4px}
+#menu.on .pn{transform:none}
+.mi{display:flex;align-items:center;width:100%;min-height:52px;border:0;background:none;border-radius:12px;padding:0 12px;font:600 16px Inter,sans-serif;color:var(--ink);text-align:left;cursor:pointer}
+.mi:active{background:var(--bg)}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<div id="app"><header id="hdr"><img src="logopaseando.png" alt="Paseando" height="25"></header><nav id="tabs"></nav><div id="toast" role="status"></div></div>
+<div id="app"><header id="hdr"><img src="logopaseando.png" alt="Paseando" height="25"><button id="menuBtn" data-act="menu" aria-label="Abrir menú" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header><nav id="tabs"></nav><div id="menu"></div><div id="toast" role="status"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -135,6 +144,7 @@ async function load(){
 async function loadAW(){S.aw=await q(sb.from('walks').select('*').order('inicia_at',{ascending:false}).limit(50))}
 const PRE={
 home:async()=>{if(S.dirty){await load();S.dirty=false}},
+past:async()=>{if(S.dirty){await load();S.dirty=false}},
 sync:async()=>{
  let r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).maybeSingle());
  if(!r){await q(sb.from('sync_tokens').insert({user_id:S.uid}));r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).single())}
@@ -150,8 +160,8 @@ admin:async()=>{
 
 /* ============ VISTAS ============ */
 const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:40px">
-<div class="rise" style="display:flex;flex-direction:column;align-items:center;gap:12px">${logo}<span style="font-size:22px;font-weight:800;letter-spacing:.5px">Paseando</span></div>
-<h1 class="rise" style="font-size:34px">Caminá solo,<br>para caminar en grupo.</h1>
+<div class="rise" style="display:flex;flex-direction:column;align-items:center;gap:12px">${logo}</div>
+<h1 class="rise" style="font-size:25px">Caminá solo,<br>para caminar en grupo.</h1>
 <p class="rise mut" style="font-size:16px">Sumá pasos durante la semana y desbloqueá la caminata del fin de semana en los Bosques de Palermo. Infusiones y algo dulce incluidos.</p>
 <div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-go="terms">Términos y el descargo de responsabilidad</a>.</span></label>
 <button class="btn" id="google" disabled data-act="${act}">${label}</button></div></div>`;
@@ -170,8 +180,8 @@ const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima camina
 const nosync=S.pasos===0?`<div class="card g12 rise"><h2 style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Todavía no recibimos pasos tuyos. Conectalos con un toque desde tu iPhone para desbloquear la caminata.</p><button class="btn sm" data-go="sync">Conectar mis pasos</button></div>`:'';
 return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${mineCard()}${card}${nosync}
 <div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.length?S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d===hoyAR()?800:600}">${dl(d)}</span><div class="bar s"><i data-w="${s/mx*100}"></i></div><span style="width:56px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join(''):'<p class="mut">Todavía no hay pasos registrados esta semana.</p>'}</div></div>
-<div><h2 class="rise">Caminatas anteriores</h2><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>
-<div class="row" style="justify-content:space-between;flex-wrap:wrap"><button class="link" data-go="sync">Sincronizar pasos</button><button class="link" data-go="terms">Términos</button>${S.admin?'<button class="link" data-go="admin" data-arg="0">Panel admin</button>':''}<button class="link" data-act="logout">Cerrar sesión</button></div></div>`},
+</div>`},
+past:()=>`<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Caminatas anteriores</h1></div><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>`,
 walk:()=>{const w=S.w,yo=S.p.nombre+' '+(S.p.apellido[0]||'')+'.';
 return `<div class="col"><div><button class="back" data-go="home">← Volver</button><span class="chip rise">Desbloqueada</span><h1 class="rise" style="margin-top:10px">${esc(w.titulo)}</h1></div>
 <div class="card g12 rise">${[['Cuándo',`${fecha(w.inicia_at)}, ${hora(w.inicia_at)}`],['Dónde',esc(w.lugar)+(w.punto_encuentro?' · '+esc(w.punto_encuentro):'')],['Duración',`${dur(w.duracion_min)}. ${esc(w.incluye||'')}`],['Después','Podés quedarte con el grupo. El anfitrión se va.']].map(r=>`<div><p class="mut">${r[0]}</p><p style="font-weight:600">${r[1]}</p></div>`).join('')}</div>
@@ -193,7 +203,7 @@ const andC=`<div class="card g12 rise"><h2 style="margin:0">Android</h2><p style
 const adv=`<details class="card rise"><summary style="font-weight:800;cursor:pointer">Opciones avanzadas</summary><div class="g12" style="margin-top:12px"><p class="mut">Para armar el atajo a mano o usar otra herramienta.</p><div><p class="mut">URL</p><div class="code">${esc(SYNC_URL)}</div><button class="link" data-act="copyurl">Copiar URL</button></div><div><p class="mut">Tu clave personal</p><div class="code">${esc(S.tok)}</div><div class="row"><button class="link" data-act="copytok">Copiar clave</button><button class="link" data-act="regen">Generar nueva</button></div></div><p class="mut">No la compartas: quien la tenga puede cargar pasos a tu nombre. Si generás una nueva, la vieja deja de funcionar.</p></div></details>`;
 return `<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Sincronizar pasos</h1><p class="mut" style="margin-top:6px">Un sitio web no puede leer Apple Salud por su cuenta. Los Atajos de iPhone sí pueden, y mandan tus pasos a Paseando.</p></div>
 ${ios?iosC+andC:andC+iosC}${adv}</div>`},
-rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back" data-go="home">← Volver</button><p class="mut">${fecha(p.w.inicia_at)} · ${esc(p.w.lugar)}</p><h1 style="margin-top:4px">¿Cómo estuvo la caminata?</h1></div>
+rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back" data-go="past">← Volver</button><p class="mut">${fecha(p.w.inicia_at)} · ${esc(p.w.lugar)}</p><h1 style="margin-top:4px">¿Cómo estuvo la caminata?</h1></div>
 <div class="card g12 rise"><b style="font-size:14px">Tu calificación</b><div class="row" style="gap:4px" id="stars">${[1,2,3,4,5].map(i=>`<button class="star" data-star="${i}" aria-label="${i} estrellas"><svg width="44" height="44" viewBox="0 0 24 24"><path d="${star}" fill="none" stroke="#0369A1" stroke-width="1.5"/></svg></button>`).join('')}</div>
 <label class="f" for="cm">Contanos qué te pareció</label><textarea id="cm" maxlength="100" rows="3"></textarea><p class="mut" style="text-align:right" id="cnt">0/100</p></div>
 <p class="mut rise">Tu reseña se publica como <b style="color:var(--ink)">${esc(S.p.nombre)} ${esc(S.p.apellido[0]||'')}.</b> (nombre y la inicial de tu apellido).</p>
@@ -277,11 +287,19 @@ async function go(name,arg,back){
  if(my!==nav)return;
  const old=cur&&cur.el;
  const el=document.createElement('main');el.className='screen'+(name==='admin'?' tabbed':'');el.innerHTML=V[name]();
- $('#app').insertBefore(el,$('#tabs'));cur={name,el};tabs(name==='admin'?idx:null);RATE=0;enhance(el);post(name);
+ $('#app').insertBefore(el,$('#tabs'));cur={name,el};closeMenu();$('#menuBtn').style.display=HIDE_MENU.includes(name)?'none':'flex';tabs(name==='admin'?idx:null);RATE=0;enhance(el);post(name);
  const dir=back==='fade'?0:back?-28:28;
  el.animate([{transform:`translateX(${dir}px)`,opacity:0},{transform:'none',opacity:1}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
  if(old){old.style.pointerEvents='none';old.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'}).onfinish=()=>old.remove()}
  el.scrollTop=0}
+const HIDE_MENU=['login','consent','setup'];
+function openMenu(){const m=$('#menu');
+ m.innerHTML=`<button class="bk" data-act="closemenu" aria-label="Cerrar menú"></button><div class="pn" role="dialog" aria-label="Menú"><div class="row" style="justify-content:space-between"><b style="font-size:18px;padding-left:12px">Menú</b><button class="mi" style="width:48px;justify-content:center;padding:0" data-act="closemenu" aria-label="Cerrar">✕</button></div>
+<button class="mi" data-go="past">Caminatas anteriores</button><button class="mi" data-go="sync">Sincronizar pasos</button><button class="mi" data-go="terms">Términos</button>${S.admin?'<button class="mi" data-go="admin" data-arg="0">Panel admin</button>':''}
+<div class="sep" style="margin-top:8px"></div><button class="mi" data-act="logout" style="color:#B91C1C">Cerrar sesión</button></div>`;
+ m.classList.add('on');$('#menuBtn').setAttribute('aria-expanded','true')}
+function closeMenu(){$('#menu').classList.remove('on');$('#menuBtn').setAttribute('aria-expanded','false')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3000)}
 const csv=(name,rows)=>{const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));l.download=name;l.click()};
 const afterDel=()=>{S.dirty=true;toast('Caminata eliminada');EID=null;if(cur.name==='home'){go('home',null,'fade')}else go('admin',1,'fade')};
@@ -290,17 +308,19 @@ document.addEventListener('click',async e=>{
  const s=e.target.closest('[data-star]');
  if(s){RATE=+s.dataset.star;document.querySelectorAll('#stars .star').forEach((b,i)=>{const p=b.querySelector('path');p.setAttribute('fill',i<RATE?'#0EA5E9':'none');if(i<RATE)b.animate([{transform:'scale(.7)'},{transform:'scale(1)'}],{duration:300,delay:i*40,easing:'cubic-bezier(.3,1.6,.5,1)'})});chk();return}
  const t=e.target.closest('[data-go],[data-act]');if(!t||t.disabled)return;
+ if(t.closest('#menu'))closeMenu();
  if(t.dataset.edit!==undefined)EID=t.dataset.edit||null;
  if(t.dataset.wid)WID=t.dataset.wid;
  if(t.dataset.go){e.preventDefault();go(t.dataset.go,t.dataset.arg,['home','login','consent'].includes(t.dataset.go)&&cur.name!=='login'&&cur.name!=='consent');return}
  const a=t.dataset.act;
  try{
+ if(a==='menu')openMenu();
  if(a==='login'){localStorage.setItem('consent','1');await q(sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}}))}
  if(a==='accept'){const ts=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:ts}).eq('id',S.uid));S.p.acepto_terminos_at=ts;await load();go('home')}
  if(a==='logout'){await sb.auth.signOut();S={};go('login',null,true)}
  if(a==='join'){t.disabled=true;const r=await q(sb.rpc('join_walk',{p_walk:S.w.id}));await load();
   if(r==='completa'){toast('Se completó el cupo. Aplicás a la caminata del finde siguiente.');go('home',null,'fade')}else{toast('¡Listo! Te anotaste a la caminata');go('walk')}}
- if(a==='publish'){t.disabled=true;const p=S.past[idx];await q(sb.from('reviews').insert({walk_id:p.w.id,user_id:S.uid,estrellas:RATE,comentario:$('#cm').value.trim()}));await load();toast('¡Gracias por tu reseña!');go('home',null,true)}
+ if(a==='publish'){t.disabled=true;const p=S.past[idx];await q(sb.from('reviews').insert({walk_id:p.w.id,user_id:S.uid,estrellas:RATE,comentario:$('#cm').value.trim()}));await load();toast('¡Gracias por tu reseña!');go('past',null,true)}
  if(a==='create'||a==='draft'||a==='save'){const g=i=>$('#a'+i).value;if(!g(1)||!g(2)||!g(3)){toast('Completá nombre, fecha y hora');return}
   t.disabled=true;
   const row={titulo:g(1).trim(),inicia_at:new Date(`${g(2)}T${g(3)}:00-03:00`).toISOString(),lugar:g(4).trim()||'Bosques de Palermo',punto_encuentro:g(5).trim()||null,punto_lat:PICK?PICK.lat:null,punto_lng:PICK?PICK.lng:null,duracion_min:+g(6),cupo_max:+g(7),meta_pasos:+g(8),sponsor:g(9).trim()||null,incluye:g(11).trim()||null,que_llevar:g(12).trim()||null};
