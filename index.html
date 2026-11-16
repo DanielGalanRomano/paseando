@@ -58,7 +58,7 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 #tabs{position:absolute;left:0;right:0;bottom:0;display:none;background:#fff;border-top:1px solid var(--line);padding:6px 0 calc(env(safe-area-inset-bottom) + 6px);z-index:5}
 #tabs button{flex:1;min-height:48px;border:0;background:none;font:600 14px Inter,sans-serif;color:var(--mut);cursor:pointer;position:relative}
 #tabs button.on{color:var(--c3);font-weight:800} #tabs button.on::after{content:"";position:absolute;left:30%;right:30%;top:-6px;height:3px;border-radius:2px;background:var(--c2)}
-#toast{position:absolute;left:20px;right:20px;bottom:calc(env(safe-area-inset-bottom) + 90px);background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;font-size:14px;font-weight:600;transform:translateY(30px);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.8,.2,1);z-index:9}
+#toast{position:absolute;left:20px;right:20px;bottom:calc(env(safe-area-inset-bottom) + 90px);background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;font-size:14px;font-weight:600;transform:translateY(30px);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.8,.2,1);z-index:11}
 #toast.on{transform:none;opacity:1}
 #menuBtn{position:absolute;right:4px;top:env(safe-area-inset-top,0px);width:48px;height:48px;border:0;background:none;display:none;align-items:center;justify-content:center;cursor:pointer}
 #menu{position:absolute;inset:0;z-index:8;visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s}
@@ -69,11 +69,14 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 #menu.on .pn{transform:none}
 .mi{display:flex;align-items:center;width:100%;min-height:52px;border:0;background:none;border-radius:12px;padding:0 12px;font:600 16px Inter,sans-serif;color:var(--ink);text-align:left;cursor:pointer}
 .mi:active{background:var(--bg)}
+#gate{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);background:rgba(11,42,60,.65)}
+#gate.on{display:flex}
+#gate .card{width:100%;max-height:100%;overflow-y:auto;animation:rise .4s cubic-bezier(.2,.8,.2,1)}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<div id="app"><header id="hdr"><img src="logopaseando.png" alt="Paseando" height="25"><button id="menuBtn" data-act="menu" aria-label="Abrir menú" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header><nav id="tabs"></nav><div id="menu"></div><div id="toast" role="status"></div></div>
+<div id="app"><header id="hdr"><img src="logopaseando.png" alt="Paseando" height="25"><button id="menuBtn" data-act="menu" aria-label="Abrir menú" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header><nav id="tabs"></nav><div id="menu"></div><div id="gate" role="dialog" aria-modal="true" aria-labelledby="gt"></div><div id="toast" role="status"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -132,6 +135,7 @@ async function load(){
  }
  /* Admin: sus caminatas (activas y borradores) */
  S.mine=S.admin?await q(sb.from('walks').select('*').in('estado',['publicada','borrador']).order('inicia_at',{ascending:false})):[];
+ const any=await q(sb.from('step_logs').select('dia').eq('user_id',uid).limit(1));S.synced=any.length>0;
  const logs=await q(sb.from('step_logs').select('dia,pasos').gte('dia',lunes()));
  const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
  S.dias=Object.keys(by).sort().map(d=>[d,by[d]]);S.pasos=S.dias.reduce((a,b)=>a+b[1],0);
@@ -142,13 +146,14 @@ async function load(){
   S.past=pw.map(w=>{const s=st.find(x=>x.walk_id===w.id)||{};return{w,n:s.asistentes||0,prom:s.promedio,rev:rv.filter(r=>r.walk_id===w.id),can:asi.some(a=>a.walk_id===w.id)&&!mr.some(m=>m.walk_id===w.id)}})}
 }
 async function loadAW(){S.aw=await q(sb.from('walks').select('*').order('inicia_at',{ascending:false}).limit(50))}
+async function getTok(){
+ let r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).maybeSingle());
+ if(!r){await q(sb.from('sync_tokens').insert({user_id:S.uid}));r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).single())}
+ return r.token}
 const PRE={
 home:async()=>{if(S.dirty){await load();S.dirty=false}},
 past:async()=>{if(S.dirty){await load();S.dirty=false}},
-sync:async()=>{
- let r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).maybeSingle());
- if(!r){await q(sb.from('sync_tokens').insert({user_id:S.uid}));r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).single())}
- S.tok=r.token},
+sync:async()=>{S.tok=await getTok()},
 admin:async()=>{
  if(idx===0)S.res=await q(sb.rpc('admin_resumen'));
  if(idx===1){await loadAW();S.ws={};const ids=S.aw.map(x=>x.id);
@@ -177,8 +182,7 @@ const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima camina
 <div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
 <p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(w.meta_pasos-S.pasos)} de ${fmt(w.meta_pasos)} pasos para desbloquearla`}</p>
 <div>${dots(S.ocu,w.cupo_max)}</div>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`;
-const nosync=S.pasos===0?`<div class="card g12 rise"><h2 style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Todavía no recibimos pasos tuyos. Conectalos con un toque desde tu iPhone para desbloquear la caminata.</p><button class="btn sm" data-go="sync">Conectar mis pasos</button></div>`:'';
-return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${mineCard()}${card}${nosync}
+return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${mineCard()}${card}
 <div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.length?S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d===hoyAR()?800:600}">${dl(d)}</span><div class="bar s"><i data-w="${s/mx*100}"></i></div><span style="width:56px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join(''):'<p class="mut">Todavía no hay pasos registrados esta semana.</p>'}</div></div>
 </div>`},
 past:()=>`<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Caminatas anteriores</h1></div><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>`,
@@ -287,7 +291,7 @@ async function go(name,arg,back){
  if(my!==nav)return;
  const old=cur&&cur.el;
  const el=document.createElement('main');el.className='screen'+(name==='admin'?' tabbed':'');el.innerHTML=V[name]();
- $('#app').insertBefore(el,$('#tabs'));cur={name,el};closeMenu();$('#menuBtn').style.display=HIDE_MENU.includes(name)?'none':'flex';tabs(name==='admin'?idx:null);RATE=0;enhance(el);post(name);
+ $('#app').insertBefore(el,$('#tabs'));cur={name,el};closeMenu();$('#menuBtn').style.display=HIDE_MENU.includes(name)?'none':'flex';syncGate();tabs(name==='admin'?idx:null);RATE=0;enhance(el);post(name);
  const dir=back==='fade'?0:back?-28:28;
  el.animate([{transform:`translateX(${dir}px)`,opacity:0},{transform:'none',opacity:1}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
  if(old){old.style.pointerEvents='none';old.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'}).onfinish=()=>old.remove()}
@@ -295,11 +299,27 @@ async function go(name,arg,back){
 const HIDE_MENU=['login','consent','setup'];
 function openMenu(){const m=$('#menu');
  m.innerHTML=`<button class="bk" data-act="closemenu" aria-label="Cerrar menú"></button><div class="pn" role="dialog" aria-label="Menú"><div class="row" style="justify-content:space-between"><b style="font-size:18px;padding-left:12px">Menú</b><button class="mi" style="width:48px;justify-content:center;padding:0" data-act="closemenu" aria-label="Cerrar">✕</button></div>
-<button class="mi" data-go="past">Caminatas anteriores</button><button class="mi" data-go="sync">Sincronizar pasos</button><button class="mi" data-go="terms">Términos</button>${S.admin?'<button class="mi" data-go="admin" data-arg="0">Panel admin</button>':''}
+<button class="mi" data-go="past">Caminatas anteriores</button><button class="mi" data-go="terms">Términos</button>${S.admin?'<button class="mi" data-go="admin" data-arg="0">Panel admin</button>':''}
 <div class="sep" style="margin-top:8px"></div><button class="mi" data-act="logout" style="color:#B91C1C">Cerrar sesión</button></div>`;
  m.classList.add('on');$('#menuBtn').setAttribute('aria-expanded','true')}
 function closeMenu(){$('#menu').classList.remove('on');$('#menuBtn').setAttribute('aria-expanded','false')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+async function syncGate(){
+ const g=$('#gate');
+ if(!(cur&&cur.name==='home'&&!S.synced)){g.classList.remove('on');g.innerHTML='';return}
+ const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
+ let body;
+ if(ios){
+  try{S.tok=await getTok()}catch(e){toast(e.message||'No se pudo cargar')}
+  if(!(cur&&cur.name==='home'&&!S.synced))return;
+  const back=encodeURIComponent(location.href.split('#')[0]);
+  const run=`shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(S.tok||'')}&x-success=${back}&x-cancel=${back}&x-error=${back}`;
+  body=`<div class="g12"><div><p class="mut">Paso 1 · Solo la primera vez</p><a class="btn" href="${SHORTCUT_URL}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px">Instalar atajo</a><p class="mut" style="margin-top:6px">Se abre la app Atajos. Tocá <b>Agregar atajo</b>.</p></div>
+<div class="sep"><p class="mut">Paso 2</p><a class="btn" href="${esc(run)}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px">Sincronizar ahora</a><p class="mut" style="margin-top:6px">iOS te va a pedir permiso para leer tus pasos de Salud. Tocá <b>Permitir</b>. Después vuelve solo a Paseando.</p></div>
+<button class="btn sec" data-act="chksync">Ya sincronicé</button></div>`}
+ else body=`<p style="font-size:14px">Para continuar necesitás sincronizar tus pasos desde un iPhone. Abrí Paseando en tu iPhone y seguí los pasos de esta ventana.</p>`;
+ g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Para usar Paseando tenés que sincronizar tus pasos. Un atajo lee la app Salud y los manda a tu cuenta. Esta ventana se cierra sola cuando recibimos tus primeros pasos.</p>${body}<button class="link" data-act="logout" style="text-align:center">Cerrar sesión</button></div>`;
+ g.classList.add('on')}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3000)}
 const csv=(name,rows)=>{const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));l.download=name;l.click()};
 const afterDel=()=>{S.dirty=true;toast('Caminata eliminada');EID=null;if(cur.name==='home'){go('home',null,'fade')}else go('admin',1,'fade')};
@@ -314,6 +334,7 @@ document.addEventListener('click',async e=>{
  if(t.dataset.go){e.preventDefault();go(t.dataset.go,t.dataset.arg,['home','login','consent'].includes(t.dataset.go)&&cur.name!=='login'&&cur.name!=='consent');return}
  const a=t.dataset.act;
  try{
+ if(a==='chksync'){t.disabled=true;await load();if(S.synced){go('home',null,'fade')}else{toast('Todavía no recibimos tus pasos. Corré el atajo y volvé.');t.disabled=false}}
  if(a==='menu')openMenu();
  if(a==='login'){localStorage.setItem('consent','1');await q(sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}}))}
  if(a==='accept'){const ts=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:ts}).eq('id',S.uid));S.p.acepto_terminos_at=ts;await load();go('home')}
