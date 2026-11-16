@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#38BDF8">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://brlhcorgjnaipmokhmhj.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>Paseando</title>
 <!-- Guardá tu logo cuadrado como icon.png y el del header como logopaseando.png, junto a este archivo -->
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{--c:#38BDF8;--c2:#0EA5E9;--c3:#0369A1;--bg:#F0F9FF;--line:#BAE6FD;--ink:#0B2A3C;--mut:#4B6B80}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -80,7 +83,7 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 .chart.all{overflow:visible;scroll-snap-type:none}
 .trk{display:flex}
 .sl{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;scroll-snap-align:start;cursor:pointer}
-.bw{width:100%;height:150px;display:flex;align-items:flex-end;justify-content:center}
+.bw{width:100%;height:105px;display:flex;align-items:flex-end;justify-content:center}
 .bw i{display:block;width:66.67%;height:0;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#FF4A1C,#FFE04A);transition:height 1s cubic-bezier(.2,.8,.2,1)}
 .lb{margin-top:10px;font-size:13px;color:#555;white-space:nowrap;height:18px}
 .sl.sel .lb{color:var(--ink);font-weight:800}
@@ -88,13 +91,14 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 .win>*{position:relative;z-index:1}
 .cf{position:absolute!important;top:-16px;z-index:0!important;width:8px;height:14px;border-radius:2px;pointer-events:none;animation:fall linear 3 forwards}
 @keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(560px) rotate(540deg)}}
+.sk{background:linear-gradient(90deg,#E0F2FE 25%,#F0F9FF 50%,#E0F2FE 75%);background-size:200% 100%;animation:shim 1.2s infinite linear;border-radius:20px}
+@keyframes shim{to{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<div id="app"><header id="hdr"><img src="logopaseando.png" alt="Paseando" height="25"><button id="menuBtn" data-act="menu" aria-label="Abrir menú" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header><nav id="tabs"></nav><div id="menu"></div><div id="gate" role="dialog" aria-modal="true" aria-labelledby="gt"></div><div id="toast" role="status"></div></div>
+<div id="app"><header id="hdr"><img src="logopaseando.png" alt="Paseando" height="25"><button id="menuBtn" data-act="menu" aria-label="Abrir menú" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header><main class="screen" id="skel" aria-hidden="true"><div class="col"><div class="g12"><div class="sk" style="height:16px;width:90px;border-radius:8px"></div><div class="sk" style="height:40px;width:200px;border-radius:10px"></div></div><div class="sk" style="height:258px"></div><div class="sk" style="height:220px"></div></div></main><nav id="tabs"></nav><div id="menu"></div><div id="gate" role="dialog" aria-modal="true" aria-labelledby="gt"></div><div id="toast" role="status"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ============ CONFIG ============
    Project Settings > API en Supabase. La clave "anon" es pública (la protege RLS).
@@ -137,36 +141,46 @@ const mapsLink=w=>`https://www.google.com/maps/dir/?api=1&destination=${w.punto_
 let S={},cur=null,RATE=0,idx=0,WID=null,EID=null,nav=0,PICK=null,PM=null;
 
 /* ============ DATOS (Supabase) ============ */
+function applySteps(logs,dias30){
+ const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
+ S.d30=dias30.map(d=>[d,by[d]||0]);
+ S.dias=S.d30.filter(x=>x[0]>=lunes()&&x[1]>0);S.pasos=S.dias.reduce((a,b)=>a+b[1],0)}
 async function load(){
- const uid=S.uid;
- S.p=await q(sb.from('profiles').select('*').eq('id',uid).single());
+ const uid=S.uid,now=new Date().toISOString(),dias30=ultimos(30);
+ /* Fase 1: todo lo independiente, en paralelo */
+ const [p,adm,wf,wl,logs,any,pw]=await Promise.all([
+  q(sb.from('profiles').select('*').eq('id',uid).single()),
+  q(sb.rpc('is_admin')),
+  q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',now).order('inicia_at').limit(1)),
+  q(sb.from('walks').select('*').eq('estado','publicada').order('inicia_at',{ascending:false}).limit(1)),
+  q(sb.from('step_logs').select('dia,pasos').eq('user_id',uid).gte('dia',dias30[0])),
+  q(sb.from('step_logs').select('dia').eq('user_id',uid).limit(1)),
+  q(sb.from('walks').select('*').eq('estado','finalizada').order('inicia_at',{ascending:false}).limit(10))]);
+ S.p=p;S.admin=adm;
  if(!S.p.acepto_terminos_at&&localStorage.getItem('consent')==='1'){
   const t=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',uid));
   S.p.mayor_de_18=true;S.p.acepto_terminos_at=t;localStorage.removeItem('consent')}
- S.admin=await q(sb.rpc('is_admin'));
- /* Próxima caminata futura; si no hay, la publicada más reciente */
- let [w]=await q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',new Date().toISOString()).order('inicia_at').limit(1));
- if(!w)[w]=await q(sb.from('walks').select('*').eq('estado','publicada').order('inicia_at',{ascending:false}).limit(1));
- S.w=w||null;S.ok=[];S.yo=false;S.ocu=0;
- if(w){
-  const [st,mine]=await Promise.all([q(sb.from('walk_stats').select('*').eq('walk_id',w.id).maybeSingle()),q(sb.from('walk_signups').select('estado').eq('walk_id',w.id).eq('user_id',uid).maybeSingle())]);
-  S.ocu=st?st.ocupados:0;S.yo=!!mine&&mine.estado!=='cancelado';
-  if(S.yo)S.ok=await q(sb.rpc('asistentes_caminata',{p_walk:w.id}));
- }
- /* Admin: sus caminatas (activas y borradores) */
- S.mine=S.admin?await q(sb.from('walks').select('*').in('estado',['publicada','borrador']).order('inicia_at',{ascending:false})):[];
- const any=await q(sb.from('step_logs').select('dia').eq('user_id',uid).limit(1));S.synced=any.length>0;
- const dias30=ultimos(30);
- const logs=await q(sb.from('step_logs').select('dia,pasos').eq('user_id',uid).gte('dia',dias30[0]));
- const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
- S.d30=dias30.map(d=>[d,by[d]||0]);
- S.dias=S.d30.filter(x=>x[0]>=lunes()&&x[1]>0);S.pasos=S.dias.reduce((a,b)=>a+b[1],0);
- const pw=await q(sb.from('walks').select('*').eq('estado','finalizada').order('inicia_at',{ascending:false}).limit(10));
+ const w=wf[0]||wl[0]||null;
+ S.w=w;S.ok=[];S.yo=false;S.ocu=0;S.synced=any.length>0;
+ applySteps(logs,dias30);
  const ids=pw.map(x=>x.id);S.past=[];
- if(ids.length){
-  const [st,rv,asi,mr]=await Promise.all([q(sb.from('walk_stats').select('*').in('walk_id',ids)),q(sb.from('reviews_public').select('*').in('walk_id',ids).order('created_at',{ascending:false})),q(sb.from('walk_signups').select('walk_id').eq('user_id',uid).eq('estado','asistio')),q(sb.from('reviews').select('walk_id').eq('user_id',uid))]);
-  S.past=pw.map(w=>{const s=st.find(x=>x.walk_id===w.id)||{};return{w,n:s.asistentes||0,prom:s.promedio,rev:rv.filter(r=>r.walk_id===w.id),can:asi.some(a=>a.walk_id===w.id)&&!mr.some(m=>m.walk_id===w.id)}})}
+ /* Fase 2: lo que depende de la fase 1, también en paralelo */
+ const [st,sig,mw,pb]=await Promise.all([
+  w?q(sb.from('walk_stats').select('*').eq('walk_id',w.id).maybeSingle()):null,
+  w?q(sb.from('walk_signups').select('estado').eq('walk_id',w.id).eq('user_id',uid).maybeSingle()):null,
+  S.admin?q(sb.from('walks').select('*').in('estado',['publicada','borrador']).order('inicia_at',{ascending:false})):[],
+  ids.length?Promise.all([q(sb.from('walk_stats').select('*').in('walk_id',ids)),q(sb.from('reviews_public').select('*').in('walk_id',ids).order('created_at',{ascending:false})),q(sb.from('walk_signups').select('walk_id').eq('user_id',uid).eq('estado','asistio')),q(sb.from('reviews').select('walk_id').eq('user_id',uid))]):null]);
+ if(w){S.ocu=st?st.ocupados:0;S.yo=!!sig&&sig.estado!=='cancelado'}
+ S.mine=mw;
+ if(pb){const [pst,rv,asi,mr]=pb;
+  S.past=pw.map(x=>{const s2=pst.find(y=>y.walk_id===x.id)||{};return{w:x,n:s2.asistentes||0,prom:s2.promedio,rev:rv.filter(r=>r.walk_id===x.id),can:asi.some(y=>y.walk_id===x.id)&&!mr.some(m=>m.walk_id===x.id)}})}
+ if(S.yo)S.ok=await q(sb.rpc('asistentes_caminata',{p_walk:w.id}));
 }
+async function refreshSteps(){
+ if(!sb||!S.uid||document.hidden||!cur||cur.name!=='home')return;
+ try{const d=ultimos(30),logs=await q(sb.from('step_logs').select('dia,pasos').eq('user_id',S.uid).gte('dia',d[0]));
+  const before=JSON.stringify(S.d30||[]);applySteps(logs,d);
+  if(JSON.stringify(S.d30)!==before){if(logs.length)S.synced=true;if(cur&&cur.name==='home')go('home',null,'fade')}}catch(e){}}
 async function loadAW(){S.aw=await q(sb.from('walks').select('*').order('inicia_at',{ascending:false}).limit(50))}
 async function getTok(){
  let r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).maybeSingle());
@@ -281,7 +295,12 @@ function mkMap(id,lat,lng,z){
  const m=L.map(id,{scrollWheelZoom:false}).setView([lat,lng],z);
  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(m);
  setTimeout(()=>m.invalidateSize(),450);return m}
-function initPicker(){
+let LP=null;
+function loadLeaflet(){if(window.L)return Promise.resolve();if(LP)return LP;
+ LP=new Promise((ok,no)=>{const c=document.createElement('link');c.rel='stylesheet';c.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';document.head.appendChild(c);
+  const j=document.createElement('script');j.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';j.onload=ok;j.onerror=()=>{LP=null;no(new Error('mapa'))};document.head.appendChild(j)});return LP}
+function initPicker(){if(!$('#pmap'))return;loadLeaflet().then(()=>{if($('#pmap'))buildPicker()}).catch(()=>{const el=$('#pmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
+function buildPicker(){
  const el=$('#pmap');if(!el||!window.L){if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>';return}
  const e=S.ew;PICK=e&&e.punto_lat!=null?{lat:e.punto_lat,lng:e.punto_lng}:null;
  const m=mkMap('pmap',PICK?PICK.lat:DEF_POS[0],PICK?PICK.lng:DEF_POS[1],PICK?16:15);let mk=null;
@@ -294,7 +313,7 @@ function initPicker(){
 function post(name){
  if(name==='home')initChart();
  if(name==='admin'&&idx===2)initPicker();
- if(name==='walk'&&S.w&&S.w.punto_lat!=null&&window.L){const m=mkMap('wmap',S.w.punto_lat,S.w.punto_lng,16);L.marker([S.w.punto_lat,S.w.punto_lng]).addTo(m)}}
+ if(name==='walk'&&S.w&&S.w.punto_lat!=null)loadLeaflet().then(()=>{if(!$('#wmap'))return;const m=mkMap('wmap',S.w.punto_lat,S.w.punto_lng,16);L.marker([S.w.punto_lat,S.w.punto_lng]).addTo(m)}).catch(()=>{})}
 
 /* ============ ROUTER Y ANIMACIONES ============ */
 function enhance(el){
@@ -423,16 +442,29 @@ function chk(){const b=$('#pub');if(b)b.disabled=!(RATE>0&&$('#cm').value.trim()
 
 /* ============ INICIO ============ */
 async function boot(){
+ cur={name:'skel',el:$('#skel')};
  if(!sb){go('setup');return}
  const{data:{session}}=await sb.auth.getSession();
  if(!session){go('login');return}
  S.uid=session.user.id;
- try{await load();go(S.p.acepto_terminos_at?'home':'consent')}catch(e){toast(e.message||'No se pudo cargar');go('login')}
+ try{await load();go(S.p.acepto_terminos_at?'home':'consent');setTimeout(autoSync,1500)}catch(e){toast(e.message||'No se pudo cargar');go('login')}
 }
 /* Para la app nativa (Capacitor/Flutter webview): después de leer Apple Health / Health Connect
    llamar Paseando.syncSteps([{dia:'2026-11-14',hora:9,pasos:1200}, ...]) */
 window.Paseando={syncSteps:async rows=>{await q(sb.from('step_logs').upsert(rows.map(x=>({user_id:S.uid,dia:x.dia,hora:x.hora,pasos:x.pasos})),{onConflict:'user_id,dia,hora'}));S.dirty=true;if(cur&&cur.name==='home'){await load();S.dirty=false;go('home',null,'fade')}}};
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sb&&S.uid&&cur&&cur.name==='home')load().then(()=>go('home',null,'fade')).catch(()=>{})});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sb&&S.uid&&cur&&cur.name==='home')load().then(()=>go('home',null,'fade')).catch(()=>{}).then(()=>setTimeout(autoSync,1500))});
+/* Sincronización automática al abrir (solo iPhone, usuarios que ya sincronizaron).
+   Lanza el atajo como máximo una vez cada AUTO_MIN minutos. */
+const AUTO_MIN=30;
+async function autoSync(){
+ if(!/iPhone|iPad|iPod/.test(navigator.userAgent)||!sb||!S.uid||!S.synced||document.hidden||!cur||cur.name!=='home')return;
+ let last=0;try{last=+localStorage.getItem('autosync')||0}catch(e){return}
+ if(Date.now()-last<AUTO_MIN*60000)return;
+ try{localStorage.setItem('autosync',String(Date.now()))}catch(e){return}
+ try{S.tok=await getTok()}catch(e){return}
+ const back=encodeURIComponent(location.href.split('#')[0]);
+ location.href=`shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(S.tok)}&x-success=${back}&x-cancel=${back}&x-error=${back}`}
+setInterval(refreshSteps,15000);
 boot();
 </script>
 </body>
