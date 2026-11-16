@@ -72,6 +72,22 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 #gate{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);background:rgba(11,42,60,.65)}
 #gate.on{display:flex}
 #gate .card{width:100%;max-height:100%;overflow-y:auto;animation:rise .4s cubic-bezier(.2,.8,.2,1)}
+.seg{display:flex;gap:2px;background:#E0F2FE;border-radius:12px;padding:3px}
+.seg button{border:0;background:none;font:800 12px Inter,sans-serif;color:var(--mut);padding:0 10px;min-height:34px;border-radius:10px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--c3)}
+.chart{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain}
+.chart::-webkit-scrollbar{display:none}
+.chart.all{overflow:visible;scroll-snap-type:none}
+.trk{display:flex}
+.sl{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;scroll-snap-align:start;cursor:pointer}
+.bw{width:100%;height:150px;display:flex;align-items:flex-end;justify-content:center}
+.bw i{display:block;width:66.67%;height:0;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#FF4A1C,#FFE04A);transition:height 1s cubic-bezier(.2,.8,.2,1)}
+.lb{margin-top:10px;font-size:13px;color:#555;white-space:nowrap;height:18px}
+.sl.sel .lb{color:var(--ink);font-weight:800}
+#gate .card.win{position:relative;overflow:hidden;text-align:center;align-items:center}
+.win>*{position:relative;z-index:1}
+.cf{position:absolute!important;top:-16px;z-index:0!important;width:8px;height:14px;border-radius:2px;pointer-events:none;animation:fall linear 3 forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(560px) rotate(540deg)}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -109,6 +125,10 @@ const DAYN=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 const hoyAR=()=>new Date().toLocaleDateString('en-CA',{timeZone:TZ});
 const lunes=()=>{const d=new Date(hoyAR()+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return d.toLocaleDateString('en-CA')};
 const dl=d=>d===hoyAR()?'Hoy':DAYN[new Date(d+'T12:00:00').getDay()];
+const ultimos=n=>{const b=new Date(hoyAR()+'T12:00:00');return Array.from({length:n},(_,i)=>{const d=new Date(b);d.setDate(b.getDate()-(n-1-i));return d.toLocaleDateString('en-CA')})};
+const dm=d=>{const x=new Date(d+'T12:00:00');return x.getDate()+'/'+(x.getMonth()+1)};
+const skipped=id=>{try{return localStorage.getItem('skip_'+id)==='1'}catch(e){return false}};
+const skipWalk=id=>{try{localStorage.setItem('skip_'+id,'1')}catch(e){}};
 const q=async p=>{const r=await p;if(r.error)throw r.error;return r.data};
 const dots=(n,c)=>`<div class="dots">${Array.from({length:c},(_,i)=>`<span class="${i<n?'on':''}"></span>`).join('')}</div><p class="mut" style="margin-top:8px">${n} de ${c} lugares ocupados. Si se llena, aplicás a la del finde siguiente.</p>`;
 const rev=r=>`<div style="border-top:1px solid #E0F2FE;padding-top:12px"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${esc(r.nombre)} ${esc(r.apellido_inicial)}</b>${stars(r.estrellas)}</div><p style="font-size:14px;margin-top:4px">${esc(r.comentario)}</p></div>`;
@@ -136,9 +156,11 @@ async function load(){
  /* Admin: sus caminatas (activas y borradores) */
  S.mine=S.admin?await q(sb.from('walks').select('*').in('estado',['publicada','borrador']).order('inicia_at',{ascending:false})):[];
  const any=await q(sb.from('step_logs').select('dia').eq('user_id',uid).limit(1));S.synced=any.length>0;
- const logs=await q(sb.from('step_logs').select('dia,pasos').gte('dia',lunes()));
+ const dias30=ultimos(30);
+ const logs=await q(sb.from('step_logs').select('dia,pasos').eq('user_id',uid).gte('dia',dias30[0]));
  const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
- S.dias=Object.keys(by).sort().map(d=>[d,by[d]]);S.pasos=S.dias.reduce((a,b)=>a+b[1],0);
+ S.d30=dias30.map(d=>[d,by[d]||0]);
+ S.dias=S.d30.filter(x=>x[0]>=lunes()&&x[1]>0);S.pasos=S.dias.reduce((a,b)=>a+b[1],0);
  const pw=await q(sb.from('walks').select('*').eq('estado','finalizada').order('inicia_at',{ascending:false}).limit(10));
  const ids=pw.map(x=>x.id);S.past=[];
  if(ids.length){
@@ -175,15 +197,14 @@ const V={
 setup:()=>`<div class="col" style="padding-top:40px"><div class="card g12"><h2 style="margin:0">Falta configurar Supabase</h2><p style="font-size:14px">Completá <b>SUPABASE_URL</b> y <b>SUPABASE_ANON_KEY</b> al inicio del script de index.html (Project Settings → API en Supabase).</p></div></div>`,
 login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
-home:()=>{const w=S.w,u=w&&S.pasos>=w.meta_pasos,pc=w?Math.min(100,S.pasos/w.meta_pasos*100):0,mx=Math.max(1,...S.dias.map(d=>d[1]));
+home:()=>{const w=S.w,u=w&&S.pasos>=w.meta_pasos,pc=w?Math.min(100,S.pasos/w.meta_pasos*100):0;
 const btn=!u?'<button class="btn" disabled>Bloqueada hasta llegar a la meta</button>':S.yo?'<button class="btn" data-go="walk">Ver mi caminata</button>':'<button class="btn" data-act="join">Anotarme a la caminata</button>';
 const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima caminata</h2><p class="mut">Todavía no hay una caminata publicada. Volvé pronto.</p></div>':`<div class="card g12 rise"><div><p class="mut">Próxima caminata</p><p style="font-size:20px;font-weight:800;margin-top:2px">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:4px">${esc(w.lugar)}${w.punto_encuentro?' · '+esc(w.punto_encuentro):''}</p>${w.punto_lat!=null?`<a href="${mapsLink(w)}" target="_blank" rel="noopener" style="font-size:14px;font-weight:600">Cómo llegar</a>`:''}</div>
 <p style="font-size:14px">${esc(w.titulo)}. ${esc(w.incluye||'')}</p>
 <div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
 <p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(w.meta_pasos-S.pasos)} de ${fmt(w.meta_pasos)} pasos para desbloquearla`}</p>
 <div>${dots(S.ocu,w.cupo_max)}</div>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`;
-return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${mineCard()}${card}
-<div class="rise"><h2>Día a día</h2><div class="g12">${S.dias.length?S.dias.map(([d,s])=>`<div class="row"><span style="width:36px;font-size:14px;color:var(--mut);font-weight:${d===hoyAR()?800:600}">${dl(d)}</span><div class="bar s"><i data-w="${s/mx*100}"></i></div><span style="width:56px;text-align:right;font-size:14px">${fmt(s)}</span></div>`).join(''):'<p class="mut">Todavía no hay pasos registrados esta semana.</p>'}</div></div>
+return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${stepsCard(true)}${mineCard()}${card}
 </div>`},
 past:()=>`<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Caminatas anteriores</h1></div><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>`,
 walk:()=>{const w=S.w,yo=S.p.nombre+' '+(S.p.apellido[0]||'')+'.';
@@ -271,6 +292,7 @@ function initPicker(){
  m.on('click',ev=>put(ev.latlng.lat,ev.latlng.lng));
  PM={m,put,clear}}
 function post(name){
+ if(name==='home')initChart();
  if(name==='admin'&&idx===2)initPicker();
  if(name==='walk'&&S.w&&S.w.punto_lat!=null&&window.L){const m=mkMap('wmap',S.w.punto_lat,S.w.punto_lng,16);L.marker([S.w.punto_lat,S.w.punto_lng]).addTo(m)}}
 
@@ -296,6 +318,17 @@ async function go(name,arg,back){
  el.animate([{transform:`translateX(${dir}px)`,opacity:0},{transform:'none',opacity:1}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
  if(old){old.style.pointerEvents='none';old.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'}).onfinish=()=>old.remove()}
  el.scrollTop=0}
+function stepsCard(anim){
+ const D=S.d30||[],n=D.length,r=S.range===30?30:7,mx=Math.max(1,...D.map(x=>x[1])),pk=S.pick==null?n-1:S.pick;
+ const bars=D.map((x,i)=>{const v=x[1],h=v>0?Math.max(6,v/mx*100):3,lb=(r===7||(n-1-i)%5===0)?dm(x[0]):'';
+  return `<div class="sl${i===pk?' sel':''}" data-act="pick" data-i="${i}"><div class="bw"><i data-h="${h}"${v>0?'':' style="opacity:.35"'}></i></div><span class="lb"${r===30?' style="font-size:11px"':''}>${lb}</span></div>`}).join('');
+ const x=D[pk];
+ return `<div class="card g12${anim?' rise':''}" id="stp"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Día a día</h2><div class="seg"><button class="${r===7?'on':''}" data-act="range" data-v="7">7 días</button><button class="${r===30?'on':''}" data-act="range" data-v="30">30 días</button></div></div>
+<div class="chart${r===30?' all':''}" id="cht"><div class="trk" style="width:${r===7?n/7*100:100}%">${bars}</div></div>
+<p class="mut" id="sread" style="text-align:center">${x?`${dl(x[0])} ${dm(x[0])} · ${fmt(x[1])} pasos`:''}</p></div>`}
+function initChart(){const c=$('#cht');if(!c)return;
+ requestAnimationFrame(()=>{if(!c.classList.contains('all'))c.scrollLeft=c.scrollWidth;
+  requestAnimationFrame(()=>c.querySelectorAll('[data-h]').forEach(n=>n.style.height=n.dataset.h+'%'))})}
 const HIDE_MENU=['login','consent','setup'];
 function openMenu(){const m=$('#menu');
  m.innerHTML=`<button class="bk" data-act="closemenu" aria-label="Cerrar menú"></button><div class="pn" role="dialog" aria-label="Menú"><div class="row" style="justify-content:space-between"><b style="font-size:18px;padding-left:12px">Menú</b><button class="mi" style="width:48px;justify-content:center;padding:0" data-act="closemenu" aria-label="Cerrar">✕</button></div>
@@ -306,7 +339,16 @@ function closeMenu(){$('#menu').classList.remove('on');$('#menuBtn').setAttribut
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 async function syncGate(){
  const g=$('#gate');
- if(!(cur&&cur.name==='home'&&!S.synced)){g.classList.remove('on');g.innerHTML='';return}
+ const hide=()=>{g.classList.remove('on');g.innerHTML='';g.dataset.k=''};
+ if(!(cur&&cur.name==='home'))return hide();
+ if(S.synced){
+  const w=S.w;
+  if(!(w&&!S.yo&&S.pasos>=w.meta_pasos&&!skipped(w.id)))return hide();
+  const key='win'+w.id;if(g.classList.contains('on')&&g.dataset.k===key)return;
+  const cf=Array.from({length:18},(_,i)=>`<span class="cf" style="left:${(i*37+5)%100}%;background:${['#38BDF8','#FF5A1F','#FFD93D','#0EA5E9','#86EFAC'][i%5]};animation-delay:${(i%6)*.25}s;animation-duration:${2.4+(i%4)*.5}s"></span>`).join('');
+  const quedan=Math.max(0,w.cupo_max-S.ocu);
+  g.innerHTML=`<div class="card g12 win">${cf}<div class="gift pop" style="width:76px;height:76px;border-radius:38px">${giftSvg.replace('width="26" height="26"','width="40" height="40"')}</div><h2 id="gt" style="margin:0;font-size:26px">¡Lo lograste!</h2><p style="font-size:15px">Llegaste a <b>${fmt(S.pasos)} pasos</b> y desbloqueaste la caminata.</p><div class="sep" style="width:100%"><p style="font-weight:800">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:2px">${esc(w.lugar)}</p>${quedan?`<p class="mut" style="margin-top:4px">Quedan ${quedan} lugares</p>`:''}</div><button class="btn" data-act="join">Aceptar caminata</button><button class="btn sec" data-act="skipwin">Guardarme para la próxima</button></div>`;
+  g.dataset.k=key;g.classList.add('on');return}
  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
  let body;
  if(ios){
@@ -319,7 +361,7 @@ async function syncGate(){
 <button class="btn sec" data-act="chksync">Ya sincronicé</button></div>`}
  else body=`<p style="font-size:14px">Para continuar necesitás sincronizar tus pasos desde un iPhone. Abrí Paseando en tu iPhone y seguí los pasos de esta ventana.</p>`;
  g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Para usar Paseando tenés que sincronizar tus pasos. Un atajo lee la app Salud y los manda a tu cuenta. Esta ventana se cierra sola cuando recibimos tus primeros pasos.</p>${body}<button class="link" data-act="logout" style="text-align:center">Cerrar sesión</button></div>`;
- g.classList.add('on')}
+ g.dataset.k='sync';g.classList.add('on')}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3000)}
 const csv=(name,rows)=>{const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));l.download=name;l.click()};
 const afterDel=()=>{S.dirty=true;toast('Caminata eliminada');EID=null;if(cur.name==='home'){go('home',null,'fade')}else go('admin',1,'fade')};
@@ -336,11 +378,14 @@ document.addEventListener('click',async e=>{
  try{
  if(a==='chksync'){t.disabled=true;await load();if(S.synced){go('home',null,'fade')}else{toast('Todavía no recibimos tus pasos. Corré el atajo y volvé.');t.disabled=false}}
  if(a==='menu')openMenu();
+ if(a==='pick'){const i=+t.dataset.i,x=S.d30[i];S.pick=i;$('#sread').textContent=`${dl(x[0])} ${dm(x[0])} · ${fmt(x[1])} pasos`;document.querySelectorAll('#cht .sl').forEach((n,k)=>n.classList.toggle('sel',k===i))}
+ if(a==='range'){S.range=+t.dataset.v;S.pick=null;$('#stp').outerHTML=stepsCard(false);initChart()}
+ if(a==='skipwin'){skipWalk(S.w.id);syncGate()}
  if(a==='login'){localStorage.setItem('consent','1');await q(sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}}))}
  if(a==='accept'){const ts=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:ts}).eq('id',S.uid));S.p.acepto_terminos_at=ts;await load();go('home')}
  if(a==='logout'){await sb.auth.signOut();S={};go('login',null,true)}
  if(a==='join'){t.disabled=true;const r=await q(sb.rpc('join_walk',{p_walk:S.w.id}));await load();
-  if(r==='completa'){toast('Se completó el cupo. Aplicás a la caminata del finde siguiente.');go('home',null,'fade')}else{toast('¡Listo! Te anotaste a la caminata');go('walk')}}
+  if(r==='completa'){skipWalk(S.w.id);toast('Se completó el cupo. Aplicás a la caminata del finde siguiente.');go('home',null,'fade')}else{toast('¡Listo! Te anotaste a la caminata');go('walk')}}
  if(a==='publish'){t.disabled=true;const p=S.past[idx];await q(sb.from('reviews').insert({walk_id:p.w.id,user_id:S.uid,estrellas:RATE,comentario:$('#cm').value.trim()}));await load();toast('¡Gracias por tu reseña!');go('past',null,true)}
  if(a==='create'||a==='draft'||a==='save'){const g=i=>$('#a'+i).value;if(!g(1)||!g(2)||!g(3)){toast('Completá nombre, fecha y hora');return}
   t.disabled=true;
