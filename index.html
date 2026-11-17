@@ -84,7 +84,7 @@ ol.steps{margin:0;padding-left:20px;line-height:1.6;font-size:14px;display:flex;
 .trk{display:flex}
 .sl{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;scroll-snap-align:start;cursor:pointer}
 .bw{width:100%;height:105px;display:flex;align-items:flex-end;justify-content:center}
-.bw i{display:block;width:66.67%;height:0;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#FF4A1C,#FFE04A);transition:height 1s cubic-bezier(.2,.8,.2,1)}
+.bw i{display:block;width:66.67%;height:0;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#FF4A1C,#FFE04A) bottom/100% 105px no-repeat;transition:height 1s cubic-bezier(.2,.8,.2,1)}
 .lb{margin-top:10px;font-size:13px;color:#555;white-space:nowrap;height:18px}
 .sl.sel .lb{color:var(--ink);font-weight:800}
 #gate .card.win{position:relative;overflow:hidden;text-align:center;align-items:center}
@@ -157,7 +157,7 @@ const barrioHTML=()=>`<div class="card g12"><h2 id="gt" style="margin:0">¿En qu
 <label class="chk"><input type="checkbox" id="b3"><span>Acepto que mi nombre y la inicial de mi apellido se muestren como sugerencia a otra persona de mi barrio.</span></label>
 <button class="btn" data-act="savebarrio">Guardar</button><button class="link" data-act="nobarrio" style="text-align:center">Ahora no</button></div>`;
 function chatGate(){const g=$('#gate'),m=S.match;if(!m)return;
- g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Caminá con ${esc(m.nombre)} ${esc(m.inicial)}.</h2>
+ g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Caminá con ${esc(m.nombre)} ${esc(m.inicial)}. (${esc(m.barrio)})</h2>
 <p style="font-size:14px">Es opcional. Dejá tu contacto (WhatsApp o Instagram). Cuando ${esc(m.nombre)} deje el suyo, lo ves acá y arreglan por fuera de la app. Encontrate siempre en un lugar público.</p>
 <label class="f">Tu contacto<input type="text" id="c1" maxlength="60" placeholder="+54 9 11… o @usuario" value="${esc(S.mycont||'')}"></label>
 <button class="btn" data-act="sharecont">Compartir mi contacto</button>
@@ -167,7 +167,7 @@ ${m.contacto?`<div class="sep"><p class="mut">Contacto de ${esc(m.nombre)}</p><d
 const dayCard=()=>{if(!S.p.barrio)return '';
  const p=hoyPasos(),f=Math.max(0,META_DIA-p),m=S.match;let b;
  if(f>0)b=`<div><b style="font-size:32px;font-weight:800" data-count="${f}">0</b> <span class="mut">pasos para llegar a ${fmt(META_DIA)}</span></div><div class="bar"><i data-w="${p/META_DIA*100}"></i></div><p class="mut">Al llegar, te sugerimos a alguien de ${esc(S.p.barrio)} para caminar juntos (opcional).</p>`;
- else if(m)b=`<span class="chip g" style="align-self:flex-start">¡Meta cumplida!</span><div class="row"><div class="av">${esc((m.nombre||'?')[0])}</div><div><b>${esc(m.nombre)} ${esc(m.inicial)}.</b><p class="mut">${esc(m.barrio)} · también llegó a ${fmt(META_DIA)} pasos hoy</p></div></div><button class="btn" data-act="chat">Chatear para caminar juntos</button>`;
+ else if(m)b=`<span class="chip g" style="align-self:flex-start">¡Meta cumplida!</span><div class="row"><div class="av">${esc((m.nombre||'?')[0])}</div><div><b>${esc(m.nombre)} ${esc(m.inicial)}. · ${esc(m.barrio)}</b><p class="mut">También llegó a ${fmt(META_DIA)} pasos hoy</p></div></div><button class="btn" data-act="chat">Chatear para caminar juntos</button>`;
  else b=`<span class="chip g" style="align-self:flex-start">¡Meta cumplida!</span><p style="font-size:14px">${S.p.visible_barrio?'Todavía no hay nadie en tu barrio con la meta cumplida hoy. Volvé más tarde.':'Para ver sugerencias de compañeros necesitás aceptar que te mostremos a otros.'}</p>`;
  return `<div class="card g12 rise"><h2 style="margin:0">Beneficio diario</h2>${b}</div>`};
 
