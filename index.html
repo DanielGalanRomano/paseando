@@ -140,6 +140,37 @@ const chipE=w=>w.estado==='borrador'?'<span class="chip y">Borrador</span>':w.es
 const mapsLink=w=>`https://www.google.com/maps/dir/?api=1&destination=${w.punto_lat},${w.punto_lng}`;
 let S={},cur=null,RATE=0,idx=0,WID=null,EID=null,nav=0,PICK=null,PM=null;
 
+/* ============ BENEFICIO DIARIO ============ */
+const BARRIOS='Agronomía,Almagro,Balvanera,Barracas,Belgrano,Boedo,Caballito,Chacarita,Coghlan,Colegiales,Constitución,Flores,Floresta,La Boca,La Paternal,Liniers,Mataderos,Monte Castro,Montserrat,Nueva Pompeya,Núñez,Palermo,Parque Avellaneda,Parque Chacabuco,Parque Chas,Parque Patricios,Puerto Madero,Recoleta,Retiro,Saavedra,San Cristóbal,San Nicolás,San Telmo,Vélez Sarsfield,Versalles,Villa Crespo,Villa del Parque,Villa Devoto,Villa General Mitre,Villa Lugano,Villa Luro,Villa Ortúzar,Villa Pueyrredón,Villa Real,Villa Riachuelo,Villa Santa Rita,Villa Soldati,Villa Urquiza'.split(',');
+const META_DIA=10000;
+const hoyPasos=()=>{const x=(S.d30||[]).find(d=>d[0]===hoyAR());return x?x[1]:0};
+const needBarrio=()=>S.synced&&!S.p.barrio&&!S.nobarrio&&Date.now()-new Date(S.p.acepto_terminos_at)>=864e5;
+async function loadMatch(){S.match=null;
+ if(!S.p||!S.p.barrio||!S.p.sexo||!S.p.visible_barrio||hoyPasos()<META_DIA)return;
+ try{S.match=await q(sb.rpc('companero_del_dia'))}catch(e){}}
+const barrioHTML=()=>`<div class="card g12"><h2 id="gt" style="margin:0">¿En qué barrio vivís?</h2>
+<p style="font-size:14px">Lo usamos para sugerirte gente de tu barrio con quien caminar.</p>
+<button class="btn sm sec" data-act="detect">Detectar con mi ubicación</button>
+<label class="f">Barrio<input type="text" id="b1" list="barrios" autocomplete="off" placeholder="Ej: Palermo"></label>
+<datalist id="barrios">${BARRIOS.map(b=>`<option value="${b}">`).join('')}</datalist>
+<label class="f">Yo soy<select id="b2"><option value="">Elegir</option><option value="mujer">Mujer</option><option value="hombre">Hombre</option></select></label>
+<label class="chk"><input type="checkbox" id="b3"><span>Acepto que mi nombre y la inicial de mi apellido se muestren como sugerencia a otra persona de mi barrio.</span></label>
+<button class="btn" data-act="savebarrio">Guardar</button><button class="link" data-act="nobarrio" style="text-align:center">Ahora no</button></div>`;
+function chatGate(){const g=$('#gate'),m=S.match;if(!m)return;
+ g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Caminá con ${esc(m.nombre)} ${esc(m.inicial)}.</h2>
+<p style="font-size:14px">Es opcional. Dejá tu contacto (WhatsApp o Instagram). Cuando ${esc(m.nombre)} deje el suyo, lo ves acá y arreglan por fuera de la app. Encontrate siempre en un lugar público.</p>
+<label class="f">Tu contacto<input type="text" id="c1" maxlength="60" placeholder="+54 9 11… o @usuario" value="${esc(S.mycont||'')}"></label>
+<button class="btn" data-act="sharecont">Compartir mi contacto</button>
+${m.contacto?`<div class="sep"><p class="mut">Contacto de ${esc(m.nombre)}</p><div class="code">${esc(m.contacto)}</div></div>`:`<p class="mut">Cuando ${esc(m.nombre)} comparta el suyo, aparece acá.</p>`}
+<button class="btn sec" data-act="closechat">Cerrar</button></div>`;
+ g.dataset.k='chat';g.classList.add('on')}
+const dayCard=()=>{if(!S.p.barrio)return '';
+ const p=hoyPasos(),f=Math.max(0,META_DIA-p),m=S.match;let b;
+ if(f>0)b=`<div><b style="font-size:32px;font-weight:800" data-count="${f}">0</b> <span class="mut">pasos para llegar a ${fmt(META_DIA)}</span></div><div class="bar"><i data-w="${p/META_DIA*100}"></i></div><p class="mut">Al llegar, te sugerimos a alguien de ${esc(S.p.barrio)} para caminar juntos (opcional).</p>`;
+ else if(m)b=`<span class="chip g" style="align-self:flex-start">¡Meta cumplida!</span><div class="row"><div class="av">${esc((m.nombre||'?')[0])}</div><div><b>${esc(m.nombre)} ${esc(m.inicial)}.</b><p class="mut">${esc(m.barrio)} · también llegó a ${fmt(META_DIA)} pasos hoy</p></div></div><button class="btn" data-act="chat">Chatear para caminar juntos</button>`;
+ else b=`<span class="chip g" style="align-self:flex-start">¡Meta cumplida!</span><p style="font-size:14px">${S.p.visible_barrio?'Todavía no hay nadie en tu barrio con la meta cumplida hoy. Volvé más tarde.':'Para ver sugerencias de compañeros necesitás aceptar que te mostremos a otros.'}</p>`;
+ return `<div class="card g12 rise"><h2 style="margin:0">Beneficio diario</h2>${b}</div>`};
+
 /* ============ DATOS (Supabase) ============ */
 function applySteps(logs,dias30){
  const by={};logs.forEach(l=>by[l.dia]=(by[l.dia]||0)+l.pasos);
@@ -175,12 +206,13 @@ async function load(){
  if(pb){const [pst,rv,asi,mr]=pb;
   S.past=pw.map(x=>{const s2=pst.find(y=>y.walk_id===x.id)||{};return{w:x,n:s2.asistentes||0,prom:s2.promedio,rev:rv.filter(r=>r.walk_id===x.id),can:asi.some(y=>y.walk_id===x.id)&&!mr.some(m=>m.walk_id===x.id)}})}
  if(S.yo)S.ok=await q(sb.rpc('asistentes_caminata',{p_walk:w.id}));
+ await loadMatch();
 }
 async function refreshSteps(){
  if(!sb||!S.uid||document.hidden||!cur||cur.name!=='home')return;
  try{const d=ultimos(30),logs=await q(sb.from('step_logs').select('dia,pasos').eq('user_id',S.uid).gte('dia',d[0]));
   const before=JSON.stringify(S.d30||[]);applySteps(logs,d);
-  if(JSON.stringify(S.d30)!==before){if(logs.length)S.synced=true;if(cur&&cur.name==='home')go('home',null,'fade')}}catch(e){}}
+  if(JSON.stringify(S.d30)!==before){if(logs.length)S.synced=true;await loadMatch();if(cur&&cur.name==='home')go('home',null,'fade')}}catch(e){}}
 async function loadAW(){S.aw=await q(sb.from('walks').select('*').order('inicia_at',{ascending:false}).limit(50))}
 async function getTok(){
  let r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).maybeSingle());
@@ -218,7 +250,7 @@ const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima camina
 <div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
 <p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(w.meta_pasos-S.pasos)} de ${fmt(w.meta_pasos)} pasos para desbloquearla`}</p>
 <div>${dots(S.ocu,w.cupo_max)}</div>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`;
-return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${stepsCard(true)}${mineCard()}${card}
+return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${stepsCard(true)}${dayCard()}${mineCard()}${card}
 </div>`},
 past:()=>`<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Caminatas anteriores</h1></div><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>`,
 walk:()=>{const w=S.w,yo=S.p.nombre+' '+(S.p.apellido[0]||'')+'.';
@@ -249,7 +281,7 @@ rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back"
 <button class="btn rise" id="pub" disabled data-act="publish">Publicar reseña</button></div>`},
 terms:()=>`<div class="col"><div><button class="back" data-go="${cur&&['login','consent'].includes(cur.name)?cur.name:'home'}">← Volver</button><h1>Términos y descargo</h1></div>
 
-${[['Edad','Solo pueden participar personas de 18 años o más. Podemos pedir verificación de identidad.'],['Participación voluntaria','Caminar al aire libre implica riesgos (terreno, clima, caídas). Participás bajo tu propia responsabilidad y declarás estar en condiciones físicas de hacerlo.'],['Descargo de responsabilidad','El organizador no responde por lesiones, accidentes ni pérdida de objetos, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto hacia el resto. Podemos retirar a quien no lo cumpla, sin devolución.'],['Datos personales','Usamos tu nombre y mail de Google. Quienes están anotados ven tu nombre y la inicial de tu apellido, y lo mismo en las reseñas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Fotos','Podemos sacar fotos del grupo. Avisanos si no querés aparecer.'],['Cupos','Cada caminata tiene un cupo máximo. Si se llena, aplicás a la del finde siguiente.']].map(t=>`<div class="rise"><h2 style="margin-bottom:4px;font-size:16px">${t[0]}</h2><p style="font-size:14px;color:#2B4A5E">${t[1]}</p></div>`).join('')}</div>`,
+${[['Edad','Solo pueden participar personas de 18 años o más. Podemos pedir verificación de identidad.'],['Participación voluntaria','Caminar al aire libre implica riesgos (terreno, clima, caídas). Participás bajo tu propia responsabilidad y declarás estar en condiciones físicas de hacerlo.'],['Descargo de responsabilidad','El organizador no responde por lesiones, accidentes ni pérdida de objetos, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto hacia el resto. Podemos retirar a quien no lo cumpla, sin devolución.'],['Datos personales','Usamos tu nombre y mail de Google. Quienes están anotados ven tu nombre y la inicial de tu apellido, y lo mismo en las reseñas. Si aceptás las sugerencias de compañeros de caminata, tu nombre, la inicial de tu apellido y tu barrio se muestran a otra persona de tu barrio que cumplió la meta diaria. El contacto que compartas lo ve solo quien también compartió el suyo. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Fotos','Podemos sacar fotos del grupo. Avisanos si no querés aparecer.'],['Cupos','Cada caminata tiene un cupo máximo. Si se llena, aplicás a la del finde siguiente.']].map(t=>`<div class="rise"><h2 style="margin-bottom:4px;font-size:16px">${t[0]}</h2><p style="font-size:14px;color:#2B4A5E">${t[1]}</p></div>`).join('')}</div>`,
 admin:()=>{const t=idx;let b='';
 if(t==0){const R=S.res||{},ad=R.activos_por_dia||[],ph=R.pasos_por_hora||[],mx=Math.max(1,...ad.map(d=>d.usuarios));
  const fr=[['6–10',6,10],['10–14',10,14],['14–19',14,19],['19–23',19,23]].map(([l,a,z])=>[l,ph.filter(x=>x.hora>=a&&x.hora<z).reduce((s,x)=>s+x.pasos,0)]),tot=Math.max(1,ph.reduce((s,x)=>s+x.pasos,0));
@@ -361,6 +393,8 @@ async function syncGate(){
  const hide=()=>{g.classList.remove('on');g.innerHTML='';g.dataset.k=''};
  if(!(cur&&cur.name==='home'))return hide();
  if(S.synced){
+  if(g.dataset.k==='chat'&&g.classList.contains('on'))return;
+  if(needBarrio()){if(!(g.dataset.k==='barrio'&&g.classList.contains('on'))){g.innerHTML=barrioHTML();g.dataset.k='barrio';g.classList.add('on')}return}
   const w=S.w;
   if(!(w&&!S.yo&&S.pasos>=w.meta_pasos&&!skipped(w.id)))return hide();
   const key='win'+w.id;if(g.classList.contains('on')&&g.dataset.k===key)return;
@@ -432,6 +466,25 @@ document.addEventListener('click',async e=>{
  if(a==='copyurl'||a==='copytok'){await navigator.clipboard.writeText(a==='copyurl'?SYNC_URL:S.tok);toast('Copiado')}
  if(a==='regen'){if(!confirm('Tu atajo actual dejará de funcionar hasta que le pegues la clave nueva. ¿Continuar?'))return;
   const n=crypto.randomUUID();await q(sb.from('sync_tokens').update({token:n}).eq('user_id',S.uid));go('sync',null,'fade');toast('Clave nueva generada')}
+ /* --- Beneficio diario --- */
+ if(a==='nobarrio'){S.nobarrio=true;syncGate()}
+ if(a==='detect'){if(!navigator.geolocation){toast('Tu navegador no permite ubicación');return}
+  t.disabled=true;
+  const pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:10000}));
+  const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=14&addressdetails=1&accept-language=es&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+  const ad=(await r.json()).address||{},b=ad.suburb||ad.neighbourhood||ad.city_district||ad.quarter||'';
+  if(b){$('#b1').value=b;toast('¿Vivís en '+b+'? Si no, cambialo.')}else toast('No pudimos detectarlo. Elegí tu barrio de la lista.');
+  t.disabled=false}
+ if(a==='savebarrio'){const b=$('#b1').value.trim(),x=$('#b2').value;if(!b||!x){toast('Completá barrio y cómo te identificás');return}
+  t.disabled=true;const v=$('#b3').checked;
+  await q(sb.from('profiles').update({barrio:b,sexo:x,visible_barrio:v}).eq('id',S.uid));
+  S.p.barrio=b;S.p.sexo=x;S.p.visible_barrio=v;await loadMatch();toast('¡Listo! Barrio guardado');go('home',null,'fade')}
+ if(a==='chat')chatGate();
+ if(a==='sharecont'){const c=$('#c1').value.trim();if(c.length<3){toast('Escribí tu contacto');return}
+  await q(sb.from('match_contactos').upsert({dia:hoyAR(),user_id:S.uid,contacto:c},{onConflict:'dia,user_id'}));
+  S.mycont=c;await loadMatch();chatGate();toast('Contacto compartido')}
+ if(a==='closechat'){const g=$('#gate');g.classList.remove('on');g.innerHTML='';g.dataset.k=''}
+ if(a==='closemenu')closeMenu();
  }catch(err){toast(err.message||'Ocurrió un error');if(t)t.disabled=false}
 });
 document.addEventListener('input',e=>{
