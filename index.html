@@ -38,6 +38,7 @@ p{margin:0;line-height:1.5} a{color:var(--c3)} .mut{color:var(--mut);font-size:1
 @keyframes rise{to{opacity:1;transform:none}}
 .dots{display:flex;gap:6px;flex-wrap:wrap} .dots span{width:16px;height:16px;border-radius:8px;border:2px solid var(--c2)} .dots span.on{background:var(--c2)}
 .av{width:40px;height:40px;border-radius:20px;background:var(--c);font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.pf{width:56px;height:56px;border-radius:28px;object-fit:cover;background:#E0F2FE;flex:none;font-size:20px}
 .free{border:2px dashed var(--c2);background:none}
 .chip{display:inline-block;background:var(--c);font-size:13px;font-weight:800;border-radius:12px;padding:6px 10px;white-space:nowrap}
 .chip.g{background:#BBF7D0} .chip.y{background:#FEF08A} .chip.n{background:#E5E7EB}
@@ -138,7 +139,41 @@ const dots=(n,c)=>`<div class="dots">${Array.from({length:c},(_,i)=>`<span class
 const rev=r=>`<div style="border-top:1px solid #E0F2FE;padding-top:12px"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${esc(r.nombre)} ${esc(r.apellido_inicial)}</b>${stars(r.estrellas)}</div><p style="font-size:14px;margin-top:4px">${esc(r.comentario)}</p></div>`;
 const chipE=w=>w.estado==='borrador'?'<span class="chip y">Borrador</span>':w.estado==='finalizada'?'<span class="chip n">Finalizada</span>':new Date(w.inicia_at)<new Date()?'<span class="chip y">Por finalizar</span>':'<span class="chip g">Activa</span>';
 const mapsLink=w=>`https://www.google.com/maps/dir/?api=1&destination=${w.punto_lat},${w.punto_lng}`;
-let S={},cur=null,RATE=0,idx=0,WID=null,EID=null,nav=0,PICK=null,PM=null;
+let S={},cur=null,RATE=0,idx=0,WID=null,EID=null,nav=0,PICK=null,PM=null,PQ=null,PQM=null;
+
+/* ============ CAMINEMOS 15 MINUTOS ============ */
+const foto=(u,n)=>u?`<img class="pf" src="${esc(u)}" referrerpolicy="no-referrer" alt="">`:`<div class="av pf">${esc((n||'?')[0])}</div>`;
+const perfilOk=()=>!!(S.p&&S.p.edad>=18&&S.p.foto_url);
+const cuando=iso=>{const m=Math.round((new Date(iso)-Date.now())/60000);return m<=1?'Ahora':m<60?'En '+m+' min':hora(iso)};
+async function loadPas(){
+ try{S.pas=await q(sb.rpc('paseos_abiertos'));
+  S.ped=(S.pas||[]).some(x=>x.es_mio)?await q(sb.rpc('pedidos_de_mi_paseo')):[]}
+ catch(e){S.pas=S.pas||[];S.ped=S.ped||[]}}
+const paseoCard=()=>{const pas=S.pas||[],otros=pas.filter(x=>!x.es_mio).length,mio=pas.find(x=>x.es_mio),pend=(S.ped||[]).filter(x=>x.estado==='pendiente').length;
+ const tx=pend?`${pend===1?'Una persona quiere':pend+' personas quieren'} caminar con vos.`:mio?'Tu propuesta está publicada. Mirá quién quiere sumarse.':otros?`${otros===1?'Hay 1 propuesta':'Hay '+otros+' propuestas'} para caminar 15 minutos.`:'Todavía no hay propuestas. ¡Proponé la primera!';
+ return `<div class="card g12 rise"><div class="row" style="justify-content:space-between;align-items:flex-start"><h2 style="margin:0">Caminemos 15 minutos</h2>${pend?`<span class="chip y">${pend}</span>`:''}</div><p style="font-size:14px">${tx}</p><button class="btn" data-go="paseos">${mio?'Ver mi propuesta':'Ver propuestas'}</button>${mio?'':'<button class="btn sec" data-act="newpaseo">Proponer una caminata</button>'}</div>`};
+const syncCard=()=>S.synced?'':`<div class="card g12 rise"><h2 style="margin:0">Sumá tus pasos (opcional)</h2><p style="font-size:14px">Con un iPhone podés registrar tus pasos, ver tu progreso y desbloquear la caminata grupal del fin de semana.</p>${/iPhone|iPad|iPod/.test(navigator.userAgent)?'<button class="btn sec" data-go="sync">Conectar mis pasos</button>':'<p class="mut">Por ahora solo está disponible desde un iPhone.</p>'}</div>`;
+const pasoCard=x=>{
+ const acc=x.es_mio?'<span class="chip g" style="align-self:flex-start">Tu propuesta</span>'
+  :x.mi_estado==='aceptado'?`<span class="chip g" style="align-self:flex-start">Te aceptaron</span><a class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center" href="https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}" target="_blank" rel="noopener">Cómo llegar al punto exacto</a>`
+  :x.mi_estado==='pendiente'?`<button class="btn" disabled>Pedido enviado</button><button class="link" data-act="quitarped" data-id="${x.id}">Cancelar pedido</button>`
+  :`<button class="btn" data-act="sumarme" data-id="${x.id}">Me sumo</button>`;
+ return `<div class="card g12 rise"><div class="row">${foto(x.foto_url,x.nombre)}<div style="flex:1;min-width:0"><b>${esc(x.nombre)} ${esc(x.inicial||'')}., ${x.edad}</b>${x.barrio?`<p class="mut">${esc(x.barrio)}</p>`:''}</div><span class="chip y">${cuando(x.inicia_at)}</span></div>
+<p style="font-size:14px"><b>Punto de encuentro:</b> ${esc(x.punto)}</p>${acc}${x.es_mio?'':`<button class="link" data-act="repo" data-id="${x.id}" style="font-size:12px;color:var(--mut)">Reportar</button>`}</div>`};
+function perfilGate(){const g=$('#gate');
+ g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Tu perfil para caminar</h2><p style="font-size:14px">Quien vea tu propuesta o tu pedido ve tu foto, tu nombre, la inicial de tu apellido y tu edad.</p>
+<div class="row"><img id="pfimg" class="pf" style="width:80px;height:80px;border-radius:40px" ${S.p.foto_url?`src="${esc(S.p.foto_url)}"`:''} referrerpolicy="no-referrer" alt=""><label class="btn sm sec" style="display:flex;align-items:center;justify-content:center;width:auto;padding:0 16px;cursor:pointer">${S.p.foto_url?'Cambiar foto':'Subir foto'}<input type="file" id="pf" accept="image/*" hidden></label></div>
+<label class="f">Edad<input type="number" id="pe" min="18" max="99" value="${S.p.edad||''}" placeholder="Tu edad"></label>
+<button class="btn" data-act="savepf">Guardar</button><button class="link" data-act="closegate" style="text-align:center">Cancelar</button></div>`;
+ g.dataset.k='perfil';g.classList.add('on')}
+function shrink(f,max=700){return new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);
+ im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?ok(b):no(new Error('blob')),'image/jpeg',.85)};
+ im.onerror=()=>{URL.revokeObjectURL(u);no(new Error('imagen no válida'))};im.src=u})}
+async function subirFoto(f){try{toast('Subiendo foto…');const b=await shrink(f),path=S.uid+'/perfil-'+Date.now()+'.jpg';
+ const up=await sb.storage.from('fotos').upload(path,b,{contentType:'image/jpeg',cacheControl:'31536000'});if(up.error)throw up.error;
+ const url=sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;
+ await q(sb.from('profiles').update({foto_url:url}).eq('id',S.uid));S.p.foto_url=url;const i=$('#pfimg');if(i)i.src=url;toast('Foto actualizada')}
+ catch(e){console.error(e);toast('No se pudo subir la foto')}}
 
 /* ============ BENEFICIO DIARIO ============ */
 const BARRIOS='Agronomía,Almagro,Balvanera,Barracas,Belgrano,Boedo,Caballito,Chacarita,Coghlan,Colegiales,Constitución,Flores,Floresta,La Boca,La Paternal,Liniers,Mataderos,Monte Castro,Montserrat,Nueva Pompeya,Núñez,Palermo,Parque Avellaneda,Parque Chacabuco,Parque Chas,Parque Patricios,Puerto Madero,Recoleta,Retiro,Saavedra,San Cristóbal,San Nicolás,San Telmo,Vélez Sarsfield,Versalles,Villa Crespo,Villa del Parque,Villa Devoto,Villa General Mitre,Villa Lugano,Villa Luro,Villa Ortúzar,Villa Pueyrredón,Villa Real,Villa Riachuelo,Villa Santa Rita,Villa Soldati,Villa Urquiza'.split(',');
@@ -188,6 +223,9 @@ async function load(){
   q(sb.from('step_logs').select('dia').eq('user_id',uid).limit(1)),
   q(sb.from('walks').select('*').eq('estado','finalizada').order('inicia_at',{ascending:false}).limit(10))]);
  S.p=p;S.admin=adm;
+ /* La foto de Google es la foto por defecto; la persona puede cambiarla */
+ const gf=S.meta&&(S.meta.avatar_url||S.meta.picture);
+ if(!S.p.foto_url&&gf){try{await q(sb.from('profiles').update({foto_url:gf}).eq('id',uid));S.p.foto_url=gf}catch(e){}}
  if(!S.p.acepto_terminos_at&&localStorage.getItem('consent')==='1'){
   const t=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',uid));
   S.p.mayor_de_18=true;S.p.acepto_terminos_at=t;localStorage.removeItem('consent')}
@@ -206,13 +244,18 @@ async function load(){
  if(pb){const [pst,rv,asi,mr]=pb;
   S.past=pw.map(x=>{const s2=pst.find(y=>y.walk_id===x.id)||{};return{w:x,n:s2.asistentes||0,prom:s2.promedio,rev:rv.filter(r=>r.walk_id===x.id),can:asi.some(y=>y.walk_id===x.id)&&!mr.some(m=>m.walk_id===x.id)}})}
  if(S.yo)S.ok=await q(sb.rpc('asistentes_caminata',{p_walk:w.id}));
- await loadMatch();
+ await Promise.all([loadMatch(),loadPas()]);
 }
 async function refreshSteps(){
  if(!sb||!S.uid||document.hidden||!cur||cur.name!=='home')return;
  try{const d=ultimos(30),logs=await q(sb.from('step_logs').select('dia,pasos').eq('user_id',S.uid).gte('dia',d[0]));
   const before=JSON.stringify(S.d30||[]);applySteps(logs,d);
   if(JSON.stringify(S.d30)!==before){if(logs.length)S.synced=true;await loadMatch();if(cur&&cur.name==='home')go('home',null,'fade')}}catch(e){}}
+/* Refresca propuestas y pedidos cada 15 s (en Inicio y en Caminemos) */
+async function refreshPas(){
+ if(!sb||!S.uid||document.hidden||!cur||!['home','paseos'].includes(cur.name)||$('#gate').classList.contains('on'))return;
+ const b=JSON.stringify([S.pas,S.ped]);await loadPas();
+ if(JSON.stringify([S.pas,S.ped])!==b&&cur&&['home','paseos'].includes(cur.name)&&!$('#gate').classList.contains('on'))go(cur.name,null,'fade')}
 async function loadAW(){S.aw=await q(sb.from('walks').select('*').order('inicia_at',{ascending:false}).limit(50))}
 async function getTok(){
  let r=await q(sb.from('sync_tokens').select('token').eq('user_id',S.uid).maybeSingle());
@@ -221,6 +264,7 @@ async function getTok(){
 const PRE={
 home:async()=>{if(S.dirty){await load();S.dirty=false}},
 past:async()=>{if(S.dirty){await load();S.dirty=false}},
+paseos:async()=>{await loadPas()},
 sync:async()=>{S.tok=await getTok()},
 admin:async()=>{
  if(idx===0)S.res=await q(sb.rpc('admin_resumen'));
@@ -234,8 +278,8 @@ admin:async()=>{
 /* ============ VISTAS ============ */
 const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:40px">
 <div class="rise" style="display:flex;flex-direction:column;align-items:center;gap:12px">${logo}</div>
-<h1 class="rise" style="font-size:25px">Caminá solo,<br>para caminar en grupo.</h1>
-<p class="rise mut" style="font-size:16px">Sumá pasos durante la semana y desbloqueá la caminata del fin de semana en los Bosques de Palermo. Infusiones y algo dulce incluidos.</p>
+<h1 class="rise" style="font-size:25px">Caminá 15 minutos<br>con alguien cerca.</h1>
+<p class="rise mut" style="font-size:16px">Proponé una caminata corta en un lugar público o sumate a la de otra persona. Si tenés iPhone, también podés sumar tus pasos y desbloquear la caminata grupal del finde en los Bosques de Palermo.</p>
 <div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-go="terms">Términos y el descargo de responsabilidad</a>.</span></label>
 <button class="btn" id="google" disabled data-act="${act}">${label}</button></div></div>`;
 const mineCard=()=>!S.admin||!S.mine.length?'':`<div class="card g12 rise"><h2 style="margin:0">Tus caminatas (admin)</h2>${S.mine.map(m=>`<div class="sep g12"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(m.titulo)}</b><p class="mut">${fecha(m.inicia_at)}, ${hora(m.inicia_at)} · ${esc(m.lugar)}</p></div>${chipE(m)}</div><div class="grid2"><button class="btn sm sec" data-go="admin" data-arg="2" data-edit="${m.id}">Editar</button><button class="btn sm dan" data-act="del" data-id="${m.id}">Eliminar</button></div></div>`).join('')}<button class="btn sm" data-go="admin" data-arg="2" data-edit="">+ Nueva caminata</button></div>`;
@@ -245,13 +289,27 @@ login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
 home:()=>{const w=S.w,u=w&&S.pasos>=w.meta_pasos,pc=w?Math.min(100,S.pasos/w.meta_pasos*100):0;
 const btn=!u?'<button class="btn" disabled>Bloqueada hasta llegar a la meta</button>':S.yo?'<button class="btn" data-go="walk">Ver mi caminata</button>':'<button class="btn" data-act="join">Anotarme a la caminata</button>';
-const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima caminata</h2><p class="mut">Todavía no hay una caminata publicada. Volvé pronto.</p></div>':`<div class="card g12 rise"><div><p class="mut">Próxima caminata</p><p style="font-size:20px;font-weight:800;margin-top:2px">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:4px">${esc(w.lugar)}${w.punto_encuentro?' · '+esc(w.punto_encuentro):''}</p>${w.punto_lat!=null?`<a href="${mapsLink(w)}" target="_blank" rel="noopener" style="font-size:14px;font-weight:600">Cómo llegar</a>`:''}</div>
+const card=!w?'<div class="card rise"><h2 style="margin:0 0 6px">Próxima caminata grupal</h2><p class="mut">Todavía no hay una caminata publicada. Volvé pronto.</p></div>':`<div class="card g12 rise"><div><p class="mut">Próxima caminata grupal</p><p style="font-size:20px;font-weight:800;margin-top:2px">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:4px">${esc(w.lugar)}${w.punto_encuentro?' · '+esc(w.punto_encuentro):''}</p>${w.punto_lat!=null?`<a href="${mapsLink(w)}" target="_blank" rel="noopener" style="font-size:14px;font-weight:600">Cómo llegar</a>`:''}</div>
 <p style="font-size:14px">${esc(w.titulo)}. ${esc(w.incluye||'')}</p>
-<div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
-<p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(w.meta_pasos-S.pasos)} de ${fmt(w.meta_pasos)} pasos para desbloquearla`}</p>
+${S.synced?`<div class="row"><div class="bar"><i data-w="${pc}"></i></div><div class="gift ${u?'pop':''}">${giftSvg}</div></div>
+<p style="font-size:14px;font-weight:600;color:var(--c3)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(w.meta_pasos-S.pasos)} de ${fmt(w.meta_pasos)} pasos para desbloquearla`}</p>`:`<p style="font-size:14px;font-weight:600;color:var(--c3)">Para desbloquearla necesitás ${fmt(w.meta_pasos)} pasos en la semana. Conectá tus pasos arriba.</p>`}
 <div>${dots(S.ocu,w.cupo_max)}</div>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`;
-return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1></div>${stepsCard(true)}${dayCard()}${mineCard()}${card}
+return `<div class="col"><div class="rise"><p class="mut">Hola, ${esc(S.p.nombre)}</p>${S.synced?`<h1 style="font-size:36px"><span data-count="${S.pasos}">0</span> <span class="mut" style="font-size:15px;font-weight:600">pasos esta semana</span></h1>`:'<h1 style="font-size:30px">¿Caminamos 15 minutos?</h1>'}</div>${paseoCard()}${S.synced?stepsCard(true)+dayCard():syncCard()}${mineCard()}${card}
 </div>`},
+paseos:()=>{const pas=S.pas||[],mio=pas.find(x=>x.es_mio),otros=pas.filter(x=>!x.es_mio),ped=S.ped||[];
+ const mi=mio?`<div class="card g12 rise"><h2 style="margin:0">Tu propuesta</h2><div><p style="font-weight:800">${cuando(mio.inicia_at)} · ${esc(mio.punto)}</p><p class="mut">Son 15 minutos. Aceptá a quien quieras: solo esas personas ven el punto exacto en el mapa.</p></div>
+${ped.length?ped.map(r=>`<div class="sep g12"><div class="row">${foto(r.foto_url,r.nombre)}<div style="flex:1;min-width:0"><b>${esc(r.nombre)} ${esc(r.inicial||'')}., ${r.edad}</b><p class="mut">${r.estado==='aceptado'?'Aceptado':'Quiere sumarse'}</p></div></div>${r.estado==='pendiente'?`<div class="grid2"><button class="btn sm" data-act="resp" data-id="${r.pedido_id}" data-v="1">Aceptar</button><button class="btn sm sec" data-act="resp" data-id="${r.pedido_id}" data-v="0">Rechazar</button></div>`:''}</div>`).join(''):'<p class="mut">Todavía nadie pidió sumarse. Esta pantalla se actualiza sola.</p>'}
+<button class="btn sm dan" data-act="cancelpaseo">Cancelar mi propuesta</button></div>`:'<button class="btn rise" data-act="newpaseo">Proponer una caminata de 15 minutos</button>';
+ return `<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Caminemos 15 minutos</h1><p class="mut" style="margin-top:6px">Alguien propone caminar un rato. Pedí sumarte y, si te aceptan, ves el punto exacto de encuentro.</p></div>
+${mi}${otros.length?`<h2 style="margin:0">Propuestas</h2>`+otros.map(pasoCard).join(''):(mio?'':'<div class="card rise"><p class="mut">Todavía no hay propuestas. ¡Proponé la primera!</p></div>')}
+<div class="card rise"><h2 style="font-size:16px">Cuidate</h2><p style="font-size:14px;color:#2B4A5E">Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y no compartas datos que no quieras. Podés reportar cualquier propuesta.</p><button class="link" data-act="perfil">Editar mi foto y mi edad</button></div></div>`},
+paseonuevo:()=>`<div class="col"><div><button class="back" data-go="paseos">← Volver</button><h1>Proponer una caminata</h1><p class="mut" style="margin-top:6px">15 minutos caminando juntos. Aparecés con tu foto, nombre y edad.</p></div>
+<div class="card rise"><div class="row">${foto(S.p.foto_url,S.p.nombre)}<b>${esc(S.p.nombre)} ${esc((S.p.apellido||'')[0]||'')}., ${S.p.edad}</b></div></div>
+<div class="card g12 rise"><label class="f">Punto de encuentro<input type="text" id="q1" maxlength="80" placeholder="Ej: Rosedal, frente al kiosco"></label>
+<div class="g12"><b style="font-size:14px">Marcalo en el mapa</b><div id="qmap" class="map"></div><p class="mut" id="qinfo"></p><button class="btn sm sec" data-act="qmyloc">Usar mi ubicación</button></div>
+<label class="f">Cuándo<select id="q2"><option value="0">Ahora</option><option value="10">En 10 minutos</option><option value="20">En 20 minutos</option><option value="30">En 30 minutos</option><option value="60">En 1 hora</option></select></label></div>
+<p class="mut rise">Elegí un lugar público y concurrido. Solo las personas que aceptes ven el punto exacto del mapa.</p>
+<button class="btn rise" data-act="pubpaseo">Publicar propuesta</button></div>`,
 past:()=>`<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Caminatas anteriores</h1></div><div class="g12">${S.past.length?S.past.map((p,i)=>`<div class="card g12 rise"><div><p style="font-size:16px;font-weight:800">${fecha(p.w.inicia_at)}</p><p class="mut" style="margin-top:2px">${esc(p.w.lugar)} · ${p.n} asistentes${p.prom!=null?' · '+fmt(p.prom,1)+' de 5':''}</p></div>${p.rev.map(rev).join('')}${p.can?`<button class="btn" data-go="rate" data-arg="${i}">Calificar esta caminata</button>`:''}</div>`).join(''):'<p class="mut">Todavía no hubo caminatas.</p>'}</div></div>`,
 walk:()=>{const w=S.w,yo=S.p.nombre+' '+(S.p.apellido[0]||'')+'.';
 return `<div class="col"><div><button class="back" data-go="home">← Volver</button><span class="chip rise">Desbloqueada</span><h1 class="rise" style="margin-top:10px">${esc(w.titulo)}</h1></div>
@@ -272,7 +330,7 @@ const iosC=`<div class="card g12 rise"><h2 style="margin:0">iPhone</h2>
 <p class="mut">Si el atajo no se deja instalar, activá <b>Permitir atajos no confiables</b> en Ajustes → Atajos → Avanzado.</p></div>`;
 const andC=`<div class="card g12 rise"><h2 style="margin:0">Android</h2><p style="font-size:14px">Chrome no puede leer Health Connect y la API web de Google Fit está discontinuada, así que desde la web sola no hay forma directa de leer los pasos.</p><p style="font-size:14px">La opción que sí funciona es empaquetar esta web como app (por ejemplo con Capacitor + un plugin de Health Connect) y llamar a <b>Paseando.syncSteps()</b>, que ya está lista en este código.</p></div>`;
 const adv=`<details class="card rise"><summary style="font-weight:800;cursor:pointer">Opciones avanzadas</summary><div class="g12" style="margin-top:12px"><p class="mut">Para armar el atajo a mano o usar otra herramienta.</p><div><p class="mut">URL</p><div class="code">${esc(SYNC_URL)}</div><button class="link" data-act="copyurl">Copiar URL</button></div><div><p class="mut">Tu clave personal</p><div class="code">${esc(S.tok)}</div><div class="row"><button class="link" data-act="copytok">Copiar clave</button><button class="link" data-act="regen">Generar nueva</button></div></div><p class="mut">No la compartas: quien la tenga puede cargar pasos a tu nombre. Si generás una nueva, la vieja deja de funcionar.</p></div></details>`;
-return `<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Sincronizar pasos</h1><p class="mut" style="margin-top:6px">Un sitio web no puede leer Apple Salud por su cuenta. Los Atajos de iPhone sí pueden, y mandan tus pasos a Paseando.</p></div>
+return `<div class="col"><div><button class="back" data-go="home">← Volver</button><h1>Sincronizar pasos</h1><p class="mut" style="margin-top:6px">Es opcional: con tus pasos ves tu progreso y desbloqueás la caminata grupal del fin de semana. Un sitio web no puede leer Apple Salud por su cuenta; los Atajos de iPhone sí, y mandan tus pasos a Paseando.</p></div>
 ${ios?iosC+andC:andC+iosC}${adv}</div>`},
 rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back" data-go="past">← Volver</button><p class="mut">${fecha(p.w.inicia_at)} · ${esc(p.w.lugar)}</p><h1 style="margin-top:4px">¿Cómo estuvo la caminata?</h1></div>
 <div class="card g12 rise"><b style="font-size:14px">Tu calificación</b><div class="row" style="gap:4px" id="stars">${[1,2,3,4,5].map(i=>`<button class="star" data-star="${i}" aria-label="${i} estrellas"><svg width="44" height="44" viewBox="0 0 24 24"><path d="${star}" fill="none" stroke="#0369A1" stroke-width="1.5"/></svg></button>`).join('')}</div>
@@ -281,7 +339,7 @@ rate:()=>{const p=S.past[idx];return `<div class="col"><div><button class="back"
 <button class="btn rise" id="pub" disabled data-act="publish">Publicar reseña</button></div>`},
 terms:()=>`<div class="col"><div><button class="back" data-go="${cur&&['login','consent'].includes(cur.name)?cur.name:'home'}">← Volver</button><h1>Términos y descargo</h1></div>
 
-${[['Edad','Solo pueden participar personas de 18 años o más. Podemos pedir verificación de identidad.'],['Participación voluntaria','Caminar al aire libre implica riesgos (terreno, clima, caídas). Participás bajo tu propia responsabilidad y declarás estar en condiciones físicas de hacerlo.'],['Descargo de responsabilidad','El organizador no responde por lesiones, accidentes ni pérdida de objetos, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto hacia el resto. Podemos retirar a quien no lo cumpla, sin devolución.'],['Datos personales','Usamos tu nombre y mail de Google. Quienes están anotados ven tu nombre y la inicial de tu apellido, y lo mismo en las reseñas. Si aceptás las sugerencias de compañeros de caminata, tu nombre, la inicial de tu apellido y tu barrio se muestran a otra persona de tu barrio que cumplió la meta diaria. El contacto que compartas lo ve solo quien también compartió el suyo. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Fotos','Podemos sacar fotos del grupo. Avisanos si no querés aparecer.'],['Cupos','Cada caminata tiene un cupo máximo. Si se llena, aplicás a la del finde siguiente.']].map(t=>`<div class="rise"><h2 style="margin-bottom:4px;font-size:16px">${t[0]}</h2><p style="font-size:14px;color:#2B4A5E">${t[1]}</p></div>`).join('')}</div>`,
+${[['Edad','Solo pueden participar personas de 18 años o más. Podemos pedir verificación de identidad.'],['Participación voluntaria','Caminar al aire libre implica riesgos (terreno, clima, caídas). Participás bajo tu propia responsabilidad y declarás estar en condiciones físicas de hacerlo.'],['Caminatas de 15 minutos entre personas','Paseando solo facilita el contacto entre personas que deciden caminar juntas. No verificamos a quienes usan la app. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien. Podés reportar cualquier propuesta.'],['Descargo de responsabilidad','El organizador no responde por lesiones, accidentes, pérdida de objetos ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto hacia el resto. Podemos retirar a quien no lo cumpla, sin devolución.'],['Datos personales','Usamos tu nombre, mail y foto de Google. Quienes están anotados en una caminata grupal ven tu nombre y la inicial de tu apellido, y lo mismo en las reseñas. Si proponés una caminata de 15 minutos o pedís sumarte a una, las demás personas ven tu foto, nombre, inicial del apellido y edad; el punto exacto del mapa lo ve solo quien aceptaste. Si aceptás las sugerencias de compañeros de caminata, tu nombre, la inicial de tu apellido y tu barrio se muestran a otra persona de tu barrio que cumplió la meta diaria. El contacto que compartas lo ve solo quien también compartió el suyo. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Fotos','Podemos sacar fotos del grupo. Avisanos si no querés aparecer.'],['Cupos','Cada caminata grupal tiene un cupo máximo. Si se llena, aplicás a la del finde siguiente.']].map(t=>`<div class="rise"><h2 style="margin-bottom:4px;font-size:16px">${t[0]}</h2><p style="font-size:14px;color:#2B4A5E">${t[1]}</p></div>`).join('')}</div>`,
 admin:()=>{const t=idx;let b='';
 if(t==0){const R=S.res||{},ad=R.activos_por_dia||[],ph=R.pasos_por_hora||[],mx=Math.max(1,...ad.map(d=>d.usuarios));
  const fr=[['6–10',6,10],['10–14',10,14],['14–19',14,19],['19–23',19,23]].map(([l,a,z])=>[l,ph.filter(x=>x.hora>=a&&x.hora<z).reduce((s,x)=>s+x.pasos,0)]),tot=Math.max(1,ph.reduce((s,x)=>s+x.pasos,0));
@@ -342,9 +400,17 @@ function buildPicker(){
  if(PICK)put(PICK.lat,PICK.lng);else info();
  m.on('click',ev=>put(ev.latlng.lat,ev.latlng.lng));
  PM={m,put,clear}}
+/* Selector de punto para "Caminemos 15 minutos" */
+function initQ(){if(!$('#qmap'))return;loadLeaflet().then(()=>{if($('#qmap'))buildQ()}).catch(()=>{const el=$('#qmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
+function buildQ(){const el=$('#qmap');if(!el||!window.L)return;PQ=null;
+ const m=mkMap('qmap',DEF_POS[0],DEF_POS[1],15);let mk=null;
+ const info=()=>{const n=$('#qinfo');if(n)n.textContent=PQ?'Punto marcado. Podés arrastrar el marcador.':'Tocá el mapa para marcar dónde se encuentran.'};
+ const put=(a,b)=>{PQ={lat:a,lng:b};if(mk)mk.setLatLng([a,b]);else{mk=L.marker([a,b],{draggable:true}).addTo(m);mk.on('dragend',()=>{const p=mk.getLatLng();PQ={lat:p.lat,lng:p.lng}})}info()};
+ m.on('click',ev=>put(ev.latlng.lat,ev.latlng.lng));info();PQM={m,put}}
 function post(name){
  if(name==='home')initChart();
  if(name==='admin'&&idx===2)initPicker();
+ if(name==='paseonuevo')initQ();
  if(name==='walk'&&S.w&&S.w.punto_lat!=null)loadLeaflet().then(()=>{if(!$('#wmap'))return;const m=mkMap('wmap',S.w.punto_lat,S.w.punto_lng,16);L.marker([S.w.punto_lat,S.w.punto_lng]).addTo(m)}).catch(()=>{})}
 
 /* ============ ROUTER Y ANIMACIONES ============ */
@@ -383,41 +449,30 @@ function initChart(){const c=$('#cht');if(!c)return;
 const HIDE_MENU=['login','consent','setup'];
 function openMenu(){const m=$('#menu');
  m.innerHTML=`<button class="bk" data-act="closemenu" aria-label="Cerrar menú"></button><div class="pn" role="dialog" aria-label="Menú"><div class="row" style="justify-content:space-between"><b style="font-size:18px;padding-left:12px">Menú</b><button class="mi" style="width:48px;justify-content:center;padding:0" data-act="closemenu" aria-label="Cerrar">✕</button></div>
-<button class="mi" data-go="past">Caminatas anteriores</button><button class="mi" data-go="terms">Términos</button>${S.admin?'<button class="mi" data-go="admin" data-arg="0">Panel admin</button>':''}
+<button class="mi" data-go="paseos">Caminemos 15 minutos</button><button class="mi" data-go="sync">Conectar mis pasos</button><button class="mi" data-go="past">Caminatas anteriores</button><button class="mi" data-go="terms">Términos</button>${S.admin?'<button class="mi" data-go="admin" data-arg="0">Panel admin</button>':''}
 <div class="sep" style="margin-top:8px"></div><button class="mi" data-act="logout" style="color:#B91C1C">Cerrar sesión</button></div>`;
  m.classList.add('on');$('#menuBtn').setAttribute('aria-expanded','true')}
 function closeMenu(){$('#menu').classList.remove('on');$('#menuBtn').setAttribute('aria-expanded','false')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+/* Ventanas emergentes del Inicio. Los pasos son opcionales: ya no se bloquea la app si no sincronizaste. */
 async function syncGate(){
  const g=$('#gate');
+ if(g.classList.contains('on')&&g.dataset.k==='perfil')return;
  const hide=()=>{g.classList.remove('on');g.innerHTML='';g.dataset.k=''};
- if(!(cur&&cur.name==='home'))return hide();
- if(S.synced){
-  if(g.dataset.k==='chat'&&g.classList.contains('on'))return;
-  if(needBarrio()){if(!(g.dataset.k==='barrio'&&g.classList.contains('on'))){g.innerHTML=barrioHTML();g.dataset.k='barrio';g.classList.add('on')}return}
-  const w=S.w;
-  if(!(w&&!S.yo&&S.pasos>=w.meta_pasos&&!skipped(w.id)))return hide();
-  const key='win'+w.id;if(g.classList.contains('on')&&g.dataset.k===key)return;
-  const cf=Array.from({length:18},(_,i)=>`<span class="cf" style="left:${(i*37+5)%100}%;background:${['#38BDF8','#FF5A1F','#FFD93D','#0EA5E9','#86EFAC'][i%5]};animation-delay:${(i%6)*.25}s;animation-duration:${2.4+(i%4)*.5}s"></span>`).join('');
-  const quedan=Math.max(0,w.cupo_max-S.ocu);
-  g.innerHTML=`<div class="card g12 win">${cf}<div class="gift pop" style="width:76px;height:76px;border-radius:38px">${giftSvg.replace('width="26" height="26"','width="40" height="40"')}</div><h2 id="gt" style="margin:0;font-size:26px">¡Lo lograste!</h2><p style="font-size:15px">Llegaste a <b>${fmt(S.pasos)} pasos</b> y desbloqueaste la caminata.</p><div class="sep" style="width:100%"><p style="font-weight:800">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:2px">${esc(w.lugar)}</p>${quedan?`<p class="mut" style="margin-top:4px">Quedan ${quedan} lugares</p>`:''}</div><button class="btn" data-act="join">Aceptar caminata</button><button class="btn sec" data-act="skipwin">Guardarme para la próxima</button></div>`;
-  g.dataset.k=key;g.classList.add('on');return}
- const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
- let body;
- if(ios){
-  try{S.tok=await getTok()}catch(e){toast(e.message||'No se pudo cargar')}
-  if(!(cur&&cur.name==='home'&&!S.synced))return;
-  const back=encodeURIComponent(location.href.split('#')[0]);
-  const run=`shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(S.tok||'')}&x-success=${back}&x-cancel=${back}&x-error=${back}`;
-  body=`<div class="g12"><div><p class="mut">Paso 1 · Solo la primera vez</p><a class="btn" href="${SHORTCUT_URL}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px">Instalar atajo</a><p class="mut" style="margin-top:6px">Se abre la app Atajos. Tocá <b>Agregar atajo</b>.</p></div>
-<div class="sep"><p class="mut">Paso 2</p><a class="btn" href="${esc(run)}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px">Sincronizar ahora</a><p class="mut" style="margin-top:6px">iOS te va a pedir permiso para leer tus pasos de Salud. Tocá <b>Permitir</b>. Después vuelve solo a Paseando.</p></div>
-<button class="btn sec" data-act="chksync">Ya sincronicé</button></div>`}
- else body=`<p style="font-size:14px">Para continuar necesitás sincronizar tus pasos desde un iPhone. Abrí Paseando en tu iPhone y seguí los pasos de esta ventana.</p>`;
- g.innerHTML=`<div class="card g12"><h2 id="gt" style="margin:0">Conectá tus pasos</h2><p style="font-size:14px">Para usar Paseando tenés que sincronizar tus pasos. Un atajo lee la app Salud y los manda a tu cuenta. Esta ventana se cierra sola cuando recibimos tus primeros pasos.</p>${body}<button class="link" data-act="logout" style="text-align:center">Cerrar sesión</button></div>`;
- g.dataset.k='sync';g.classList.add('on')}
+ if(!(cur&&cur.name==='home'&&S.synced))return hide();
+ if(g.dataset.k==='chat'&&g.classList.contains('on'))return;
+ if(needBarrio()){if(!(g.dataset.k==='barrio'&&g.classList.contains('on'))){g.innerHTML=barrioHTML();g.dataset.k='barrio';g.classList.add('on')}return}
+ const w=S.w;
+ if(!(w&&!S.yo&&S.pasos>=w.meta_pasos&&!skipped(w.id)))return hide();
+ const key='win'+w.id;if(g.classList.contains('on')&&g.dataset.k===key)return;
+ const cf=Array.from({length:18},(_,i)=>`<span class="cf" style="left:${(i*37+5)%100}%;background:${['#38BDF8','#FF5A1F','#FFD93D','#0EA5E9','#86EFAC'][i%5]};animation-delay:${(i%6)*.25}s;animation-duration:${2.4+(i%4)*.5}s"></span>`).join('');
+ const quedan=Math.max(0,w.cupo_max-S.ocu);
+ g.innerHTML=`<div class="card g12 win">${cf}<div class="gift pop" style="width:76px;height:76px;border-radius:38px">${giftSvg.replace('width="26" height="26"','width="40" height="40"')}</div><h2 id="gt" style="margin:0;font-size:26px">¡Lo lograste!</h2><p style="font-size:15px">Llegaste a <b>${fmt(S.pasos)} pasos</b> y desbloqueaste la caminata.</p><div class="sep" style="width:100%"><p style="font-weight:800">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:2px">${esc(w.lugar)}</p>${quedan?`<p class="mut" style="margin-top:4px">Quedan ${quedan} lugares</p>`:''}</div><button class="btn" data-act="join">Aceptar caminata</button><button class="btn sec" data-act="skipwin">Guardarme para la próxima</button></div>`;
+ g.dataset.k=key;g.classList.add('on')}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3000)}
 const csv=(name,rows)=>{const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));l.download=name;l.click()};
 const afterDel=()=>{S.dirty=true;toast('Caminata eliminada');EID=null;if(cur.name==='home'){go('home',null,'fade')}else go('admin',1,'fade')};
+const closeGate=()=>{const g=$('#gate');g.classList.remove('on');g.innerHTML='';g.dataset.k=''};
 
 document.addEventListener('click',async e=>{
  const s=e.target.closest('[data-star]');
@@ -429,7 +484,6 @@ document.addEventListener('click',async e=>{
  if(t.dataset.go){e.preventDefault();go(t.dataset.go,t.dataset.arg,['home','login','consent'].includes(t.dataset.go)&&cur.name!=='login'&&cur.name!=='consent');return}
  const a=t.dataset.act;
  try{
- if(a==='chksync'){t.disabled=true;await load();if(S.synced){go('home',null,'fade')}else{toast('Todavía no recibimos tus pasos. Corré el atajo y volvé.');t.disabled=false}}
  if(a==='menu')openMenu();
  if(a==='pick'){const i=+t.dataset.i,x=S.d30[i];S.pick=i;$('#sread').textContent=`${dl(x[0])} ${dm(x[0])} · ${fmt(x[1])} pasos`;document.querySelectorAll('#cht .sl').forEach((n,k)=>n.classList.toggle('sel',k===i))}
  if(a==='range'){S.range=+t.dataset.v;S.pick=null;$('#stp').outerHTML=stepsCard(false);initChart()}
@@ -483,14 +537,35 @@ document.addEventListener('click',async e=>{
  if(a==='sharecont'){const c=$('#c1').value.trim();if(c.length<3){toast('Escribí tu contacto');return}
   await q(sb.from('match_contactos').upsert({dia:hoyAR(),user_id:S.uid,contacto:c},{onConflict:'dia,user_id'}));
   S.mycont=c;await loadMatch();chatGate();toast('Contacto compartido')}
- if(a==='closechat'){const g=$('#gate');g.classList.remove('on');g.innerHTML='';g.dataset.k=''}
+ if(a==='closechat')closeGate();
  if(a==='closemenu')closeMenu();
- }catch(err){toast(err.message||'Ocurrió un error');if(t)t.disabled=false}
+ /* --- Caminemos 15 minutos --- */
+ if(a==='newpaseo'){if(!perfilOk())return perfilGate();go('paseonuevo')}
+ if(a==='perfil')perfilGate();
+ if(a==='closegate')closeGate();
+ if(a==='savepf'){const ed=+$('#pe').value;if(!(ed>=18&&ed<=99)){toast('Tenés que tener 18 años o más');return}
+  t.disabled=true;await q(sb.from('profiles').update({edad:ed}).eq('id',S.uid));S.p.edad=ed;t.disabled=false;
+  if(!S.p.foto_url){toast('Subí una foto para continuar');return}
+  closeGate();toast('Listo, ya podés proponer o sumarte');if(cur&&cur.name==='paseos')go('paseos',null,'fade')}
+ if(a==='qmyloc'){if(!navigator.geolocation||!PQM){toast('No pudimos obtener tu ubicación');return}
+  navigator.geolocation.getCurrentPosition(p=>{PQM.m.setView([p.coords.latitude,p.coords.longitude],17);PQM.put(p.coords.latitude,p.coords.longitude)},()=>toast('No pudimos obtener tu ubicación'),{enableHighAccuracy:true,timeout:10000})}
+ if(a==='pubpaseo'){const pt=$('#q1').value.trim();if(pt.length<3){toast('Escribí el punto de encuentro');return}if(!PQ){toast('Marcá el punto en el mapa');return}
+  t.disabled=true;await q(sb.rpc('crear_paseo',{p_lat:PQ.lat,p_lng:PQ.lng,p_punto:pt,p_min:+$('#q2').value}));
+  await loadPas();toast('¡Publicada! Volvé acá para ver quién quiere sumarse.');go('paseos',null,true)}
+ if(a==='cancelpaseo'){if(!confirm('¿Cancelar tu propuesta?'))return;await q(sb.rpc('cancelar_paseo'));await loadPas();toast('Propuesta cancelada');go('paseos',null,'fade')}
+ if(a==='sumarme'){if(!perfilOk())return perfilGate();t.disabled=true;await q(sb.rpc('pedir_paseo',{p_paseo:t.dataset.id}));
+  await loadPas();toast('Pedido enviado. Si te aceptan, ves el punto exacto.');go('paseos',null,'fade')}
+ if(a==='quitarped'){await q(sb.rpc('quitar_pedido',{p_paseo:t.dataset.id}));await loadPas();go('paseos',null,'fade')}
+ if(a==='resp'){t.disabled=true;await q(sb.rpc('responder_pedido',{p_pedido:t.dataset.id,p_ok:t.dataset.v==='1'}));await loadPas();go('paseos',null,'fade')}
+ if(a==='repo'){if(!confirm('¿Reportar esta propuesta? La vamos a revisar.'))return;await q(sb.rpc('reportar_paseo',{p_paseo:t.dataset.id}));await loadPas();toast('Gracias, la vamos a revisar');go('paseos',null,'fade')}
+ }catch(err){const m=err&&err.message||'';toast(m.includes('perfil_incompleto')?'Completá tu foto y tu edad':m.includes('paseo_no_disponible')?'Esa propuesta ya no está disponible':m||'Ocurrió un error');if(t)t.disabled=false}
 });
 document.addEventListener('input',e=>{
  if(e.target.id==='ok18')$('#google').disabled=!e.target.checked;
  if(e.target.id==='cm'){$('#cnt').textContent=e.target.value.length+'/100';chk()}});
-document.addEventListener('change',e=>{if(e.target.id==='wsel'){WID=e.target.value;go('admin',3,'fade')}});
+document.addEventListener('change',e=>{
+ if(e.target.id==='wsel'){WID=e.target.value;go('admin',3,'fade')}
+ if(e.target.id==='pf'){const f=e.target.files&&e.target.files[0];e.target.value='';if(f)subirFoto(f)}});
 function chk(){const b=$('#pub');if(b)b.disabled=!(RATE>0&&$('#cm').value.trim().length>0)}
 
 /* ============ INICIO ============ */
@@ -499,7 +574,7 @@ async function boot(){
  if(!sb){go('setup');return}
  const{data:{session}}=await sb.auth.getSession();
  if(!session){go('login');return}
- S.uid=session.user.id;
+ S.uid=session.user.id;S.meta=session.user.user_metadata||{};
  try{await load();go(S.p.acepto_terminos_at?'home':'consent');setTimeout(autoSync,1500)}catch(e){toast(e.message||'No se pudo cargar');go('login')}
 }
 /* Para la app nativa (Capacitor/Flutter webview): después de leer Apple Health / Health Connect
@@ -518,6 +593,7 @@ async function autoSync(){
  const back=encodeURIComponent(location.href.split('#')[0]);
  location.href=`shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(S.tok)}&x-success=${back}&x-cancel=${back}&x-error=${back}`}
 setInterval(refreshSteps,15000);
+setInterval(refreshPas,15000);
 boot();
 </script>
 </body>
