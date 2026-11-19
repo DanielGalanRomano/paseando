@@ -3,289 +3,175 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#38BDF8">
-<title>Pateando · Caminá solo, para caminar en grupo</title>
-<meta name="description" content="Sumá pasos durante la semana y desbloqueá la caminata grupal del fin de semana en los Bosques de Palermo. Infusiones y algo dulce incluidos.">
-<link rel="icon" href="logopaseando.png">
+<meta name="theme-color" content="#3680F7">
+<title>Pateando · Caminá 15 minutos con alguien cerca</title>
+<meta name="description" content="Mirá quién sale a caminar entre las 18 y las 22, sumate o proponé tu caminata de 15 minutos y desbloqueá la caminata grupal del finde.">
+<link rel="icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 <style>
-:root{--c:#38BDF8;--c2:#0EA5E9;--c3:#0369A1;--bg:#F0F9FF;--line:#BAE6FD;--ink:#0B2A3C;--mut:#4B6B80;--pale:#E0F2FE;
---d:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--b:Inter,system-ui,sans-serif}
-*{box-sizing:border-box}
+:root{--c:#3680F7;--c2:#1E54B8;--bg:#F4F8FF;--soft:#E1ECFE;--line:#CFE0FC;--ink:#0B1426;--mut:#51617A;--y:#FFD21F;--app:"app.html"}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--b);-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
 img{max-width:100%}
-a{color:var(--c3)}
-.wrap{width:min(1080px,100% - 40px);margin:0 auto}
-h1,h2,h3{font-family:var(--d);font-style:italic;font-weight:800;line-height:.98;margin:0;letter-spacing:.2px}
-h1{font-size:clamp(52px,9vw,92px)}
-h2{font-size:clamp(38px,6vw,60px)}
-h3{font-size:28px;line-height:1.05}
-p{margin:0}
-.lead{font-size:19px;color:var(--ink);max-width:34ch}
-.mut{color:var(--mut)}
-
-/* botón App Store */
-.store{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:#fff;text-decoration:none;border-radius:14px;padding:10px 22px 10px 16px;min-height:56px;transition:transform .15s}
-.store:hover{transform:translateY(-2px)} .store:active{transform:scale(.97)}
-.store svg{width:30px;height:30px;fill:#fff;flex:none}
-.store small{display:block;font-size:12px;line-height:1.1;font-weight:400}
-.store b{display:block;font-size:22px;line-height:1.1;font-weight:600;letter-spacing:-.2px}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+h1,h2,h3{margin:0;letter-spacing:-.035em;line-height:1.05}
+h1{font-size:clamp(34px,7vw,64px);font-weight:800}
+h2{font-size:clamp(28px,5vw,44px);font-weight:800}
+h3{font-size:19px;font-weight:700;letter-spacing:-.02em}
+p{margin:0}.mut{color:var(--mut)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 28px;border-radius:16px;background:var(--c);color:#fff;font:800 17px 'Plus Jakarta Sans',sans-serif;text-decoration:none;border:0;cursor:pointer;box-shadow:0 10px 26px rgba(54,128,247,.4);transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(54,128,247,.5)} .btn:active{transform:scale(.97)}
+.btn.y{background:var(--y);color:var(--ink);box-shadow:0 10px 26px rgba(0,0,0,.18)}
 :focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(244,248,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+nav b{font-size:22px;font-weight:800;font-style:italic;letter-spacing:-.03em;color:var(--c)}
+nav .btn{min-height:42px;padding:0 18px;font-size:14px;border-radius:12px;box-shadow:none}
 /* hero */
-.hero{background:var(--c);padding:calc(env(safe-area-inset-top) + 8px) 0 0;overflow:hidden}
-.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.top img{display:block;height:64px;width:auto;margin-left:-14px}
-.top a.nav{font-weight:600;font-size:15px;color:var(--ink);text-decoration:none;padding:12px 4px}
-.heroGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:end;padding-top:28px}
-.heroTxt{padding-bottom:64px;display:flex;flex-direction:column;gap:24px;align-items:flex-start}
-.heroTxt .note{font-size:14px;color:#0B2A3C;opacity:.8}
-.heroPhone{display:flex;justify-content:center;align-self:end;transform:translateY(40px)}
-
-/* teléfonos */
-.phone{width:262px;border:9px solid var(--ink);border-radius:40px;background:var(--bg);overflow:hidden;box-shadow:0 18px 40px rgba(11,42,60,.22);flex:none}
-.phone .bar{background:var(--c);height:46px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px}
-.phone .bar img{height:20px;display:block}
-.sc{padding:16px 15px 20px;font-size:11.5px;line-height:1.4;display:flex;flex-direction:column;gap:11px;height:470px;overflow:hidden}
-.sc h4{margin:0;font:800 21px/1.05 var(--d);font-style:italic}
-.sc .m{color:var(--mut);font-size:10.5px}
-.sc .k{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
-.sc .pb{display:flex;align-items:center;gap:8px}
-.sc .pb i{display:block;flex:1;height:10px;border-radius:5px;background:var(--line);position:relative;overflow:hidden}
-.sc .pb i::after{content:"";position:absolute;inset:0 auto 0 0;width:62%;background:var(--c2);border-radius:5px}
-.sc .gf{width:30px;height:30px;border-radius:15px;background:var(--c);display:grid;place-items:center;flex:none}
-.sc .dt{display:flex;gap:4px}.sc .dt s{width:11px;height:11px;border-radius:6px;border:2px solid var(--c2);background:#fff;text-decoration:none}.sc .dt s.on{background:var(--c2)}
-.sc .bt{background:var(--c);border-radius:12px;text-align:center;font-weight:800;padding:11px 8px;font-size:12px}
-.sc .bt.off{background:var(--pale);color:var(--mut)}
-.sc .av{display:flex;align-items:center;gap:8px;font-weight:600}
-.sc .av b{width:24px;height:24px;border-radius:12px;background:var(--c);display:grid;place-items:center;font-size:11px;flex:none}
-.sc .av.free b{background:none;border:2px dashed var(--c2)}
-.chip{align-self:flex-start;background:var(--c);font-weight:800;border-radius:9px;padding:3px 9px;font-size:10.5px}
-.sc .cb{display:flex;gap:8px;align-items:flex-start;font-size:10.5px;text-align:left}
-.sc .cb u{width:15px;height:15px;border-radius:4px;background:var(--c3);flex:none;display:grid;place-items:center;color:#fff;font-size:10px;text-decoration:none}
-
-/* secciones */
-section{padding:96px 0}
-.sec-pale{background:var(--pale)}
-.sec-ink{background:var(--ink);color:#fff}
-.sec-ink .mut{color:#9CC3D9}
-.head{display:flex;flex-direction:column;gap:14px;margin-bottom:48px;max-width:640px}
-
-/* cómo funciona */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:3px solid var(--ink)}
-.step{padding:28px 28px 0 0;display:flex;flex-direction:column;gap:12px}
-.step+.step{padding-left:28px;border-left:1px solid var(--line)}
-.step .n{font:800 80px/.8 var(--d);font-style:italic;color:var(--c2)}
-
-/* pantallas */
-.shots{display:flex;gap:28px;overflow-x:auto;padding:8px 20px 40px;scroll-snap-type:x mandatory;margin:0 -20px;scrollbar-width:thin}
-.shot{scroll-snap-align:center;display:flex;flex-direction:column;gap:18px;align-items:flex-start;width:262px;flex:none}
-.shot p{font-size:15px;color:var(--mut);line-height:1.5}
-.shot h3{margin-bottom:-8px}
-.shotsWrap{margin:0 auto}
-
-/* detalles */
-.det{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px}
-.d{padding:26px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
-.d h3{color:var(--c3)}
-
-/* sponsors */
-.spon{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.kpi{border:1px solid #1E4A63;border-radius:18px;padding:20px}
-.kpi b{display:block;font:800 52px/1 var(--d);font-style:italic;color:var(--c)}
-.kpi span{font-size:14px;color:#9CC3D9}
-.cols{display:flex;align-items:flex-end;gap:8px;height:90px;margin-top:14px;grid-column:1/-1;border:1px solid #1E4A63;border-radius:18px;padding:18px 20px 12px}
-.cols div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;font-size:11px;color:#9CC3D9}
-.cols i{display:block;width:100%;background:var(--c);border-radius:5px 5px 0 0}
-
-/* faq */
-details{border-top:1px solid #9FD6F2;padding:20px 0}
-details:last-of-type{border-bottom:1px solid #9FD6F2}
-summary{cursor:pointer;font-weight:800;font-size:18px;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:32px}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font:800 28px/1 var(--b);color:var(--c3);transition:transform .25s}
-details[open] summary::after{transform:rotate(45deg)}
-details p{margin-top:10px;color:#2B4A5E;max-width:62ch}
-
-/* cierre */
-.cta{background:var(--c);text-align:center;padding:96px 0}
-.cta .wrap{display:flex;flex-direction:column;align-items:center;gap:26px}
-.cta p{max-width:44ch;font-size:19px}
-footer{background:var(--ink);color:#9CC3D9;padding:40px 0 calc(env(safe-area-inset-bottom) + 40px);font-size:14px}
-footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;justify-content:space-between}
-footer a{color:#fff}
-
-@media(max-width:860px){
- .heroGrid{grid-template-columns:1fr;padding-top:12px}
- .heroTxt{padding-bottom:8px}
- .heroPhone{transform:translateY(32px);margin-top:8px}
- .steps{grid-template-columns:1fr;border-top:0}
- .step,.step+.step{padding:24px 0;border-left:0;border-top:3px solid var(--ink)}
- .det,.spon{grid-template-columns:1fr}
- section{padding:72px 0}
-}
-@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.hero{position:relative;background:var(--c);color:#fff;padding-bottom:72px;clip-path:polygon(0 0,100% 0,100% calc(100% - 36px),0 100%)}
+.hero .ph{position:relative;overflow:hidden;max-height:62vh}
+.hero .ph img{display:block;width:100%;height:100%;min-height:200px;object-fit:cover;animation:kb 1.8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes kb{from{transform:scale(1.15);opacity:0}to{transform:none;opacity:1}}
+.hero .tx{padding-top:34px;display:flex;flex-direction:column;align-items:flex-start;gap:20px;max-width:720px}
+.hero h1{font-style:italic;animation:up .8s .25s cubic-bezier(.2,.8,.2,1) both}
+.hero .tx>p{font-size:clamp(16px,2.4vw,20px);font-weight:500;opacity:.95;animation:up .8s .4s cubic-bezier(.2,.8,.2,1) both}
+.hero .btn{animation:up .8s .55s cubic-bezier(.2,.8,.2,1) both}
+.hero small{font-weight:600;opacity:.85;animation:up .8s .65s both}
+@keyframes up{from{opacity:0;transform:translateY(22px)}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--y);color:var(--ink);font-weight:800;font-size:13px;border-radius:10px;padding:6px 11px;transform:rotate(-2deg)}
+/* sections */
+section{padding:84px 0}
+.sh{display:flex;flex-direction:column;gap:12px;max-width:620px;margin-bottom:40px}
+.sh p{font-size:17px;color:var(--mut)}
+.steps{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));counter-reset:s}
+.step{background:#fff;border:1.5px solid var(--line);border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.step.in{opacity:1;transform:none} .step:nth-child(2){transition-delay:.12s}.step:nth-child(3){transition-delay:.24s}
+.step::before{counter-increment:s;content:counter(s);width:44px;height:44px;border-radius:14px;background:var(--c);color:#fff;font-weight:800;font-size:22px;font-style:italic;display:flex;align-items:center;justify-content:center;transform:rotate(-6deg)}
+.step p{color:var(--mut);font-size:15px}
+/* app mock */
+.show{background:var(--ink);color:#fff;clip-path:polygon(0 36px,100% 0,100% calc(100% - 36px),0 100%);padding:110px 0}
+.show .wrap{display:grid;gap:48px;align-items:center;grid-template-columns:1fr}
+@media(min-width:820px){.show .wrap{grid-template-columns:1.1fr .9fr}}
+.show .sh p{color:#B7C4DB}
+.list{display:flex;flex-direction:column;gap:18px;margin-top:8px}
+.list div{display:flex;gap:14px} .list i{flex:none;width:10px;height:10px;border-radius:5px;background:var(--y);margin-top:9px}
+.list p{color:#B7C4DB;font-size:15px} .list b{display:block;color:#fff;font-size:17px}
+.phone{justify-self:center;width:272px;border-radius:40px;background:#111B30;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.5),0 0 0 2px #26324D;transform:rotate(3deg)}
+.scr{background:var(--bg);color:var(--ink);border-radius:32px;overflow:hidden;position:relative;height:490px}
+.scr .top{background:var(--c);color:#fff;text-align:center;font-weight:800;font-style:italic;padding:16px 0 12px;font-size:17px}
+.scr .in{padding:14px;display:flex;flex-direction:column;gap:12px}
+.scr h4{margin:0;font-size:18px;font-weight:800;letter-spacing:-.03em}
+.mc{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:10px;display:flex;gap:10px;align-items:center;font-size:11px;transition:border-color .4s,box-shadow .4s}
+.mc.on{border-color:var(--c);box-shadow:0 0 0 3px var(--soft)}
+.mc .a{width:40px;height:54px;border-radius:10px;background:linear-gradient(160deg,#8FB8FB,var(--c));color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.mc b{display:block;font-size:13px}.mc span{color:var(--mut)}
+.mc em{font-style:normal;font-weight:800;background:var(--soft);color:var(--c2);border-radius:7px;padding:2px 6px;font-size:10px;display:inline-block;margin-bottom:3px}
+.mj{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px;font-size:11px;display:flex;flex-direction:column;gap:8px}
+.mj .bar{height:9px;border-radius:5px;background:var(--line);overflow:hidden}.mj .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c2),var(--c));border-radius:5px;transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.tg{min-height:40px;border-radius:12px;border:2px solid var(--c);background:var(--c);color:#fff;font:800 12px 'Plus Jakarta Sans',sans-serif;width:100%;transition:background .35s,color .35s}
+.tg.out{background:#fff;color:var(--c2)}
+.fab{position:absolute;right:12px;bottom:14px;background:var(--c);color:#fff;font-weight:800;font-size:12px;border-radius:20px;padding:10px 14px;box-shadow:0 8px 20px rgba(54,128,247,.5);animation:pl 2.4s infinite}
+@keyframes pl{50%{box-shadow:0 8px 20px rgba(54,128,247,.5),0 0 0 8px rgba(54,128,247,.15)}}
+/* meta */
+.meta{display:grid;gap:36px;grid-template-columns:1fr;align-items:center}
+@media(min-width:820px){.meta{grid-template-columns:1fr 1fr}}
+.big{font-size:clamp(52px,12vw,96px);font-weight:800;font-style:italic;letter-spacing:-.05em;line-height:1;color:var(--c)}
+.pb{height:22px;border-radius:11px;background:var(--line);overflow:hidden;margin:18px 0 10px}
+.pb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c2),var(--c));border-radius:11px;transition:width 2s cubic-bezier(.2,.8,.2,1)}
+.safe{background:var(--soft);border-radius:28px;padding:34px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.safe p{font-size:15px;color:var(--mut);margin-top:4px}
+/* cta */
+.cta{background:var(--c);color:#fff;text-align:center;clip-path:polygon(0 36px,100% 0,100% 100%,0 100%);padding:120px 0 90px}
+.cta .wrap{display:flex;flex-direction:column;align-items:center;gap:22px}
+.cta h2{font-style:italic;max-width:640px}
+footer{background:var(--c2);color:#fff;padding:26px 0 calc(env(safe-area-inset-bottom) + 26px);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+footer a{font-weight:600}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.step{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<nav><div class="wrap"><b>Pateando</b><a class="btn" href="app.html">Entrar</a></div></nav>
 
 <header class="hero">
- <div class="wrap">
-  <div class="top">
-   <img src="logopaseando.png" alt="Pateando" width="167" height="64">
-   <a class="nav" href="#pantallas">Ver la app</a>
-  </div>
-  <div class="heroGrid">
-   <div class="heroTxt">
-    <h1>Caminá solo,<br>para caminar<br>en grupo.</h1>
-    <p class="lead">Sumá pasos durante la semana y desbloqueá la caminata del fin de semana en los Bosques de Palermo. Infusiones y algo dulce incluidos.</p>
-    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
-     <a class="store" href="https://apps.apple.com/app/idXXXXXXXXXX" aria-label="Descargar Pateando en el App Store">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
-      <span><small>Descargala en el</small><b>App Store</b></span>
-     </a>
-     <p class="note">Para iPhone. Solo mayores de 18 años.</p>
-    </div>
-   </div>
-   <div class="heroPhone" aria-hidden="true">
-    <div class="phone">
-     <div class="bar"><img src="logopaseando.png" alt=""></div>
-     <div class="sc">
-      <div><div class="m">Hola, Camila</div><h4 style="font-size:30px">18.650 <span style="font:600 11px var(--b);font-style:normal;color:var(--mut)">pasos esta semana</span></h4></div>
-      <div class="k">
-       <div><div class="m">Próxima caminata</div><div style="font-weight:800;font-size:14px">Sábado 21 de noviembre, 10:00</div><div style="font-size:11px">Bosques de Palermo</div></div>
-       <div class="pb"><i></i><div class="gf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8c-2.5 0-4.5-.8-4.5-2.5S9.5 3 12 8zm0 0c2.5 0 4.5-.8 4.5-2.5S14.5 3 12 8z"/></svg></div></div>
-       <div style="color:var(--c3);font-weight:600">Te faltan 11.350 pasos para desbloquearla</div>
-       <div class="dt"><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s></s><s></s><s></s></div>
-       <div class="bt off">Bloqueada hasta llegar a la meta</div>
-      </div>
-      <div><div style="font:800 15px var(--d);font-style:italic;margin-bottom:6px">Día a día</div>
-       <div class="m" style="display:grid;grid-template-columns:28px 1fr 38px;gap:5px 6px;align-items:center"><span>Lun</span><i style="height:8px;border-radius:4px;background:var(--c);width:85%"></i><span>5.210</span><span>Mar</span><i style="height:8px;border-radius:4px;background:var(--c);width:100%"></i><span>6.080</span><span>Mié</span><i style="height:8px;border-radius:4px;background:var(--c);width:68%"></i><span>4.120</span></div></div>
-     </div>
-    </div>
-   </div>
-  </div>
- </div>
+ <div class="ph"><img src="encabezado.jpg" alt="Un grupo de personas caminando y charlando en un parque" width="1200" height="400"></div>
+ <div class="wrap"><div class="tx">
+  <div class="chips"><span class="chip">15 minutos</span><span class="chip">De 18 a 22 h</span><span class="chip">Gratis</span></div>
+  <h1>Caminá 15 minutos con alguien cerca.</h1>
+  <p>Mirá quién sale a caminar hoy, sumate o proponé tu propia caminata. En un lugar público, con gente que ves antes de encontrarte.</p>
+  <a class="btn y" href="app.html">Empezar a caminar</a>
+  <small>Funciona en iPhone y Android. Entrás con tu cuenta de Google.</small>
+ </div></div>
 </header>
 
-<section id="como">
- <div class="wrap">
-  <div class="head"><h2>Tres pasos, un fin de semana distinto.</h2><p class="mut">Pateando no es una app para contar pasos: es la excusa para salir a caminar con gente nueva, en un lugar lindo.</p></div>
-  <div class="steps">
-   <div class="step"><span class="n">1</span><h3>Caminá solo, a tu ritmo</h3><p class="mut">Durante la semana la app lee tus pasos desde Apple Salud. Vas al trabajo, paseás al perro, das una vuelta: todo suma.</p></div>
-   <div class="step"><span class="n">2</span><h3>Llegá a la meta semanal</h3><p class="mut">Cada caminata tiene una meta de pasos. Ves tu avance día a día y cuánto te falta para desbloquearla.</p></div>
-   <div class="step"><span class="n">3</span><h3>Anotate y caminá en grupo</h3><p class="mut">Con la meta cumplida podés reservar tu lugar. El sábado nos encontramos en los Bosques de Palermo, con infusiones y algo dulce.</p></div>
+<section id="como"><div class="wrap">
+ <div class="sh"><h2>Salir a caminar acompañado, en tres pasos.</h2><p>Sin grupos de chat ni coordinaciones eternas. Todo se resuelve en la app, en menos de un minuto.</p></div>
+ <div class="steps" id="steps">
+  <div class="step"><h3>Mirá las caminatas activas</h3><p>Arriba de todo ves quién sale hoy: la hora, el punto en el mapa y quiénes van, con su foto de cuerpo entero.</p></div>
+  <div class="step"><h3>Sumate o proponé la tuya</h3><p>Tocá “Me sumo” y listo. Si preferís proponer, elegís el pin, la hora y cuántas personas más pueden venir.</p></div>
+  <div class="step"><h3>Caminá 15 minutos</h3><p>Encontrate en el punto, caminen juntos y sumá ese tiempo a tu semana. ¿Cambiaste de idea? Con un toque “Me bajo”.</p></div>
+ </div>
+</div></section>
+
+<section class="show"><div class="wrap">
+ <div>
+  <div class="sh"><h2>Sabés con quién te vas a encontrar.</h2><p>Cada caminata muestra la foto de cuerpo entero, el nombre y la edad de quienes van. Nada de sorpresas.</p></div>
+  <div class="list">
+   <div><i></i><span><b>Entre las 18 y las 22 h</b><p>Caminatas cortas para después del trabajo o del estudio.</p></span></div>
+   <div><i></i><span><b>Pin exacto en el mapa</b><p>Con botón de “Cómo llegar” directo a tu app de mapas.</p></span></div>
+   <div><i></i><span><b>Para una persona o para varias</b><p>Vos decidís cuántos lugares hay en tu caminata.</p></span></div>
   </div>
  </div>
-</section>
+ <div class="phone" aria-hidden="true"><div class="scr"><div class="top">Paseando</div><div class="in">
+  <h4>¿Quién camina hoy?</h4>
+  <div class="mc"><div class="a">M</div><div><em>En 12 min</em><b>Majo R., 29</b><span>Rosedal · 2 de 3 van</span></div></div>
+  <div class="mc" id="mc2"><div class="a">L</div><div><em>19:30</em><b>Lucas P., 34</b><span>Plaza Italia · 1 de 2 van</span></div></div>
+  <button class="tg" id="tg" tabindex="-1">Me sumo</button>
+  <div class="mj"><b>Tu tiempo caminado</b><div class="bar"><i id="mb"></i></div><span class="mut">45 min esta semana</span></div>
+ </div><div class="fab">+ Caminar</div></div></div>
+</div></section>
 
-<section id="pantallas" class="sec-pale">
- <div class="wrap">
-  <div class="head"><h2>Así se ve por dentro.</h2><p class="mut">Una app simple, de pocas pantallas, pensada para que lo importante pase afuera.</p></div>
-  <div class="shotsWrap"><div class="shots">
-
-   <div class="shot"><div class="phone"><div class="bar"><img src="logopaseando.png" alt=""></div><div class="sc" style="align-items:center;text-align:center;padding-top:30px">
-     <h4 style="font-size:28px">Caminá solo,<br>para caminar en grupo.</h4>
-     <p class="m" style="font-size:11px">Sumá pasos durante la semana y desbloqueá la caminata del fin de semana.</p>
-     <div style="margin-top:auto;width:100%;display:flex;flex-direction:column;gap:10px"><div class="cb"><u>✓</u><span>Tengo 18 años o más y acepto los Términos y el descargo de responsabilidad.</span></div><div class="bt">Continuar con Google</div></div>
-    </div></div>
-    <div><h3>Entrás con Google</h3><p>Un toque y listo. Confirmás que sos mayor de 18 y aceptás los términos.</p></div></div>
-
-   <div class="shot"><div class="phone"><div class="bar"><img src="logopaseando.png" alt=""></div><div class="sc">
-     <div><div class="m">Hola, Camila</div><h4 style="font-size:30px">18.650 <span style="font:600 11px var(--b);font-style:normal;color:var(--mut)">pasos esta semana</span></h4></div>
-     <div class="k"><div><div class="m">Próxima caminata</div><div style="font-weight:800;font-size:14px">Sábado 21 de noviembre, 10:00</div></div>
-      <div class="pb"><i></i><div class="gf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B2A3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13"/></svg></div></div>
-      <div style="color:var(--c3);font-weight:600">Te faltan 11.350 pasos</div>
-      <div class="dt"><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s></s><s></s><s></s></div>
-      <div class="m">7 de 10 lugares ocupados</div></div>
-     <div class="k" style="gap:5px"><b>Sábado 7 de noviembre</b><div class="m">9 asistentes · 4,6 de 5</div><div><b>Martín G.</b> Muy buena onda, el grupo y el chocolate caliente.</div></div>
-    </div></div>
-    <div><h3>Tu semana, de un vistazo</h3><p>Pasos acumulados, día a día, cuánto falta y cuántos lugares quedan. Abajo, reseñas de las caminatas anteriores.</p></div></div>
-
-   <div class="shot"><div class="phone"><div class="bar"><img src="logopaseando.png" alt=""></div><div class="sc">
-     <span class="chip">Desbloqueada</span><h4 style="font-size:25px">Vuelta al lago con picnic</h4>
-     <div class="k" style="gap:6px"><div><span class="m">Cuándo</span><br><b>Sábado 21 de noviembre, 10:00</b></div><div><span class="m">Dónde</span><br><b>Bosques de Palermo</b></div><div><span class="m">Duración</span><br><b>1 h 30</b></div></div>
-     <div class="k" style="gap:6px"><b>Quiénes van (7 de 10)</b><div class="av"><b>C</b>Camila R. (vos)</div><div class="av"><b>M</b>Martín G.</div><div class="av"><b>L</b>Lucía P.</div><div class="av free"><b></b><span class="m">Lugar libre</span></div></div>
-    </div></div>
-    <div><h3>La caminata es tuya</h3><p>Todos los datos: cuándo, dónde, qué llevar y con quiénes vas. Ves nombre e inicial de cada anotado.</p></div></div>
-
-   <div class="shot"><div class="phone"><div class="bar"><img src="logopaseando.png" alt=""></div><div class="sc">
-     <div><div class="m">Sábado 7 de noviembre</div><h4 style="font-size:25px">¿Cómo estuvo la caminata?</h4></div>
-     <div class="k"><b>Tu calificación</b><div style="display:flex;gap:4px;font-size:24px;color:var(--c2);line-height:1">★★★★<span style="color:var(--line)">★</span></div>
-      <div class="m" style="margin-top:4px">Contanos qué te pareció</div><div style="border:1px solid var(--c3);border-radius:9px;padding:9px;background:#fff;min-height:64px;font-size:11px">Muy lindo grupo, volvería a ir.</div><div class="m" style="text-align:right">31/100</div></div>
-     <div class="m">Tu reseña se publica como <b style="color:var(--ink)">Camila R.</b></div>
-     <div class="bt" style="margin-top:auto">Publicar reseña</div>
-    </div></div>
-    <div><h3>Contá cómo te fue</h3><p>Después de asistir, calificás de 1 a 5 y dejás un comentario corto. Así crece la comunidad.</p></div></div>
-
-  </div></div>
+<section><div class="wrap meta">
+ <div class="sh" style="margin:0"><h2>Tus pasos se cuentan solos.</h2><p>Anotá cuánto caminaste y la app calcula los pasos. No hace falta iPhone ni ningún reloj. Al llegar a la meta semanal, se desbloquea la caminata grupal del fin de semana.</p></div>
+ <div>
+  <span class="big" id="num" data-to="100000">0</span>
+  <p class="mut" style="font-weight:600">pasos para desbloquear la caminata grupal</p>
+  <div class="pb"><i id="pbar"></i></div>
+  <p class="mut" style="font-size:14px">Una hora de caminata suma unos 6.000 pasos estimados.</p>
  </div>
-</section>
+</div></section>
 
-<section id="detalles">
- <div class="wrap">
-  <div class="head"><h2>Todo lo que tenés que saber.</h2></div>
-  <div class="det">
-   <div class="d"><h3>Dónde y cuándo</h3><p class="mut">Caminatas de fin de semana en los Bosques de Palermo, Buenos Aires. Cada una tiene su fecha, hora y punto de encuentro, que ves en la app. Suelen durar alrededor de una hora y media.</p></div>
-   <div class="d"><h3>Qué incluye</h3><p class="mut">Infusiones y algo dulce para compartir. Después de la caminata podés quedarte con el grupo; el anfitrión se retira.</p></div>
-   <div class="d"><h3>Grupos chicos</h3><p class="mut">Hay un cupo máximo por caminata, pensado para que puedas conversar con todos. Si se llena, aplicás automáticamente a la del finde siguiente.</p></div>
-   <div class="d"><h3>Qué llevar</h3><p class="mut">Ropa cómoda y ganas de conocer gente. La app te lo recuerda en la pantalla de la caminata.</p></div>
-   <div class="d"><h3>Tus pasos</h3><p class="mut">Se leen desde Apple Salud, solo para medir tu avance semanal hacia la meta de la caminata.</p></div>
-   <div class="d"><h3>Tu privacidad</h3><p class="mut">Usamos tu nombre y mail de Google. El resto de los anotados ve tu nombre y la inicial de tu apellido, igual que en las reseñas. Tus datos se tratan según la Ley 25.326 y podés pedir tu baja.</p></div>
-  </div>
+<section style="padding-top:0"><div class="wrap">
+ <div class="sh"><h2>Pensado para cuidarte.</h2></div>
+ <div class="safe">
+  <div><h3>Solo mayores de 18</h3><p>Todas las personas confirman su edad y suben su foto antes de participar.</p></div>
+  <div><h3>Lugares públicos</h3><p>Te recomendamos siempre puntos concurridos y avisarle a alguien adónde vas.</p></div>
+  <div><h3>Reportar y salir</h3><p>Podés reportar cualquier propuesta y bajarte de una caminata cuando quieras.</p></div>
  </div>
-</section>
+</div></section>
 
-<section id="sponsors" class="sec-ink">
- <div class="wrap spon">
-  <div style="display:flex;flex-direction:column;gap:18px">
-   <h2>¿Querés ser parte de la caminata?</h2>
-   <p class="mut" style="max-width:44ch">Las marcas pueden acompañar cada caminata y aparecer en la app y en el encuentro. Compartimos un reporte con cifras agregadas de la comunidad: cuántas personas caminan, cuándo y cómo califican la experiencia. Nunca compartimos nombres ni mails.</p>
-   <p><a href="mailto:hola@pateando.app" style="color:var(--c);font-weight:800">hola@pateando.app</a></p>
-  </div>
-  <div class="kpis" aria-label="Ejemplo de reporte para sponsors (datos de ejemplo)">
-   <div class="kpi"><b>1.240</b><span>usuarios registrados</span></div>
-   <div class="kpi"><b>612</b><span>activos esta semana</span></div>
-   <div class="kpi"><b>4,7</b><span>calificación promedio</span></div>
-   <div class="kpi"><b>12</b><span>caminatas realizadas</span></div>
-   <div class="cols"><div>410<i style="height:68%"></i>Lun</div><div>455<i style="height:75%"></i>Mar</div><div>430<i style="height:71%"></i>Mié</div><div>480<i style="height:79%"></i>Jue</div><div>520<i style="height:85%"></i>Vie</div><div>612<i style="height:100%"></i>Sáb</div><div>590<i style="height:96%"></i>Dom</div></div>
-   <p class="mut" style="grid-column:1/-1;font-size:13px">Datos de ejemplo del panel de administración.</p>
-  </div>
- </div>
-</section>
+<div class="cta"><div class="wrap">
+ <h2>Hoy a las 19 h alguien sale a caminar.</h2>
+ <a class="btn y" href="app.html">Entrar a Pateando</a>
+</div></div>
+<footer><div class="wrap"><span>© Pateando</span><a href="app.html">Términos y descargo de responsabilidad</a></div></footer>
 
-<section id="faq" class="sec-pale">
- <div class="wrap" style="max-width:780px">
-  <div class="head"><h2>Preguntas frecuentes</h2></div>
-  <details><summary>¿Cuánto cuesta?</summary><p>Completá acá el precio o aclará que es gratuita.</p></details>
-  <details><summary>¿Tengo que caminar sola o solo toda la semana?</summary><p>Caminás como siempre lo hacés: la app suma los pasos que das en tu día a día. No hay que hacer rutas especiales.</p></details>
-  <details><summary>¿Qué pasa si no llego a la meta de pasos?</summary><p>La caminata de esa semana queda bloqueada, pero seguís sumando para la siguiente. Siempre ves cuántos pasos te faltan.</p></details>
-  <details><summary>¿Qué pasa si el cupo se llena?</summary><p>Aplicás a la caminata del fin de semana siguiente. Los cupos son limitados para mantener grupos chicos.</p></details>
-  <details><summary>¿Puedo anotarme si soy menor de 18?</summary><p>No. Pateando es solo para personas de 18 años o más, y podemos pedir verificación de identidad.</p></details>
-  <details><summary>¿Quién ve mis datos?</summary><p>Los otros participantes ven tu nombre y la inicial de tu apellido. Los sponsors reciben únicamente cifras agregadas, sin nombres ni mails.</p></details>
-  <details><summary>¿Hay versión para Android?</summary><p>Por ahora, Pateando está disponible para iPhone.</p></details>
- </div>
-</section>
-
-<div class="cta">
- <div class="wrap">
-  <h2>El sábado te esperamos.</h2>
-  <p>Bajate la app, empezá a sumar pasos y desbloqueá tu lugar en la próxima caminata.</p>
-  <a class="store" href="https://apps.apple.com/app/idXXXXXXXXXX" aria-label="Descargar Pateando en el App Store">
-   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
-   <span><small>Descargala en el</small><b>App Store</b></span>
-  </a>
- </div>
-</div>
-
-<footer>
- <div class="wrap">
-  <span>© 2026 Pateando · Buenos Aires</span>
-  <span><a href="#faq">Preguntas</a> &nbsp;·&nbsp; <a href="#sponsors">Sponsors</a> &nbsp;·&nbsp; <a href="mailto:hola@pateando.app">Contacto</a></span>
- </div>
-</footer>
+<script>
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const t=e.target;io.unobserve(t);
+ if(t.id==='steps')t.querySelectorAll('.step').forEach(s=>s.classList.add('in'));
+ if(t.id==='num'){const to=+t.dataset.to,t0=performance.now();document.getElementById('pbar').style.width='100%';
+  (function f(n){const k=rm?1:Math.min(1,(n-t0)/2000);t.textContent=Math.round(to*(1-Math.pow(1-k,3))).toLocaleString('es-AR');if(k<1)requestAnimationFrame(f)})(t0)}
+ if(t.id==='mb')t.style.width='45%'}),{threshold:.35});
+['steps','num','mb'].forEach(i=>io.observe(document.getElementById(i)));
+if(rm)document.querySelectorAll('.step').forEach(s=>s.classList.add('in'));
+const tg=document.getElementById('tg'),c2=document.getElementById('mc2');let dentro=false;
+setInterval(()=>{dentro=!dentro;tg.classList.toggle('out',dentro);tg.textContent=dentro?'✓ Estás dentro · Me bajo':'Me sumo';c2.classList.toggle('on',dentro)},2600);
+</script>
 </body>
 </html>
