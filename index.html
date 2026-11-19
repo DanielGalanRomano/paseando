@@ -18,10 +18,9 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:#DCE8FD;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
 #app{position:relative;max-width:480px;height:100%;margin:0 auto;background:var(--bg);overflow:hidden}
-#hdr{position:absolute;top:0;left:0;right:0;z-index:6;background:#25bdfc;padding-top:env(safe-area-inset-top);display:flex;align-items:center;justify-content:center;min-height:calc(env(safe-area-inset-top) + 56px)}
-#hdr b{color:#fff;font-size:22px;font-weight:800;letter-spacing:-.03em;font-style:italic}
-#menuBtn{position:absolute;right:4px;top:env(safe-area-inset-top,0px);width:56px;height:56px;border:0;background:none;display:none;align-items:center;justify-content:center;cursor:pointer}
-.screen{position:absolute;inset:calc(env(safe-area-inset-top) + 56px) 0 0 0;overflow-y:auto;padding:24px 20px calc(env(safe-area-inset-bottom) + 110px)}
+#hdr{position:absolute;top:0;left:0;right:0;height:0;z-index:6}
+#menuBtn{position:absolute;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);width:46px;height:46px;border:0;border-radius:23px;background:rgba(11,20,38,.4);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0;z-index:8}
+.screen{position:absolute;inset:0;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 24px) 20px calc(env(safe-area-inset-bottom) + 110px)}
 h1{margin:0;font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-.03em} h2{margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-.02em}
 p{margin:0;line-height:1.5} a{color:var(--c2);font-weight:600} .mut{color:var(--mut);font-size:13px}
 .col{display:flex;flex-direction:column;gap:22px} .g12{display:flex;flex-direction:column;gap:12px} .row{display:flex;align-items:center;gap:12px}
@@ -47,9 +46,11 @@ p{margin:0;line-height:1.5} a{color:var(--c2);font-weight:600} .mut{color:var(--
 .mini:active{transform:scale(.97)} .mini.in{border-color:var(--c);box-shadow:0 0 0 3px var(--soft)}
 .mini .ph{width:56px;height:76px;border-radius:12px;object-fit:cover;background:var(--soft);flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--c2);font-size:22px}
 .mini .tx{display:flex;flex-direction:column;gap:3px;min-width:0} .mini b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .mini .mut{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fab{position:absolute;right:18px;bottom:calc(env(safe-area-inset-bottom) + 20px);z-index:7;display:none;align-items:center;gap:8px;height:58px;padding:0 22px 0 18px;border:0;border-radius:29px;background:var(--c);color:#fff;font:800 16px 'Plus Jakarta Sans',sans-serif;box-shadow:0 10px 28px rgba(54,128,247,.45);cursor:pointer;animation:fabin .7s .5s cubic-bezier(.3,1.6,.5,1) backwards,pulse 2.6s 1.5s infinite}
-.fab:active{transform:scale(.94)} @keyframes fabin{from{transform:scale(0) rotate(-90deg)}}
-@keyframes pulse{0%,100%{box-shadow:0 10px 28px rgba(54,128,247,.45)}50%{box-shadow:0 10px 28px rgba(54,128,247,.45),0 0 0 10px rgba(54,128,247,.14)}}
+#fab{position:absolute;left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom) + 18px);z-index:7;display:none;gap:10px}
+.fb{flex:1;min-height:58px;padding:8px 12px;border:0;border-radius:29px;background:var(--c);color:#fff;font:800 14px/1.15 'Plus Jakarta Sans',sans-serif;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(54,128,247,.45);cursor:pointer}
+.fb.wa{background:#15803D;box-shadow:0 10px 28px rgba(21,128,61,.4)}
+.fb:active{transform:scale(.95)}
+.pn .mini{width:100%;animation:none}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
 input[type=text],input[type=number],select{min-height:48px;width:100%;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;font:500 16px 'Plus Jakarta Sans',sans-serif;color:var(--ink);background:#fff}
 input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--c);outline-offset:2px}
@@ -69,7 +70,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 #toast.on{transform:none;opacity:1}
 .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .big{font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1}
-.ban{margin:-24px -20px 0;width:calc(100% + 40px);overflow:hidden;border-radius:0 0 28px 28px;box-shadow:0 8px 24px rgba(54,128,247,.22)}
+.ban{margin:calc(-24px - env(safe-area-inset-top)) -20px 0;width:calc(100% + 40px);overflow:hidden;border-radius:0 0 28px 28px;box-shadow:0 8px 24px rgba(54,128,247,.22)}
 .ban img{display:block;width:100%;height:auto;animation:kb 1.6s cubic-bezier(.2,.8,.2,1) both} .still .ban img{animation:none}
 @keyframes kb{from{transform:scale(1.14);opacity:0}to{transform:none;opacity:1}}
 #sheet.modal .pn{top:50%;left:14px;right:14px;bottom:auto;max-height:92%;border-radius:26px;background:#fff;opacity:0;transform:translateY(-46%) scale(.92);transition:transform .35s cubic-bezier(.3,1.3,.5,1),opacity .25s}
@@ -85,9 +86,9 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 </style>
 </head>
 <body>
-<div id="app"><header id="hdr"><b>Paseando</b><button id="menuBtn" data-act="menu" aria-label="Abrir menú"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header>
+<div id="app"><header id="hdr"><button id="menuBtn" data-act="menu" aria-label="Abrir menú"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></header>
 <main class="screen" id="screen"></main>
-<button class="fab" id="fab" data-act="newc" aria-label="Proponer una caminata"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Caminar</button>
+<div id="fab"><button class="fb" data-act="sop">Sumarme o proponer</button><a class="fb wa" href="https://chat.whatsapp.com/KwnHmDom83B3jNkP06dlm8?s=cl&amp;p=i&amp;iam=2" target="_blank" rel="noopener">Sumarme al grupo de WhatsApp</a></div>
 <div id="sheet"></div><div id="toast" role="status"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
@@ -113,17 +114,21 @@ const mapsLink=(a,b)=>`https://www.google.com/maps/dir/?api=1&destination=${a},$
 const gotLs=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const HAM='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
 let S={min:[],ca:[]},view='login',PQ=null,PQM=null,LP=null;
+const REG=new Set();
 
 /* ============ DATOS ============ */
 const perfilOk=()=>!!(S.p&&S.p.edad>=18&&S.p.foto_cuerpo_url);
 async function load(){
  const uid=S.uid,now=new Date().toISOString();
- const [p,ca,logs,wf]=await Promise.all([
+ const [p,ca,logs,wf,nu]=await Promise.all([
   q(sb.from('profiles').select('*').eq('id',uid).single()),
   q(sb.rpc('caminatas_activas')),
   q(sb.from('minutos_log').select('dia,minutos').eq('user_id',uid).gte('dia',lunes())),
-  q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',now).order('inicia_at').limit(1))]);
- S.p=p;S.ca=ca||[];S.min=logs||[];S.w=wf[0]||null;S.ocu=0;S.yo=false;
+  q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',now).order('inicia_at').limit(1)),
+  sb.rpc('usuarios_nuevos').then(r=>r.data||[],()=>[])]);
+ S.p=p;S.ca=ca||[];S.min=logs||[];S.w=wf[0]||null;S.ocu=0;S.yo=false;S.nu=nu;
+ const hechas=S.ca.filter(c=>(c.estoy||c.es_mio)&&c.miembros.length>1&&new Date(c.inicia_at)<=new Date()&&!REG.has(c.id));
+ if(hechas.length){try{await Promise.all(hechas.map(c=>{REG.add(c.id);return sb.rpc('registrar_caminata',{p_id:c.id})}));S.min=await q(sb.from('minutos_log').select('dia,minutos').eq('user_id',uid).gte('dia',lunes()))}catch(e){console.warn(e)}}
  const gf=gphoto();
  if(!S.p.foto_url&&gf){S.p.foto_url=gf;try{await q(sb.from('profiles').update({foto_url:gf}).eq('id',uid))}catch(e){console.warn(e)}}
  if(!S.p.acepto_terminos_at&&gotLs('consent')==='1'){const t=new Date().toISOString();
@@ -133,7 +138,7 @@ async function load(){
 const gphoto=()=>{const m=S.meta||{},i=(S.ids||[]).find(x=>x.provider==='google'),d=(i&&i.identity_data)||{},u=m.avatar_url||m.picture||d.avatar_url||d.picture||'';return u.replace(/=s\d+-c$/,'=s256-c')};
 const minTot=()=>S.min.reduce((a,b)=>a+b.minutos,0);
 const minHoy=()=>S.min.filter(x=>x.dia===hoyAR()).reduce((a,b)=>a+b.minutos,0);
-const sig=()=>JSON.stringify([S.ca,S.min,S.ocu,S.yo,S.w&&S.w.id]);
+const sig=()=>JSON.stringify([S.ca,S.min,S.ocu,S.yo,S.w&&S.w.id,S.nu&&S.nu.length]);
 
 /* ============ VISTAS ============ */
 const fig=(u,n,cls='ph')=>u?`<img class="${cls}" src="${esc(u)}" referrerpolicy="no-referrer" alt="${esc(n)}">`:`<div class="${cls}">${esc((n||'?')[0])}</div>`;
@@ -144,17 +149,17 @@ function groupCard(){const w=S.w;if(!w)return `<div class="card rise"><h2>Camina
  const btn=S.yo?`<button class="btn out pop" data-act="wleave">✓ Estás anotado · Me bajo</button>`:!u?`<button class="btn" disabled>Se desbloquea con ${fmt(meta)} pasos</button>`:libres?`<button class="btn" data-act="wjoin">Anotarme a la caminata</button>`:`<button class="btn" disabled>Cupo completo</button>`;
  return `<div class="card g12 rise"><div><p class="mut">Caminata grupal</p><p style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:2px">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:4px">${esc(w.lugar)}${w.punto_encuentro?' · '+esc(w.punto_encuentro):''}</p>${w.punto_lat!=null?`<a href="${mapsLink(w.punto_lat,w.punto_lng)}" target="_blank" rel="noopener" style="font-size:14px">Cómo llegar</a>`:''}</div><p style="font-size:14px">${esc(w.titulo)}. ${esc(w.incluye||'')}</p>
 <div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p style="font-size:14px;font-weight:600;color:var(--c2)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(meta-pasos)} pasos para desbloquearla`}</p><p class="mut">${S.ocu} de ${w.cupo_max} lugares ocupados</p>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`}
+const nuevos=()=>S.nu&&S.nu.length?`<div class="rise"><h2>Nuevos en Paseando</h2><div class="mbs">${S.nu.map(u=>`<div class="mb">${fig(u.foto_cuerpo_url||u.foto_url,u.nombre,'ph')}<span>${esc(u.nombre)} ${esc(u.inicial)}., ${u.edad}</span></div>`).join('')}</div></div>`:'';
 const V={
 login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
 home:()=>{const pasos=minTot()*PPM,meta=(S.w&&S.w.meta_pasos)||META;
- return `<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>
-<div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Caminar</b> y proponé la primera.</p></div>`}</div>
-<div class="card g12 rise"><h2 style="margin:0">Tu tiempo caminado</h2><div><span class="big" data-count="${pasos}">0</span> <span class="mut">pasos estimados esta semana</span></div><div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p class="mut">${minTot()} min esta semana · ${minHoy()} min hoy · calculamos ${PPM} pasos por minuto</p>
-<div class="chips">${[15,30,45,60].map(m=>`<button class="btn sm out" data-act="addmin" data-v="${m}">+${m}</button>`).join('')}</div>
-<div class="row"><input type="number" id="mc" min="1" max="300" placeholder="Otros minutos" inputmode="numeric" style="flex:1"><button class="btn sm" style="width:auto;padding:0 18px" data-act="addcust">Sumar</button></div></div>
+ return `<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>${nuevos()}
+<div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Sumarme o proponer</b> y proponé la primera.</p></div>`}</div>
+<div class="card g12 rise"><h2 style="margin:0">Tu tiempo caminado</h2><div><span class="big" data-count="${pasos}">0</span> <span class="mut">pasos estimados esta semana</span></div><div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p class="mut">${minTot()} min esta semana · se suman solos al caminar con alguien (15 min × ${PPM} pasos)</p>
+<p class="mut" style="font-size:12px">¡Muy pronto vas a poder registrar todos tus pasos!</p></div>
 ${groupCard()}<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`},
-terms:()=>`<div class="col"><div><button class="link" data-act="back">← Volver</button><h1>Términos y descargo</h1></div>${[['Edad','Solo participan personas de 18 años o más.'],['Participación voluntaria','Caminar al aire libre implica riesgos. Participás bajo tu propia responsabilidad.'],['Caminatas de 15 minutos','Paseando conecta personas que deciden caminar juntas y no verifica a nadie. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien.'],['Fotos y datos','Quienes ven tu caminata ven tu foto de cuerpo entero, nombre, inicial del apellido y edad, para saber con quién se encuentran. El punto del mapa es público para las caminatas activas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Responsabilidad','El organizador no responde por lesiones, pérdidas ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto. Podemos retirar a quien no lo cumpla.']].map(t=>`<div><h2 style="font-size:16px;margin-bottom:4px">${t[0]}</h2><p style="font-size:14px;color:#2B3A55">${t[1]}</p></div>`).join('')}</div>`};
+terms:()=>`<div class="col"><div><button class="link" data-act="back">← Volver</button><h1>Términos y descargo</h1></div>${[['Edad','Solo participan personas de 18 años o más.'],['Participación voluntaria','Caminar al aire libre implica riesgos. Participás bajo tu propia responsabilidad.'],['Caminatas de 15 minutos','Paseando conecta personas que deciden caminar juntas y no verifica a nadie. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien.'],['Fotos y datos','Quienes ven tu caminata ven tu foto de cuerpo entero, nombre, inicial del apellido y edad, para saber con quién se encuentran. Si tu perfil está completo, también aparecés en la lista de nuevos usuarios que ven los demás. El punto del mapa es público para las caminatas activas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Responsabilidad','El organizador no responde por lesiones, pérdidas ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto. Podemos retirar a quien no lo cumpla.']].map(t=>`<div><h2 style="font-size:16px;margin-bottom:4px">${t[0]}</h2><p style="font-size:14px;color:#2B3A55">${t[1]}</p></div>`).join('')}</div>`};
 
 /* ============ SHEETS ============ */
 function sheet(h,modal){const s=$('#sheet');s.classList.toggle('modal',!!modal);s.innerHTML=`<div class="bk" data-act="close"></div><div class="pn" role="dialog" aria-modal="true">${h}</div>`;s.classList.add('on')}
@@ -190,6 +195,7 @@ function newSheet(){const h=hoyAR();S.qd=slots(h).length?h:addD(h,1);S.qt='';S.q
   const put=(a,b)=>{PQ={lat:a,lng:b};if(mk)mk.setLatLng([a,b]);else{mk=L.marker([a,b],{draggable:true}).addTo(m);mk.on('dragend',()=>{const p=mk.getLatLng();PQ={lat:p.lat,lng:p.lng};qGeo(p.lat,p.lng)})}qGeo(a,b)};
   m.on('click',ev=>put(ev.latlng.lat,ev.latlng.lng));qInfo();PQM={m,put}}).catch(()=>{const el=$('#qmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
 function menuSheet(){const p=S.p||{};sheet(`<div class="row">${fig(p.foto_url,p.nombre,'av')}<div style="min-width:0"><b>${esc(p.nombre)} ${esc(p.apellido||'')}</b><p class="mut" style="overflow:hidden;text-overflow:ellipsis">${esc(p.email||'')}</p></div></div><button class="mi" data-act="perfil">Mi foto y mi edad</button><button class="mi" data-act="terms">Términos</button><button class="btn out" data-act="logout">Cerrar sesión</button>`)}
+function sopSheet(){sheet(`<h2 style="margin:0">Sumarme o proponer</h2>${S.ca.length?`<div class="g12">${S.ca.map(mini).join('')}</div>`:'<p class="mut">No hay caminatas activas ahora.</p>'}<button class="btn" data-act="newc">Proponer mi caminata</button><button class="link" data-act="close" style="text-align:center">Cerrar</button>`)}
 
 /* ============ MAPAS ============ */
 function mkMap(id,lat,lng,z){const m=L.map(id,{scrollWheelZoom:false}).setView([lat,lng],z);
@@ -239,6 +245,7 @@ document.addEventListener('click',async e=>{
   if(!S.p.foto_cuerpo_url){toast('Subí tu foto de cuerpo entero');return}
   t.disabled=true;await q(sb.from('profiles').update({edad:ed}).eq('id',S.uid));S.p.edad=ed;closeSheet();toast('Perfil listo');const f=S.after;S.after=null;if(f)f()}
  if(a==='newc')newSheet();
+ if(a==='sop')sopSheet();
  if(a==='qday'){S.qd=t.dataset.v;S.qt='';qTimes()}
  if(a==='qtime'){S.qt=t.dataset.v;document.querySelectorAll('#qt .tm').forEach(b=>b.classList.toggle('on',b.dataset.v===S.qt))}
  if(a==='qpp'){S.qp=+t.dataset.v;document.querySelectorAll('#qp .tm').forEach(b=>b.classList.toggle('on',b===t))}
@@ -253,8 +260,6 @@ document.addEventListener('click',async e=>{
  if(a==='join')need(async()=>{await q(sb.rpc('sumarme_caminata',{p_id:id}));await load();render('home',true);openDetail(id);toast('¡Te sumaste!')});
  if(a==='leave'){const c=S.ca.find(x=>x.id===id);if(c&&c.es_mio&&!confirm('Si cancelás tu caminata, se cancela para todos. ¿Seguro?'))return;
   t.disabled=true;const r=await q(sb.rpc('bajarme_caminata',{p_id:id}));await load();render('home',true);if(r==='cancelada'){closeSheet();toast('Caminata cancelada')}else{openDetail(id);toast('Te bajaste de la caminata')}}
- if(a==='addmin'||a==='addcust'){const m=a==='addmin'?+t.dataset.v:+$('#mc').value;if(!(m>=1&&m<=300)){toast('Escribí entre 1 y 300 minutos');return}
-  t.disabled=true;await q(sb.rpc('registrar_minutos',{p_min:m}));await load();render('home',true);toast(`+${m} min · ${fmt(m*PPM)} pasos estimados`)}
  if(a==='wjoin'){t.disabled=true;const r=await q(sb.rpc('join_walk',{p_walk:S.w.id}));await load();render('home',true);toast(r==='completa'?'Se completó el cupo':'¡Te anotaste a la caminata grupal!')}
  if(a==='wleave'){t.disabled=true;await q(sb.rpc('salir_walk',{p_walk:S.w.id}));await load();render('home',true);toast('Te bajaste de la caminata grupal')}
  }catch(err){const m=err&&err.message||'';const k=Object.keys(ERR).find(x=>m.includes(x));toast(k?ERR[k]:m||'Ocurrió un error');t.disabled=false}
