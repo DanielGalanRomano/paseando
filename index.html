@@ -97,6 +97,7 @@ const SUPABASE_URL='https://brlhcorgjnaipmokhmhj.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybGhjb3Jnam5haXBtb2tobWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MzAyMzgsImV4cCI6MjExMDIwNjIzOH0.49WI6fH9wxiYNgXo5jjaa4VwfvPOjx5Y_NLlIgx06v8';
 const TZ='America/Argentina/Buenos_Aires',DEF_POS=[-34.5745,-58.4150];
 const PPM=100,META=100000; /* pasos estimados por minuto · meta semanal por defecto */
+const PREMIO={dias:3,txt:'un premio sorpresa'}; /* premio fácil: entrar X días distintos en la semana · cambiá el texto por tu premio real */
 const sb=window.supabase?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const $=(s,e=document)=>e.querySelector(s);
 const fmt=n=>Math.round(+n).toLocaleString('es-AR');
@@ -120,13 +121,14 @@ const REG=new Set();
 const perfilOk=()=>!!(S.p&&S.p.edad>=18&&S.p.foto_cuerpo_url);
 async function load(){
  const uid=S.uid,now=new Date().toISOString();
- const [p,ca,logs,wf,nu]=await Promise.all([
+ const [p,ca,logs,wf,nu,ap]=await Promise.all([
   q(sb.from('profiles').select('*').eq('id',uid).single()),
   q(sb.rpc('caminatas_activas')),
   q(sb.from('minutos_log').select('dia,minutos').eq('user_id',uid).gte('dia',lunes())),
   q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',now).order('inicia_at').limit(1)),
-  sb.rpc('usuarios_nuevos').then(r=>r.data||[],()=>[])]);
- S.p=p;S.ca=ca||[];S.min=logs||[];S.w=wf[0]||null;S.ocu=0;S.yo=false;S.nu=nu;
+  sb.rpc('usuarios_nuevos').then(r=>r.data||[],()=>[]),
+  sb.from('aperturas').select('dia,veces').eq('user_id',uid).gte('dia',lunes()).then(r=>r.data||[],()=>[])]);
+ S.p=p;S.ca=ca||[];S.min=logs||[];S.w=wf[0]||null;S.ocu=0;S.yo=false;S.nu=nu;S.ap=ap;
  const hechas=S.ca.filter(c=>(c.estoy||c.es_mio)&&c.miembros.length>1&&new Date(c.inicia_at)<=new Date()&&!REG.has(c.id));
  if(hechas.length){try{await Promise.all(hechas.map(c=>{REG.add(c.id);return sb.rpc('registrar_caminata',{p_id:c.id})}));S.min=await q(sb.from('minutos_log').select('dia,minutos').eq('user_id',uid).gte('dia',lunes()))}catch(e){console.warn(e)}}
  const gf=gphoto();
@@ -138,12 +140,20 @@ async function load(){
 const gphoto=()=>{const m=S.meta||{},i=(S.ids||[]).find(x=>x.provider==='google'),d=(i&&i.identity_data)||{},u=m.avatar_url||m.picture||d.avatar_url||d.picture||'';return u.replace(/=s\d+-c$/,'=s256-c')};
 const minTot=()=>S.min.reduce((a,b)=>a+b.minutos,0);
 const minHoy=()=>S.min.filter(x=>x.dia===hoyAR()).reduce((a,b)=>a+b.minutos,0);
-const sig=()=>JSON.stringify([S.ca,S.min,S.ocu,S.yo,S.w&&S.w.id,S.nu&&S.nu.length]);
+const sig=()=>JSON.stringify([S.ca,S.min,S.ocu,S.yo,S.w&&S.w.id,S.nu&&S.nu.length,S.ap]);
+
+/* Registra una entrada a la app (máx. 1 cada 30 min por dispositivo, así recargar no infla el número) */
+async function registrarEntrada(){
+ try{const l=+gotLs('lastOpen')||0;if(Date.now()-l<30*60000)return;
+  await q(sb.rpc('registrar_entrada'));try{localStorage.setItem('lastOpen',String(Date.now()))}catch(e){}}
+ catch(e){console.warn(e)}}
 
 /* ============ VISTAS ============ */
 const fig=(u,n,cls='ph')=>u?`<img class="${cls}" src="${esc(u)}" referrerpolicy="no-referrer" alt="${esc(n)}">`:`<div class="${cls}">${esc((n||'?')[0])}</div>`;
 const mini=c=>`<button class="mini${c.estoy?' in':''}" data-act="open" data-id="${c.id}"><div style="position:relative;flex:none">${fig(c.foto_cuerpo_url||c.foto_url,c.nombre)}${c.foto_cuerpo_url&&c.foto_url?`<img class="gb" src="${esc(c.foto_url)}" referrerpolicy="no-referrer" alt="">`:''}</div><div class="tx"><span class="chip${new Date(c.inicia_at)<=new Date()?' live':''}" style="align-self:flex-start">${cuando(c)}</span><b>${esc(c.nombre)} ${esc(c.inicial)}., ${c.edad}</b><span class="mut">${esc(c.punto)}</span><span class="mut">${c.miembros.length} de ${c.cupo_max} van${c.estoy?' · estás dentro':''}</span></div></button>`;
 const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:24px"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><h1 class="rise" style="font-size:27px">Caminá 15 minutos<br>con alguien cerca.</h1><p class="rise mut" style="font-size:15px">Mirá quién sale a caminar entre las 18 y las 22, sumate o proponé tu caminata. Cuando juntes pasos, desbloqueás la caminata grupal del finde.</p><div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-act="terms">Términos y el descargo de responsabilidad</a>.</span></label><button class="btn" id="go" disabled data-act="${act}">${label}</button>${act==='accept'?'<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button>':''}</div></div>`;
+function premioCard(){const d=new Set((S.ap||[]).map(x=>x.dia)).size,n=PREMIO.dias,ok=d>=n;
+ return `<div class="card g12 rise"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Tu primer pasito</h2><span class="chip${ok?' g':''}">${Math.min(d,n)} de ${n}</span></div><p style="font-size:14px">${ok?`¡Listo! Ganaste <b>${esc(PREMIO.txt)}</b>. Escribinos por el grupo de WhatsApp para reclamarlo.`:`Entrá a Pateando ${n} días distintos esta semana y ganá <b>${esc(PREMIO.txt)}</b>.`}</p><div class="row" style="gap:8px">${Array.from({length:n},(_,i)=>`<div class="bar" style="height:10px"><i data-w="${i<d?100:0}"></i></div>`).join('')}</div></div>`}
 function groupCard(){const w=S.w;if(!w)return `<div class="card rise"><h2>Caminata grupal</h2><p class="mut">Todavía no hay una caminata grupal publicada. Volvé pronto.</p></div>`;
  const pasos=minTot()*PPM,meta=w.meta_pasos||META,u=pasos>=meta,libres=Math.max(0,w.cupo_max-S.ocu);
  const btn=S.yo?`<button class="btn out pop" data-act="wleave">✓ Estás anotado · Me bajo</button>`:!u?`<button class="btn" disabled>Se desbloquea con ${fmt(meta)} pasos</button>`:libres?`<button class="btn" data-act="wjoin">Anotarme a la caminata</button>`:`<button class="btn" disabled>Cupo completo</button>`;
@@ -156,6 +166,7 @@ consent:()=>gate('accept','Aceptar y continuar'),
 home:()=>{const pasos=minTot()*PPM,meta=(S.w&&S.w.meta_pasos)||META;
  return `<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>${nuevos()}
 <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Sumarme o proponer</b> y proponé la primera.</p></div>`}</div>
+${premioCard()}
 <div class="card g12 rise"><h2 style="margin:0">Tu tiempo caminado</h2><div><span class="big" data-count="${pasos}">0</span> <span class="mut">pasos estimados esta semana</span></div><div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p class="mut">${minTot()} min esta semana · se suman solos al caminar con alguien (15 min × ${PPM} pasos)</p>
 <p class="mut" style="font-size:12px">¡Muy pronto vas a poder registrar todos tus pasos!</p></div>
 ${groupCard()}<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`},
@@ -274,6 +285,7 @@ async function boot(){
  const{data:{session}}=await sb.auth.getSession();
  if(!session){render('login');return}
  S.uid=session.user.id;S.meta=session.user.user_metadata||{};S.ids=session.user.identities||[];
+ await registrarEntrada();
  try{await load();render(S.p.acepto_terminos_at?'home':'consent')}catch(e){toast(e.message||'No se pudo cargar');render('login')}}
 /* Actualiza caminatas activas cada 15 s (si no hay ventana abierta) */
 setInterval(async()=>{if(document.hidden||!S.uid||view!=='home'||$('#sheet').classList.contains('on'))return;
