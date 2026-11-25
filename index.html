@@ -148,12 +148,6 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 h1{font-size:20px}
 .rise.row .av{width:34px;height:34px;border-radius:17px}
 
-/* Nuevos */
-.nv h2{font-size:14px;margin:0 0 6px}
-.nv .mbs{gap:8px;padding-bottom:0}
-.nv .mb{width:54px;font-size:10px;gap:2px}
-.nv .mb img,.nv .mb .ph{width:54px;height:66px;border-radius:10px;font-size:20px}
-
 /* Pasos */
 .spc{padding:12px;gap:8px;border-radius:20px}
 .spc .big{font-size:28px}
@@ -183,6 +177,14 @@ h1{font-size:20px}
 .st3{gap:6px}.st3 div{padding:6px 4px;border-radius:10px}.st3 b{font-size:13px}.st3 span{font-size:11px}
 #hoy .btn{min-height:44px;font-size:14px}
 #hoy .bar{height:8px}
+
+/* Nuevos (tabla en el ranking) */
+.nt{width:100%;border-collapse:collapse;font-size:13px}
+.nt th{text-align:left;font-size:11px;color:var(--mut);font-weight:700;padding:4px 6px}
+.nt td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:middle;font-weight:600}
+.nt .av{width:30px;height:30px;border-radius:15px;font-size:12px}
+.nt .chip{font-size:10px;padding:2px 6px;margin-top:2px}
+.nt th:last-child,.nt td:last-child{text-align:right}
 </style>
 </head>
 <body>
@@ -379,12 +381,14 @@ function rankInner(){const r=S.rk||[];if(!r.length)return'<p class="mut">Todaví
   return g+`<div class="rkr${me?' me':''}"><b class="pos p${x.puesto}">${x.puesto}</b>${fig(x.foto_url,x.nombre,'av')}<div class="nm">${esc(x.nombre)} ${esc(x.inicial)}.${me?' (vos)':''}</div><span class="stp">${fmt(x.pasos)}</span></div>`}).join('')}
 function drawRank(){const e=$('#rkIn');if(e)e.innerHTML=rankInner()}
 
-const nuevos=()=>S.nu&&S.nu.length?`<div class="rise nv"><h2>Nuevos en Paseando</h2><div class="mbs">${S.nu.map(u=>`<div class="mb">${fig(u.foto_cuerpo_url||u.foto_url,u.nombre,'ph')}<span>${esc(u.nombre)} ${esc(u.inicial)}., ${u.edad}</span></div>`).join('')}</div></div>`:'';
+/* --- Nuevos usuarios (tabla dentro del ranking) --- */
+const fechaCorta=iso=>new Date(iso).toLocaleDateString('es-AR',{timeZone:TZ,day:'2-digit',month:'2-digit'});
+function nuevosInner(){const n=S.nu||[];if(!n.length)return'';
+ return `<div class="g12" style="gap:6px"><h2 style="margin:0">Nuevos en Paseando</h2><table class="nt"><thead><tr><th>Usuario</th><th>Se sumó</th><th>Pasos</th></tr></thead><tbody>${n.map(u=>`<tr><td><div class="row" style="gap:8px">${fig(u.foto_url,u.nombre,'av')}<div><div>${esc(u.nombre)} ${esc(u.inicial)}.${u.id===S.uid?' (vos)':''}</div><span class="chip g">Usuario de esta semana</span></div></div></td><td>${fechaCorta(u.created_at)}</td><td>${fmt(u.pasos)}</td></tr>`).join('')}</tbody></table></div>`}
 const V={
 login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
 home:()=>`<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div>
-${nuevos()}
 <div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>
 ${chartCard()}
 <div id="hoy" class="rise">${hoyInner()}</div>
@@ -438,7 +442,7 @@ function newSheet(){const h=hoyAR();S.qd=slots(h).length?h:addD(h,1);S.qt='';S.q
   const put=(a,b)=>{PQ={lat:a,lng:b};if(mk)mk.setLatLng([a,b]);else{mk=L.marker([a,b],{draggable:true}).addTo(m);mk.on('dragend',()=>{const p=mk.getLatLng();PQ={lat:p.lat,lng:p.lng};qGeo(p.lat,p.lng)})}qGeo(a,b)};
   m.on('click',ev=>put(ev.latlng.lat,ev.latlng.lng));qInfo();PQM={m,put}}).catch(()=>{const el=$('#qmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
 function menuSheet(){const p=S.p||{};sheet(`<div class="row">${fig(p.foto_url,p.nombre,'av')}<div style="min-width:0"><b>${esc(p.nombre)} ${esc(p.apellido||'')}</b><p class="mut" style="overflow:hidden;text-overflow:ellipsis">${esc(p.email||'')}</p></div></div><button class="mi" data-act="perfil">Perfil (foto y edad)</button><button class="mi" data-act="rank">Ranking de caminantes</button><button class="mi" data-act="terms">Términos</button><button class="btn out" data-act="logout">Cerrar sesión</button>`)}
-function rankSheet(){sheet(`<h2 style="margin:0">Ranking de caminantes</h2><div class="tms eq" id="rper">${[['hoy','Hoy'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.rkp||'sem')===k?' on':''}" data-act="rkp" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="rkIn" style="gap:4px">${rankInner()}</div><button class="btn out" data-act="close">Cerrar</button>`)}
+function rankSheet(){sheet(`<h2 style="margin:0">Ranking de caminantes</h2><div class="tms eq" id="rper">${[['hoy','Hoy'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.rkp||'sem')===k?' on':''}" data-act="rkp" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="rkIn" style="gap:4px">${rankInner()}</div>${nuevosInner()}<button class="btn out" data-act="close">Cerrar</button>`)}
 function sopSheet(){sheet(`<h2 style="margin:0">Sumarme o proponer</h2>${S.ca.length?`<div class="g12">${S.ca.map(mini).join('')}</div>`:'<p class="mut">No hay caminatas activas ahora.</p>'}<button class="btn" data-act="newc">Proponer mi caminata</button><button class="link" data-act="close" style="text-align:center">Cerrar</button>`)}
 
 /* ============ MAPAS ============ */
