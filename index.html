@@ -34,6 +34,7 @@ p{margin:0;line-height:1.5} a{color:var(--c2);font-weight:600} .mut{color:var(--
 .chip.g{background:#DCFCE7;color:var(--ok)} .chip.live{background:var(--c);color:#fff;animation:blink 1.6s infinite}
 @keyframes blink{50%{opacity:.6}}
 .bar{height:14px;border-radius:7px;background:var(--line);overflow:hidden;flex:1}
+.g12>.bar{flex:none}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c2),var(--c));border-radius:7px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
 .rise{opacity:0;transform:translateY(14px);animation:rise .6s cubic-bezier(.2,.8,.2,1) forwards} .still .rise{animation:none;opacity:1;transform:none}
 @keyframes rise{to{opacity:1;transform:none}}
@@ -82,6 +83,70 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .tm{flex:none;min-height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font:700 14px 'Plus Jakarta Sans',sans-serif;color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
 .tm.on{background:var(--c);border-color:var(--c);color:#fff;transform:scale(1.05)} .tms.eq .tm{flex:1;padding:0}
 #qmap{height:170px}
+
+/* ---- Hero de pasos ---- */
+.hero{background:linear-gradient(135deg,var(--c2),var(--c));color:#fff;border-radius:28px;padding:22px 20px 20px;box-shadow:0 14px 32px rgba(54,128,247,.32)}
+.hero .big{color:#fff;font-size:52px}
+.hr1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.hl{font-size:14px;font-weight:700;opacity:.92;margin-top:6px}
+.trk{position:relative;height:58px;margin:22px 14px 0 4px}
+.trk::before{content:"";position:absolute;left:0;right:0;top:13px;border-top:2.5px dashed rgba(255,255,255,.45)}
+.trk u{position:absolute;left:0;top:11.5px;height:5px;border-radius:3px;background:#fff;text-decoration:none}
+.nd{position:absolute;top:0;width:28px;height:28px;border-radius:14px;border:2.5px solid rgba(255,255,255,.7);background:var(--c2);color:#fff;display:flex;align-items:center;justify-content:center}
+.nd.on{background:#fff;border-color:#fff;color:var(--c2)}
+.nd.cur{border-color:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.28)}
+.nd svg{display:block}
+.nd span{position:absolute;top:34px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;white-space:nowrap;color:#fff}
+.psr{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:14px;font-weight:800}
+.segs{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:8px}
+.segs i{height:10px;border-radius:5px;background:rgba(255,255,255,.25)}
+.hint{font-size:13px;font-weight:600;margin-top:10px;opacity:.96}
+
+/* ---- Gráfico ---- */
+.ch{display:grid;grid-template-columns:36px 1fr;grid-template-rows:176px auto;column-gap:6px;padding-top:20px}
+.ya{position:relative}
+.ya span{position:absolute;right:0;transform:translateY(50%);font-size:11px;font-weight:600;color:var(--mut)}
+.pl{position:relative;display:flex;align-items:stretch;gap:8px;border-bottom:1.5px solid var(--line)}
+.gl{position:absolute;left:0;right:0;border-top:1px dashed var(--line)}
+.gl.goal{border-top:1.5px dashed var(--ok);z-index:2}
+.gl.goal em{position:absolute;right:0;top:-16px;font:700 10px 'Plus Jakarta Sans',sans-serif;color:var(--ok);font-style:normal}
+.bc{position:relative;flex:1;display:flex;align-items:flex-end;justify-content:center;z-index:1}
+.bc i{position:relative;display:block;width:100%;max-width:30px;min-height:3px;border-radius:8px 8px 3px 3px;background:#9DBFFA;transition:height .9s cubic-bezier(.2,.8,.2,1)}
+.bc.cur i{background:linear-gradient(180deg,var(--c),var(--c2))}
+.bc i em{position:absolute;left:50%;top:-17px;transform:translateX(-50%);font:700 10px 'Plus Jakarta Sans',sans-serif;color:var(--ink);font-style:normal;white-space:nowrap}
+.xa{grid-column:2;display:flex;gap:8px}
+.xa span{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--mut);padding-top:7px}
+.xa span.on{color:var(--c2);font-weight:800}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:600;color:var(--mut)}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* ---- Hoy salís vos ---- */
+.wx{border-radius:22px;padding:16px;color:#fff;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.wxt{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wxt .tp{display:block;font-size:56px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.wxt p{font-size:14px;font-weight:600;opacity:.95;margin-top:4px}
+.wxs{display:flex;gap:6px;flex-wrap:wrap}
+.wxs span{background:rgba(255,255,255,.2);border-radius:10px;padding:5px 9px;font-size:12px;font-weight:700}
+.wxm{font-size:13px;font-weight:600;line-height:1.4}
+.sk{border-radius:18px;background:linear-gradient(90deg,var(--soft),#F3F8FF,var(--soft));background-size:200% 100%;animation:shim 1.3s infinite}
+@keyframes shim{to{background-position:-200% 0}}
+.rtm{background:var(--soft);border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.rtm svg{display:block;width:100%;height:auto}
+.st3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st3 div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}
+.st3 b{display:block;font-size:15px;letter-spacing:-.02em;white-space:nowrap}
+.st3 span{font-size:12px;color:var(--mut);font-weight:600}
+
+/* ---- Ranking ---- */
+.rkr{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:14px}
+.rkr.me{background:var(--soft)}
+.rkr .pos{width:26px;height:26px;border-radius:13px;background:var(--soft);color:var(--c2);font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+.rkr.me .pos{background:#fff}
+.rkr .pos.p1{background:#F5B301;color:#fff}.rkr .pos.p2{background:#9AA7B8;color:#fff}.rkr .pos.p3{background:#C77B3B;color:#fff}
+.rkr .av{width:34px;height:34px;border-radius:17px;font-size:14px}
+.rkr .nm{flex:1;min-width:0;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rkr .stp{font-weight:800;font-size:14px;color:var(--c2)}
+.gap{text-align:center;color:var(--mut);letter-spacing:4px;line-height:.6}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -96,14 +161,17 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 const SUPABASE_URL='https://brlhcorgjnaipmokhmhj.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybGhjb3Jnam5haXBtb2tobWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MzAyMzgsImV4cCI6MjExMDIwNjIzOH0.49WI6fH9wxiYNgXo5jjaa4VwfvPOjx5Y_NLlIgx06v8';
 const TZ='America/Argentina/Buenos_Aires',DEF_POS=[-34.5745,-58.4150];
-const PPM=100,META=100000; /* pasos estimados por minuto · meta semanal por defecto */
-const PREMIO={dias:3,txt:'un premio sorpresa'}; /* premio fácil: entrar X días distintos en la semana · cambiá el texto por tu premio real */
+const PPM=100,META=100000; /* pasos por minuto (igual que en el SQL) · meta por defecto de la caminata grupal */
+const PASITO=10000,PASITOS_BEN=10,STEP_M=.75; /* 10.000 pasos = 1 pasito · 10 pasitos = beneficio · largo de paso (m) para armar el trayecto */
+const PREMIO={txt:'un premio sorpresa'}; /* cambiá el texto por tu beneficio real */
 const sb=window.supabase?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const $=(s,e=document)=>e.querySelector(s);
 const fmt=n=>Math.round(+n).toLocaleString('es-AR');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const q=async p=>{const r=await p;if(r.error)throw r.error;return r.data};
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const kk=(n,d)=>n>=1000?String(+(n/1000).toFixed(d)).replace('.',',')+'K':String(Math.round(n));
 const hora=iso=>new Date(iso).toLocaleTimeString('es-AR',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hour12:false});
 const fecha=iso=>cap(new Date(iso).toLocaleDateString('es-AR',{timeZone:TZ,weekday:'long',day:'numeric',month:'long'}));
 const hoyAR=()=>new Date().toLocaleDateString('en-CA',{timeZone:TZ});
@@ -114,23 +182,27 @@ const cuando=c=>{const m=Math.round((new Date(c.inicia_at)-Date.now())/60000);re
 const mapsLink=(a,b)=>`https://www.google.com/maps/dir/?api=1&destination=${a},${b}`;
 const gotLs=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const HAM='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
-let S={min:[],ca:[]},view='login',PQ=null,PQM=null,LP=null;
+let S={min:[],ca:[],dias:[]},view='login',PQ=null,PQM=null,LP=null;
 const REG=new Set();
 
 /* ============ DATOS ============ */
 const perfilOk=()=>!!(S.p&&S.p.edad>=18&&S.p.foto_cuerpo_url);
+const desdeDe=per=>per==='hoy'?hoyAR():per==='mes'?hoyAR().slice(0,8)+'01':lunes();
+const rankQ=per=>sb.rpc('ranking_pasos',{p_desde:desdeDe(per)}).then(r=>r.error?null:(r.data||[]),()=>null);
 async function load(){
  const uid=S.uid,now=new Date().toISOString();
- const [p,ca,logs,wf,nu,ap]=await Promise.all([
+ const [p,ca,dias,plan,wf,nu,rk]=await Promise.all([
   q(sb.from('profiles').select('*').eq('id',uid).single()),
   q(sb.rpc('caminatas_activas')),
-  q(sb.from('minutos_log').select('dia,minutos').eq('user_id',uid).gte('dia',lunes())),
+  sb.rpc('mis_pasos_dia').then(r=>r.error?null:(r.data||[]),()=>null),
+  sb.rpc('plan_de_hoy').then(r=>r.error?null:((r.data||[])[0]||null),()=>null),
   q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',now).order('inicia_at').limit(1)),
   sb.rpc('usuarios_nuevos').then(r=>r.data||[],()=>[]),
-  sb.from('aperturas').select('dia,veces').eq('user_id',uid).gte('dia',lunes()).then(r=>r.data||[],()=>[])]);
- S.p=p;S.ca=ca||[];S.min=logs||[];S.w=wf[0]||null;S.ocu=0;S.yo=false;S.nu=nu;S.ap=ap;
+  rankQ(S.rkp||'sem')]);
+ if(!plan||!S.plan||plan.id!==S.plan.id)S.fin=false;
+ S.t0=Date.now();S.p=p;S.ca=ca||[];S.dias=dias||[];S.sqlOk=dias!==null;S.plan=plan;S.w=wf[0]||null;S.ocu=0;S.yo=false;S.nu=nu;S.rk=rk;
  const hechas=S.ca.filter(c=>(c.estoy||c.es_mio)&&c.miembros.length>1&&new Date(c.inicia_at)<=new Date()&&!REG.has(c.id));
- if(hechas.length){try{await Promise.all(hechas.map(c=>{REG.add(c.id);return sb.rpc('registrar_caminata',{p_id:c.id})}));S.min=await q(sb.from('minutos_log').select('dia,minutos').eq('user_id',uid).gte('dia',lunes()))}catch(e){console.warn(e)}}
+ if(hechas.length){try{await Promise.all(hechas.map(c=>{REG.add(c.id);return sb.rpc('registrar_caminata',{p_id:c.id})}));if(S.sqlOk){S.dias=await q(sb.rpc('mis_pasos_dia'));S.t0=Date.now()}}catch(e){console.warn(e)}}
  const gf=gphoto();
  if(!S.p.foto_url&&gf){S.p.foto_url=gf;try{await q(sb.from('profiles').update({foto_url:gf}).eq('id',uid))}catch(e){console.warn(e)}}
  if(!S.p.acepto_terminos_at&&gotLs('consent')==='1'){const t=new Date().toISOString();
@@ -138,9 +210,12 @@ async function load(){
  if(S.w){const[st,sg]=await Promise.all([q(sb.from('walk_stats').select('*').eq('walk_id',S.w.id).maybeSingle()),q(sb.from('walk_signups').select('estado').eq('walk_id',S.w.id).eq('user_id',uid).maybeSingle())]);
   S.ocu=st?st.ocupados:0;S.yo=!!sg&&sg.estado!=='cancelado'}}
 const gphoto=()=>{const m=S.meta||{},i=(S.ids||[]).find(x=>x.provider==='google'),d=(i&&i.identity_data)||{},u=m.avatar_url||m.picture||d.avatar_url||d.picture||'';return u.replace(/=s\d+-c$/,'=s256-c')};
-const minTot=()=>S.min.reduce((a,b)=>a+b.minutos,0);
-const minHoy=()=>S.min.filter(x=>x.dia===hoyAR()).reduce((a,b)=>a+b.minutos,0);
-const sig=()=>JSON.stringify([S.ca,S.min,S.ocu,S.yo,S.w&&S.w.id,S.nu&&S.nu.length,S.ap]);
+/* Pasos: la base viene del servidor; lo que corre desde la última carga se suma acá para que el número suba solo */
+const liveD=()=>{const p=S.plan;if(!p||p.estado!=='aceptada')return 0;const m=p.pasos_meta||PASITO;return Math.max(0,Math.min(m,p.pasos+(Date.now()-S.t0)/60000*PPM)-p.pasos)};
+const enCurso=()=>{const p=S.plan;return !!p&&p.estado==='aceptada'&&p.pasos+liveD()<(p.pasos_meta||PASITO)};
+const pasosHoy=()=>{const d=S.dias.find(x=>x.dia===hoyAR());return Math.floor((d?d.pasos:0)+liveD())};
+const pasosTotal=()=>Math.floor(S.dias.reduce((a,b)=>a+b.pasos,0)+liveD());
+const sig=()=>JSON.stringify([S.ca,S.ocu,S.yo,S.w&&S.w.id,S.nu&&S.nu.length,S.plan&&[S.plan.id,S.plan.estado],S.dias.length,S.rk&&S.rk.length]);
 
 /* Registra una entrada a la app (máx. 1 cada 30 min por dispositivo, así recargar no infla el número) */
 async function registrarEntrada(){
@@ -152,10 +227,139 @@ async function registrarEntrada(){
 const fig=(u,n,cls='ph')=>u?`<img class="${cls}" src="${esc(u)}" referrerpolicy="no-referrer" alt="${esc(n)}">`:`<div class="${cls}">${esc((n||'?')[0])}</div>`;
 const mini=c=>`<button class="mini${c.estoy?' in':''}" data-act="open" data-id="${c.id}"><div style="position:relative;flex:none">${fig(c.foto_cuerpo_url||c.foto_url,c.nombre)}${c.foto_cuerpo_url&&c.foto_url?`<img class="gb" src="${esc(c.foto_url)}" referrerpolicy="no-referrer" alt="">`:''}</div><div class="tx"><span class="chip${new Date(c.inicia_at)<=new Date()?' live':''}" style="align-self:flex-start">${cuando(c)}</span><b>${esc(c.nombre)} ${esc(c.inicial)}., ${c.edad}</b><span class="mut">${esc(c.punto)}</span><span class="mut">${c.miembros.length} de ${c.cupo_max} van${c.estoy?' · estás dentro':''}</span></div></button>`;
 const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:24px"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><h1 class="rise" style="font-size:27px">Caminá 15 minutos<br>con alguien cerca.</h1><p class="rise mut" style="font-size:15px">Mirá quién sale a caminar entre las 18 y las 22, sumate o proponé tu caminata. Cuando juntes pasos, desbloqueás la caminata grupal del finde.</p><div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-act="terms">Términos y el descargo de responsabilidad</a>.</span></label><button class="btn" id="go" disabled data-act="${act}">${label}</button>${act==='accept'?'<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button>':''}</div></div>`;
-function premioCard(){const d=new Set((S.ap||[]).map(x=>x.dia)).size,n=PREMIO.dias,ok=d>=n;
- return `<div class="card g12 rise"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Tu primer pasito</h2><span class="chip${ok?' g':''}">${Math.min(d,n)} de ${n}</span></div><p style="font-size:14px">${ok?`¡Listo! Ganaste <b>${esc(PREMIO.txt)}</b>. Escribinos por el grupo de WhatsApp para reclamarlo.`:`Entrá a Pateando ${n} días distintos esta semana y ganá <b>${esc(PREMIO.txt)}</b>.`}</p><div class="row" style="gap:8px">${Array.from({length:n},(_,i)=>`<div class="bar" style="height:10px"><i data-w="${i<d?100:0}"></i></div>`).join('')}</div></div>`}
+
+/* --- Hero: pasos del día + pasitos --- */
+const CK=[2500,5000,7500,10000];
+const CHECK='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const GIFT='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12"/><path d="M12 9C10.5 5 7 5 7 7.5 7 9 9 9 12 9zM12 9c1.500-4 5-4 5-1.500C17 9 15 9 12 9z"/></svg>';
+function heroInner(){
+ const h=pasosHoy(),tot=pasosTotal(),p=Math.floor(tot/PASITO),ok=p>=PASITOS_BEN,fr=(tot%PASITO)/PASITO*100,nx=CK.findIndex(v=>h<v),falta=PASITOS_BEN-p;
+ return `<div class="hr1"><div><span class="big" id="stepsNum" data-count="${h}">${fmt(h)}</span><p class="hl">Pasos del día</p></div>${enCurso()?'<span class="chip live" style="background:#fff;color:var(--c2)">En vivo</span>':''}</div>
+<div class="trk"><u style="width:${Math.min(100,h/PASITO*100)}%"></u>${CK.map((v,i)=>`<div class="nd${h>=v?' on':''}${i===nx?' cur':''}" style="left:calc(${(i+1)*25}% - 14px)">${i===3?GIFT:h>=v?CHECK:''}<span>${kk(v,2)}</span></div>`).join('')}</div>
+<div class="psr"><span>Pasitos</span><span>${Math.min(p,PASITOS_BEN)} de ${PASITOS_BEN}</span></div>
+<div class="segs">${Array.from({length:PASITOS_BEN},(_,i)=>i<p?'<i style="background:#fff"></i>':i===p?`<i style="background:linear-gradient(90deg,#fff ${fr}%,rgba(255,255,255,.25) ${fr}%)"></i>`:'<i></i>').join('')}</div>
+<p class="hint">${ok?`¡Beneficio desbloqueado! Escribinos por el grupo de WhatsApp para reclamar ${esc(PREMIO.txt)}.`:`Cada ${fmt(PASITO)} pasos suman 1 pasito. Te ${falta===1?'falta 1 pasito':'faltan '+falta+' pasitos'} para ${esc(PREMIO.txt)}.`}</p>`}
+
+/* --- Gráfico de pasos --- */
+const DS=['dom','lun','mar','mié','jue','vie','sáb'],MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function chartData(per){
+ const m=new Map(S.dias.map(d=>[d.dia,d.pasos])),hoy=hoyAR(),out=[];m.set(hoy,(m.get(hoy)||0)+liveD());
+ if(per==='dia'){for(let i=6;i>=0;i--){const d=addD(hoy,-i);out.push({l:DS[new Date(d+'T12:00:00').getDay()],v:Math.floor(m.get(d)||0),cur:i===0})}}
+ else if(per==='sem'){const l0=lunes();for(let i=5;i>=0;i--){const a=addD(l0,-7*i);let s=0;for(let k=0;k<7;k++)s+=m.get(addD(a,k))||0;out.push({l:a.slice(8)+'/'+a.slice(5,7),v:Math.floor(s),cur:i===0})}}
+ else{const y=+hoy.slice(0,4),mo=+hoy.slice(5,7);for(let i=5;i>=0;i--){const d=new Date(y,mo-1-i,1),k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');let s=0;m.forEach((v,dd)=>{if(dd.startsWith(k))s+=v});out.push({l:MES[d.getMonth()],v:Math.floor(s),cur:i===0})}}
+ return out}
+function niceTop(mx){const s=mx/4,e=Math.pow(10,Math.floor(Math.log10(s))),f=s/e,n=[1,1.5,2,2.5,3,4,5,6,7.5,10].find(x=>x>=f-1e-9);return n*e*4}
+function chartInner(anim){
+ const per=S.cp||'dia',d=chartData(per),mn={dia:PASITO,sem:PASITO*3,mes:PASITO*10}[per],top=niceTop(Math.max(mn,...d.map(x=>x.v))),tot=d.reduce((a,b)=>a+b.v,0),n=d.length;
+ const lbl={dia:'últimos 7 días',sem:'últimas 6 semanas',mes:'últimos 6 meses'}[per],avg={dia:'por día',sem:'por semana',mes:'por mes'}[per],ticks=[0,1,2,3,4].map(i=>top/4*i);
+ return `<div class="row" style="justify-content:space-between;align-items:flex-end"><div><p class="mut">Total · ${lbl}</p><p style="font-size:24px;font-weight:800;letter-spacing:-.03em">${fmt(tot)}</p></div><div style="text-align:right"><p class="mut">Promedio ${avg}</p><p style="font-size:24px;font-weight:800;letter-spacing:-.03em;color:var(--c2)">${fmt(tot/n)}</p></div></div>
+<div class="ch"><div class="ya">${ticks.map(v=>`<span style="bottom:${v/top*100}%">${kk(v,2)}</span>`).join('')}</div>
+<div class="pl">${ticks.slice(1).map(v=>`<div class="gl" style="bottom:${v/top*100}%"></div>`).join('')}${per==='dia'?`<div class="gl goal" style="bottom:${PASITO/top*100}%"><em>Meta</em></div>`:''}${d.map(x=>{const h=x.v/top*100;return `<div class="bc${x.cur?' cur':''}"><i data-h="${h}" style="height:${anim?0:h}%">${x.v?`<em>${kk(x.v,1)}</em>`:''}</i></div>`}).join('')}</div>
+<div class="xa">${d.map(x=>`<span${x.cur?' class="on"':''}>${x.l}</span>`).join('')}</div></div>
+<div class="lg"><span><i style="background:linear-gradient(180deg,var(--c),var(--c2))"></i>Actual</span><span><i style="background:#9DBFFA"></i>Anteriores</span>${per==='dia'?'<span><i style="background:var(--ok)"></i>Meta diaria 10K</span>':''}</div>`}
+const chartCard=()=>`<div class="card g12 rise"><h2 style="margin:0">Tus pasos</h2><div class="tms eq" id="cper">${[['dia','Día'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.cp||'dia')===k?' on':''}" data-act="cper" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="chartIn">${chartInner(S.anim)}</div></div>`;
+function drawChart(anim){const e=$('#chartIn');if(!e)return;e.innerHTML=chartInner(anim);if(anim)enhance(e)}
+
+/* --- Clima --- */
+const CLOUD='<path d="M20 46h26a10 10 0 0 0 1-19.9A14 14 0 0 0 20.5 29 9 9 0 0 0 20 46z" fill="#fff"/>';
+const IC=b=>`<svg viewBox="0 0 64 64" width="76" height="76" fill="none" stroke-linecap="round" aria-hidden="true">${b}</svg>`;
+const ICON={
+ sol:IC('<circle cx="32" cy="32" r="12" fill="#FFD25A"/><path d="M32 8v7M32 49v7M8 32h7M49 32h7M15 15l5 5M44 44l5 5M49 15l-5 5M20 44l-5 5" stroke="#FFD25A" stroke-width="4"/>'),
+ luna:IC('<path d="M40 12a20 20 0 1 0 14 32A24 24 0 0 1 40 12z" fill="#FFE9A8"/>'),
+ solnube:IC('<circle cx="24" cy="24" r="9" fill="#FFD25A"/><path d="M24 8v4M8 24h4M13 13l3 3M35 13l-3 3" stroke="#FFD25A" stroke-width="3.5"/><g transform="translate(5 6) scale(.9)">'+CLOUD+'</g>'),
+ nube:IC(CLOUD),
+ lluvia:IC('<g transform="translate(0 -6)">'+CLOUD+'</g><path d="M24 50l-3 7M34 50l-3 7M44 50l-3 7" stroke="#CFE4FF" stroke-width="3.5"/>'),
+ tormenta:IC('<g transform="translate(0 -8)"><path d="M20 46h26a10 10 0 0 0 1-19.9A14 14 0 0 0 20.5 29 9 9 0 0 0 20 46z" fill="#D6E0F0"/></g><path d="M35 38l-8 12h7l-3 10 11-15h-7z" fill="#FFD25A"/>'),
+ niebla:IC('<path d="M14 22h36M10 32h44M18 42h28" stroke="#fff" stroke-width="4.5" opacity=".9"/>')};
+const GR={sol:'linear-gradient(135deg,#2F6FE6,#5A9BFA)',solnube:'linear-gradient(135deg,#3A6FCB,#7FA9E6)',nube:'linear-gradient(135deg,#4F6C98,#8398B8)',niebla:'linear-gradient(135deg,#5B6F8D,#93A3BB)',lluvia:'linear-gradient(135deg,#1E4A98,#4570BA)',tormenta:'linear-gradient(135deg,#162547,#3A4E7C)',noche:'linear-gradient(135deg,#0B1426,#1E54B8)'};
+function WX(c){if(c===0)return['Despejado','sol'];if(c<=2)return['Algo nublado','solnube'];if(c===3)return['Nublado','nube'];if(c<=48)return['Niebla','niebla'];if(c<=57)return['Llovizna','lluvia'];if(c<=67)return['Lluvia','lluvia'];if(c<=77)return['Nieve','nube'];if(c<=82)return['Chubascos','lluvia'];if(c<=86)return['Nieve','nube'];return['Tormenta','tormenta']}
+function consejo(w){if(w.code>=95)return'Hay tormenta en la zona. Mejor esperar a que pase antes de salir.';if(w.lluvia>=60||(w.code>=51&&w.code<=82))return'Se espera lluvia: llevá paraguas o elegí otro horario.';if(w.temp>=30)return'Hace calor: salí temprano o al atardecer y llevá agua.';if(w.temp<=8)return'Hace frío: abrigate bien antes de salir.';return'Buen clima para caminar. ¡Aprovechalo!'}
+async function loadWx(){const p=S.pos;if(!p||(S.wx&&Date.now()-S.wx.t<30*60000))return;
+ try{const u=`https://api.open-meteo.com/v1/forecast?latitude=${p.lat.toFixed(3)}&longitude=${p.lng.toFixed(3)}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,is_day&hourly=temperature_2m,precipitation_probability,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=${encodeURIComponent(TZ)}&forecast_days=1`;
+  const j=await(await fetch(u)).json(),c=j.current,hr=j.hourly,dy=j.daily;if(!c)throw new Error('clima');
+  const nowH=+new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'numeric',hourCycle:'h23'}).format(new Date());
+  let mej=null,bs=1e9;for(let h=Math.max(nowH,6);h<=21;h++){const t=hr.temperature_2m[h],pr=hr.precipitation_probability[h]||0,cd=hr.weather_code[h];if(t==null)continue;const sc=pr+Math.abs(t-20)*3+(cd>=95?100:0);if(sc<bs){bs=sc;mej=h}}
+  S.wx={t:Date.now(),temp:Math.round(c.temperature_2m),sens:Math.round(c.apparent_temperature),code:c.weather_code,viento:Math.round(c.wind_speed_10m),isDay:c.is_day===1,max:Math.round(dy.temperature_2m_max[0]),min:Math.round(dy.temperature_2m_min[0]),lluvia:dy.precipitation_probability_max[0]||0,mej};S.wxErr=false}
+ catch(e){console.warn(e);S.wxErr=true}}
+function wxHTML(){const w=S.wx;if(!w)return S.wxErr?'':'<div class="sk" style="height:150px"></div>';
+ const[txt,g]=WX(w.code),noche=!w.isDay&&(g==='sol'||g==='solnube'),k=noche?(g==='sol'?'luna':'solnube'):g,bg=noche?GR.noche:GR[g];
+ return `<div class="wx" style="background:${bg}"><div class="wxt"><div><span class="tp">${w.temp}°</span><p>${txt} · sensación ${w.sens}°</p></div>${ICON[k]}</div><div class="wxs"><span>Viento ${w.viento} km/h</span><span>Lluvia ${w.lluvia}%</span><span>${w.mej!=null?'Mejor hora: '+w.mej+' h':'Mín '+w.min+'° · Máx '+w.max+'°'}</span></div><p class="wxm">${consejo(w)}</p></div>`}
+
+/* --- Trayecto: ubicación, ruta de ~10.000 pasos y vista previa --- */
+function getPos(){return new Promise(ok=>{
+ const fb=()=>{const l=gotLs('lastPos');if(l){try{const j=JSON.parse(l);return ok({lat:j.lat,lng:j.lng,src:'cache'})}catch(e){}}ok({lat:DEF_POS[0],lng:DEF_POS[1],src:'def'})};
+ if(!navigator.geolocation)return fb();
+ navigator.geolocation.getCurrentPosition(p=>{const r={lat:p.coords.latitude,lng:p.coords.longitude,src:'gps'};try{localStorage.setItem('lastPos',JSON.stringify({lat:r.lat,lng:r.lng}))}catch(e){}ok(r)},fb,{enableHighAccuracy:false,timeout:8000,maximumAge:600000})})}
+const RT=6371000,rad=x=>x*Math.PI/180,deg=x=>x*180/Math.PI;
+const dest=(la,ln,d,br)=>{const a=d/RT,b=rad(br),p=rad(la),l=rad(ln),p2=Math.asin(Math.sin(p)*Math.cos(a)+Math.cos(p)*Math.sin(a)*Math.cos(b)),l2=l+Math.atan2(Math.sin(b)*Math.sin(a)*Math.cos(p),Math.cos(a)-Math.sin(p)*Math.sin(p2));return[deg(p2),deg(l2)]};
+async function routeFoot(pts){const c=pts.map(p=>p[1].toFixed(5)+','+p[0].toFixed(5)).join(';'),ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),9000);let j;
+ try{const r=await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${c}?overview=full&geometries=polyline&steps=false`,{signal:ctl.signal});j=await r.json()}
+ catch(x){const e=new Error('red');e.net=true;throw e}finally{clearTimeout(to)}
+ if(j.code!=='Ok'||!j.routes||!j.routes[0])throw new Error('ruta');return j.routes[0]}
+function aprox(la,ln,obj){const r=obj/(2*Math.PI),c=dest(la,ln,r,0),pts=[];for(let i=0;i<=24;i++)pts.push(dest(c[0],c[1],r,180+i*15).map(x=>+x.toFixed(5)));return{ruta:'ap:'+JSON.stringify(pts),dist:Math.round(obj)}}
+/* Arma un circuito cerrado que sale y vuelve a tu ubicación, ajustado a ~10.000 pasos. Cambia de dirección cada día. */
+async function armarRuta(la,ln){
+ const OBJ=PASITO*STEP_M;let h=0;for(const c of S.uid+hoyAR())h=(h*31+c.charCodeAt(0))>>>0;let br=(h%24)*15,net=false;
+ for(let t=0;t<3&&!net;t++){let d=OBJ/3.9,best=null;
+  try{for(let i=0;i<3;i++){const r=await routeFoot([[la,ln],dest(la,ln,d,br),dest(la,ln,d,br+60),[la,ln]]);
+    if(!best||Math.abs(r.distance-OBJ)<Math.abs(best.distance-OBJ))best=r;
+    if(Math.abs(r.distance-OBJ)/OBJ<.1)break;d*=OBJ/r.distance}}
+  catch(e){if(e.net)net=true}
+  if(best&&Math.abs(best.distance-OBJ)/OBJ<.25)return{ruta:best.geometry,dist:Math.round(best.distance)};
+  br+=120}
+ return aprox(la,ln,OBJ)}
+function decPoly(s){let i=0,la=0,ln=0,o=[];while(i<s.length){let b,sh=0,r=0;do{b=s.charCodeAt(i++)-63;r|=(b&31)<<sh;sh+=5}while(b>=32);la+=(r&1)?~(r>>1):(r>>1);sh=0;r=0;do{b=s.charCodeAt(i++)-63;r|=(b&31)<<sh;sh+=5}while(b>=32);ln+=(r&1)?~(r>>1):(r>>1);o.push([la/1e5,ln/1e5])}return o}
+const esAprox=pl=>pl.ruta.startsWith('ap:');
+const ptsDe=pl=>{try{return esAprox(pl)?JSON.parse(pl.ruta.slice(3)):decPoly(pl.ruta)}catch(e){return[]}};
+function routeSvg(pts){const w=320,h=150,pad=18;if(!pts||pts.length<2)return'';
+ let a=1e9,b=-1e9,c=1e9,d=-1e9;for(const p of pts){a=Math.min(a,p[0]);b=Math.max(b,p[0]);c=Math.min(c,p[1]);d=Math.max(d,p[1])}
+ const k=Math.cos((a+b)/2*Math.PI/180),sx=Math.max((d-c)*k,1e-6),sy=Math.max(b-a,1e-6),s=Math.min((w-2*pad)/sx,(h-2*pad)/sy),ox=(w-sx*s)/2,oy=(h-sy*s)/2;
+ const X=p=>(ox+(p[1]-c)*k*s).toFixed(1),Y=p=>(oy+(b-p[0])*s).toFixed(1),st=Math.max(1,Math.ceil(pts.length/220));
+ const q2=pts.filter((_,i)=>i%st===0||i===pts.length-1),ds=q2.map((p,i)=>(i?'L':'M')+X(p)+' '+Y(p)).join('');
+ return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vista previa del trayecto"><defs><pattern id="gp" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#CFE0FC" stroke-width=".8"/></pattern></defs><rect width="${w}" height="${h}" fill="url(#gp)"/><path d="${ds}" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="${ds}" fill="none" stroke="#3680F7" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(pts[0])}" cy="${Y(pts[0])}" r="7" fill="#1E54B8" stroke="#fff" stroke-width="3"/></svg>`}
+const st3=pl=>{const m=pl.pasos_meta||PASITO,mn=Math.round(m/PPM);return `<div class="st3"><div><b>${fmt(m)}</b><span>pasos</span></div><div><b>${(pl.distancia_m/1000).toFixed(1).replace('.',',')} km</b><span>distancia</span></div><div><b>${mn>=60?(Math.floor(mn/60)+' h'+(mn%60?' '+mn%60+' min':'')):mn+' min'}</b><span>duración</span></div></div>`};
+
+/* --- Módulo "Hoy salís vos" --- */
+function hoyInner(){
+ if(!S.sqlOk)return `<div class="card g12"><h2 style="margin:0">Hoy salís vos</h2><p class="mut">Tu caminata del día se está preparando. Volvé en unos minutos.</p></div>`;
+ const pl=S.plan,m=pl?(pl.pasos_meta||PASITO):PASITO,est=pl&&pl.estado;
+ const chip=!pl?`<span class="chip">${fmt(m)} pasos</span>`:est==='aceptada'?(pl.pasos+liveD()>=m?'<span class="chip g">¡Hecha!</span>':'<span class="chip live">En marcha</span>'):est==='rechazada'?'<span class="chip">Otros planes</span>':'<span class="chip">Pendiente</span>';
+ let body='';
+ if(pl){body=`<div class="rtm" data-act="plan-open" style="cursor:pointer">${routeSvg(ptsDe(pl))}</div>${st3(pl)}`;
+  if(est==='propuesta')body+=`<button class="btn" data-act="plan-yes">La voy a hacer</button><button class="btn out" data-act="plan-no">Tengo otros planes</button><button class="link" data-act="plan-open" style="align-self:center">Ver el trayecto en el mapa</button>`;
+  else if(est==='rechazada')body+=`<p style="font-size:14px">Hoy tenés otros planes. Mañana te proponemos una caminata nueva.</p><button class="link" data-act="plan-open" style="align-self:flex-start">Cambié de idea</button>`;
+  else{const v=Math.min(m,pl.pasos+liveD());body+=`<div class="g12" style="gap:8px"><b style="font-size:14px" id="hoyPt">${fmt(v)} de ${fmt(m)} pasos</b><div class="bar"><i id="hoyPb" style="width:${v/m*100}%;transition:none"></i></div></div><p class="mut">${v>=m?'¡Sumaste tu pasito de hoy! Mañana te proponemos otra caminata.':'Tus pasos se suman solos mientras caminás. Son estimados. ¡Disfrutá la salida!'}</p><button class="link" data-act="plan-open" style="align-self:flex-start">Ver el trayecto en el mapa</button>`}}
+ else if(S.hoySt==='gps'||S.hoySt==='ruta')body=`<div class="sk" style="height:150px"></div><p class="mut">${S.hoySt==='gps'?'Buscando tu ubicación…':'Armando tu trayecto de '+fmt(m)+' pasos…'}</p>`;
+ else if(S.hoyErr)body=`<p style="font-size:14px">${esc(S.hoyErr)}</p><button class="btn out" data-act="plan-retry">Reintentar</button>`;
+ else body=`<button class="btn" data-act="plan-open">Armar mi caminata de hoy</button>`;
+ return `<div class="card g12"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Hoy salís vos</h2>${chip}</div>${wxHTML()}${body}</div>`}
+function drawHoy(){const e=$('#hoy');if(e)e.innerHTML=hoyInner()}
+async function buildPlan(){
+ if(S.building)return;S.building=true;S.hoyErr='';
+ try{S.hoySt='gps';drawHoy();
+  if(!S.pos)S.pos=await getPos();
+  loadWx().then(drawHoy);
+  S.hoySt='ruta';drawHoy();
+  const r=await armarRuta(S.pos.lat,S.pos.lng);
+  await q(sb.rpc('proponer_caminata_dia',{p_lat:S.pos.lat,p_lng:S.pos.lng,p_ruta:r.ruta,p_dist:r.dist}));
+  const pl=await q(sb.rpc('plan_de_hoy'));S.plan=pl[0]||null;S.t0=Date.now()}
+ catch(e){console.warn(e);S.hoyErr='No pudimos armar tu trayecto ahora. Probá de nuevo en un momento.'}
+ S.hoySt='';S.building=false;drawHoy()}
+async function startHoy(){
+ if(!S.sqlOk||S.started)return;S.started=true;
+ if(S.plan){S.pos={lat:S.plan.lat,lng:S.plan.lng,src:'plan'};loadWx().then(drawHoy);if(S.plan.estado==='propuesta')openPlan();return}
+ await buildPlan();if(S.plan&&S.plan.estado==='propuesta')openPlan()}
+
+/* --- Ranking --- */
+function rankInner(){const r=S.rk||[];if(!r.length)return'<p class="mut">Todavía nadie sumó pasos en este período. ¡Sé el primero!</p>';let last=0;
+ return r.map(x=>{const g=last&&x.puesto-last>1?'<div class="gap">···</div>':'';last=x.puesto;const me=x.user_id===S.uid;
+  return g+`<div class="rkr${me?' me':''}"><b class="pos p${x.puesto}">${x.puesto}</b>${fig(x.foto_url,x.nombre,'av')}<div class="nm">${esc(x.nombre)} ${esc(x.inicial)}.${me?' (vos)':''}</div><span class="stp">${fmt(x.pasos)}</span></div>`}).join('')}
+const rankCard=()=>S.rk===null?'':`<div class="card g12 rise"><h2 style="margin:0">Ranking de caminantes</h2><div class="tms eq" id="rper">${[['hoy','Hoy'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.rkp||'sem')===k?' on':''}" data-act="rkp" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="rkIn" style="gap:4px">${rankInner()}</div></div>`;
+function drawRank(){const e=$('#rkIn');if(e)e.innerHTML=rankInner()}
+
+/* --- Caminata grupal --- */
 function groupCard(){const w=S.w;if(!w)return `<div class="card rise"><h2>Caminata grupal</h2><p class="mut">Todavía no hay una caminata grupal publicada. Volvé pronto.</p></div>`;
- const pasos=minTot()*PPM,meta=w.meta_pasos||META,u=pasos>=meta,libres=Math.max(0,w.cupo_max-S.ocu);
+ const pasos=pasosTotal(),meta=w.meta_pasos||META,u=pasos>=meta,libres=Math.max(0,w.cupo_max-S.ocu);
  const btn=S.yo?`<button class="btn out pop" data-act="wleave">✓ Estás anotado · Me bajo</button>`:!u?`<button class="btn" disabled>Se desbloquea con ${fmt(meta)} pasos</button>`:libres?`<button class="btn" data-act="wjoin">Anotarme a la caminata</button>`:`<button class="btn" disabled>Cupo completo</button>`;
  return `<div class="card g12 rise"><div><p class="mut">Caminata grupal</p><p style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:2px">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:4px">${esc(w.lugar)}${w.punto_encuentro?' · '+esc(w.punto_encuentro):''}</p>${w.punto_lat!=null?`<a href="${mapsLink(w.punto_lat,w.punto_lng)}" target="_blank" rel="noopener" style="font-size:14px">Cómo llegar</a>`:''}</div><p style="font-size:14px">${esc(w.titulo)}. ${esc(w.incluye||'')}</p>
 <div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p style="font-size:14px;font-weight:600;color:var(--c2)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(meta-pasos)} pasos para desbloquearla`}</p><p class="mut">${S.ocu} de ${w.cupo_max} lugares ocupados</p>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`}
@@ -163,18 +367,19 @@ const nuevos=()=>S.nu&&S.nu.length?`<div class="rise"><h2>Nuevos en Paseando</h2
 const V={
 login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
-home:()=>{const pasos=minTot()*PPM,meta=(S.w&&S.w.meta_pasos)||META;
- return `<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>${nuevos()}
+home:()=>`<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div>
+<div class="hero rise"><div id="heroIn">${heroInner()}</div></div>
+${chartCard()}
+<div id="hoy" class="rise">${hoyInner()}</div>
+${rankCard()}
+<div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>${nuevos()}
 <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Sumarme o proponer</b> y proponé la primera.</p></div>`}</div>
-${premioCard()}
-<div class="card g12 rise"><h2 style="margin:0">Tu tiempo caminado</h2><div><span class="big" data-count="${pasos}">0</span> <span class="mut">pasos estimados esta semana</span></div><div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p class="mut">${minTot()} min esta semana · se suman solos al caminar con alguien (15 min × ${PPM} pasos)</p>
-<p class="mut" style="font-size:12px">¡Muy pronto vas a poder registrar todos tus pasos!</p></div>
-${groupCard()}<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`},
-terms:()=>`<div class="col"><div><button class="link" data-act="back">← Volver</button><h1>Términos y descargo</h1></div>${[['Edad','Solo participan personas de 18 años o más.'],['Participación voluntaria','Caminar al aire libre implica riesgos. Participás bajo tu propia responsabilidad.'],['Caminatas de 15 minutos','Paseando conecta personas que deciden caminar juntas y no verifica a nadie. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien.'],['Fotos y datos','Quienes ven tu caminata ven tu foto de cuerpo entero, nombre, inicial del apellido y edad, para saber con quién se encuentran. Si tu perfil está completo, también aparecés en la lista de nuevos usuarios que ven los demás. El punto del mapa es público para las caminatas activas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Responsabilidad','El organizador no responde por lesiones, pérdidas ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto. Podemos retirar a quien no lo cumpla.']].map(t=>`<div><h2 style="font-size:16px;margin-bottom:4px">${t[0]}</h2><p style="font-size:14px;color:#2B3A55">${t[1]}</p></div>`).join('')}</div>`};
+${groupCard()}<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`,
+terms:()=>`<div class="col"><div><button class="link" data-act="back">← Volver</button><h1>Términos y descargo</h1></div>${[['Edad','Solo participan personas de 18 años o más.'],['Participación voluntaria','Caminar al aire libre implica riesgos. Participás bajo tu propia responsabilidad.'],['Caminatas de 15 minutos','Paseando conecta personas que deciden caminar juntas y no verifica a nadie. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien.'],['Caminata sugerida y pasos','El trayecto diario es solo una sugerencia armada con mapas abiertos: caminá siempre atento al tránsito, por veredas y lugares iluminados, y si el clima no acompaña elegí otro momento. Los pasos son estimados: se calculan por el tiempo desde que confirmás la caminata (100 pasos por minuto) y no se miden con sensores.'],['Fotos y datos','Quienes ven tu caminata ven tu foto de cuerpo entero, nombre, inicial del apellido y edad, para saber con quién se encuentran. Si tu perfil está completo, también aparecés en la lista de nuevos usuarios que ven los demás. En el ranking de caminantes los demás ven tu nombre, inicial del apellido, foto de perfil y pasos. Usamos tu ubicación solo para armar tu caminata sugerida. El punto del mapa es público para las caminatas activas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Responsabilidad','El organizador no responde por lesiones, pérdidas ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto. Podemos retirar a quien no lo cumpla.']].map(t=>`<div><h2 style="font-size:16px;margin-bottom:4px">${t[0]}</h2><p style="font-size:14px;color:#2B3A55">${t[1]}</p></div>`).join('')}</div>`};
 
 /* ============ SHEETS ============ */
 function sheet(h,modal){const s=$('#sheet');s.classList.toggle('modal',!!modal);s.innerHTML=`<div class="bk" data-act="close"></div><div class="pn" role="dialog" aria-modal="true">${h}</div>`;s.classList.add('on')}
-function closeSheet(){$('#sheet').classList.remove('on');PQ=null;PQM=null;S.open=null}
+function closeSheet(){$('#sheet').classList.remove('on');PQ=null;PQM=null;S.open=null;S.planOpen=false}
 function openDetail(id){const c=S.ca.find(x=>x.id===id);if(!c){closeSheet();return}S.open=id;
  const libres=c.cupo_max-c.miembros.length;
  const btn=c.es_mio?`<button class="btn dan" data-act="leave" data-id="${id}">Cancelar mi caminata</button>`:c.estoy?`<button class="btn out pop" data-act="leave" data-id="${id}">✓ Estás dentro · Me bajo</button>`:libres<=0?'<button class="btn" disabled>Caminata completa</button>':`<button class="btn" data-act="join" data-id="${id}">Me sumo</button>`;
@@ -182,6 +387,19 @@ function openDetail(id){const c=S.ca.find(x=>x.id===id);if(!c){closeSheet();retu
 <p style="font-size:14px"><b>${diaDe(c.inicia_at)}, ${hora(c.inicia_at)}</b> · Punto: ${esc(c.punto)}</p><div id="dmap" class="map"></div><a href="${mapsLink(c.lat,c.lng)}" target="_blank" rel="noopener" style="font-size:14px">Cómo llegar</a>
 <div><p class="mut" style="margin-bottom:8px">Quiénes van (${c.miembros.length} de ${c.cupo_max})</p><div class="mbs">${c.miembros.map(m=>`<div class="mb">${fig(m.foto_cuerpo_url||m.foto_url,m.nombre,'ph')}<span>${esc(m.nombre)} ${esc(m.inicial)}.${m.id===S.uid?' (vos)':''}</span></div>`).join('')}${Array.from({length:Math.max(0,libres)},()=>'<div class="mb"><div class="ph" style="border:2px dashed var(--c)"></div><span class="mut">Lugar libre</span></div>').join('')}</div></div>${btn}<button class="link" data-act="close" style="text-align:center">Cerrar</button>`);
  loadLeaflet().then(()=>{if(!$('#dmap')||S.open!==id)return;const m=mkMap('dmap',c.lat,c.lng,16);L.marker([c.lat,c.lng]).addTo(m)}).catch(()=>{})}
+/* Pop-up del día: "te propongo esta caminata para vos" */
+async function openPlan(){
+ S.planOpen=true;
+ if(!S.plan){sheet('<div class="g12" style="text-align:center;padding:12px 0"><p class="lbl">Armando tu caminata de hoy…</p><div class="sk" style="height:200px"></div></div>',true);
+  if(S.building){while(S.building)await sleep(300)}else await buildPlan();
+  if(!S.planOpen)return;if(!S.plan){closeSheet();return}}
+ const pl=S.plan,w=S.wx,est=pl.estado;
+ sheet(`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Hoy salís vos</h2><span class="chip">${fmt(pl.pasos_meta||PASITO)} pasos</span></div>
+<p style="font-size:14px">${est==='aceptada'?'Este es tu trayecto de hoy':est==='rechazada'?'¿Cambiaste de idea? Este es tu trayecto':'Te propongo esta caminata para vos'}${w?` · ${w.temp}° ${WX(w.code)[0].toLowerCase()}`:''}.</p>
+<div id="pmap" class="map" style="height:210px"></div>${st3(pl)}${esAprox(pl)?'<p class="mut">Trayecto aproximado: no pudimos calcular las calles en este momento.</p>':''}
+${est==='aceptada'?'<button class="btn out" data-act="close">Cerrar</button>':`<button class="btn" data-act="plan-yes">La voy a hacer</button><button class="btn out" data-act="plan-no">Tengo otros planes</button><p class="mut" style="text-align:center">Si la confirmás, tus pasos se suman solos mientras caminás. Son estimados.</p>`}`,true);
+ loadLeaflet().then(()=>{if(!$('#pmap'))return;const pts=ptsDe(pl);if(pts.length<2)return;const m=mkMap('pmap',pl.lat,pl.lng,15),ln=L.polyline(pts,{color:'#3680F7',weight:5,opacity:.95,lineJoin:'round'}).addTo(m);
+  L.circleMarker(pts[0],{radius:8,color:'#fff',weight:3,fillColor:'#1E54B8',fillOpacity:1}).addTo(m);m.fitBounds(ln.getBounds(),{padding:[22,22]});setTimeout(()=>{try{m.fitBounds(ln.getBounds(),{padding:[22,22]})}catch(e){}},550)}).catch(()=>{const el=$('#pmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
 function perfilSheet(){sheet(`<h2 style="margin:0">Tu perfil para caminar</h2><p style="font-size:14px">Para proponer o sumarte, la otra gente tiene que saber con quién se encuentra: subí una foto de cuerpo entero y tu edad.</p>
 <div class="row"><img id="cimg" class="body" ${S.p.foto_cuerpo_url?`src="${esc(S.p.foto_cuerpo_url)}"`:''} alt="Foto de cuerpo entero"><label class="btn sm out" style="width:auto;padding:0 16px;cursor:pointer">${S.p.foto_cuerpo_url?'Cambiar foto':'Subir foto de cuerpo entero'}<input type="file" id="pf" accept="image/*" hidden></label></div>
 <label class="f">Edad<input type="number" id="pe" min="18" max="99" value="${S.p.edad||''}" placeholder="Tu edad" inputmode="numeric"></label><button class="btn" data-act="savepf">Guardar</button><button class="link" data-act="close" style="text-align:center">Cancelar</button>`)}
@@ -228,15 +446,22 @@ async function subirCuerpo(f){try{toast('Subiendo foto…');const b=await shrink
 /* ============ RENDER ============ */
 function enhance(el){
  el.querySelectorAll('.rise').forEach((n,i)=>n.style.animationDelay=Math.min(i*80,640)+'ms');
- requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll('[data-w]').forEach(n=>n.style.width=n.dataset.w+'%')));
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{el.querySelectorAll('[data-w]').forEach(n=>n.style.width=n.dataset.w+'%');el.querySelectorAll('[data-h]').forEach(n=>n.style.height=n.dataset.h+'%')}));
  el.querySelectorAll('[data-count]').forEach(n=>{const to=+n.dataset.count,t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1100);n.textContent=fmt(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)})}
 function mbtn(){const b=$('#menuBtn'),u=S.p&&S.p.foto_url;b.innerHTML=u?`<img src="${esc(u)}" referrerpolicy="no-referrer" alt="Mi cuenta" style="width:38px;height:38px;border-radius:19px;object-fit:cover;border:2px solid #fff">`:HAM}
-function render(name,still){view=name;mbtn();const el=$('#screen'),st=el.scrollTop;el.classList.toggle('still',!!still);el.innerHTML=V[name]();enhance(el);
+function render(name,still){view=name;mbtn();const el=$('#screen'),st=el.scrollTop;S.anim=!still;S.rt=performance.now();el.classList.toggle('still',!!still);el.innerHTML=V[name]();enhance(el);
  el.scrollTop=still?st:0;$('#menuBtn').style.display=['login','consent'].includes(name)?'none':'flex';$('#fab').style.display=name==='home'?'flex':'none';
  if(!still)el.animate([{transform:'translateX(24px)',opacity:0},{transform:'none',opacity:1}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'})}
+/* Refresca números sin volver a dibujar toda la pantalla */
+function softRefresh(){const h=$('#heroIn');if(h)h.innerHTML=heroInner();drawChart(false);drawRank();drawHoy()}
+/* Cada segundo: si hay una caminata en marcha, el número de pasos sube solo */
+function tick(){const pl=S.plan;if(view!=='home'||!pl||pl.estado!=='aceptada'||S.fin||performance.now()-S.rt<1400)return;
+ const m=pl.pasos_meta||PASITO,v=Math.min(m,pl.pasos+liveD()),hh=$('#heroIn');if(hh)hh.innerHTML=heroInner();
+ const pb=$('#hoyPb'),pt=$('#hoyPt');if(pb)pb.style.width=(v/m*100)+'%';if(pt)pt.textContent=fmt(v)+' de '+fmt(m)+' pasos';
+ if(v>=m){S.fin=true;drawHoy();drawChart(false)}}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3200)}
 const need=fn=>{if(!perfilOk()){S.after=fn;perfilSheet();return}fn()};
-const ERR={perfil_incompleto:'Completá tu foto de cuerpo entero y tu edad',fuera_de_horario:'Las caminatas son entre las 18 y las 22 h',ya_tenes_caminata:'Ya tenés una caminata activa',completa:'La caminata ya está completa',no_disponible:'Esa caminata ya no está disponible',fecha_invalida:'Elegí un horario válido',limite_diario:'Llegaste al máximo de 10 horas por día'};
+const ERR={perfil_incompleto:'Completá tu foto de cuerpo entero y tu edad',fuera_de_horario:'Las caminatas son entre las 18 y las 22 h',ya_tenes_caminata:'Ya tenés una caminata activa',completa:'La caminata ya está completa',no_disponible:'Esa caminata ya no está disponible',fecha_invalida:'Elegí un horario válido',limite_diario:'Llegaste al máximo de 10 horas por día',sin_plan:'No encontramos tu caminata de hoy',ruta_invalida:'No pudimos guardar el trayecto'};
 
 /* ============ EVENTOS ============ */
 document.addEventListener('click',async e=>{
@@ -249,8 +474,8 @@ document.addEventListener('click',async e=>{
  if(a==='back')render(S.prev&&S.prev!=='terms'?S.prev:'home');
  if(a==='open')openDetail(id);
  if(a==='login'){try{localStorage.setItem('consent','1')}catch(x){}await q(sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}}))}
- if(a==='accept'){const ts=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:ts}).eq('id',S.uid));S.p.acepto_terminos_at=ts;await load();render('home')}
- if(a==='logout'){await sb.auth.signOut();S={min:[],ca:[]};closeSheet();render('login')}
+ if(a==='accept'){const ts=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:ts}).eq('id',S.uid));S.p.acepto_terminos_at=ts;await load();render('home');startHoy()}
+ if(a==='logout'){await sb.auth.signOut();S={min:[],ca:[],dias:[]};closeSheet();render('login')}
  if(a==='perfil')perfilSheet();
  if(a==='savepf'){const ed=+$('#pe').value;if(!(ed>=18&&ed<=99)){toast('Tenés que tener 18 años o más');return}
   if(!S.p.foto_cuerpo_url){toast('Subí tu foto de cuerpo entero');return}
@@ -273,6 +498,13 @@ document.addEventListener('click',async e=>{
   t.disabled=true;const r=await q(sb.rpc('bajarme_caminata',{p_id:id}));await load();render('home',true);if(r==='cancelada'){closeSheet();toast('Caminata cancelada')}else{openDetail(id);toast('Te bajaste de la caminata')}}
  if(a==='wjoin'){t.disabled=true;const r=await q(sb.rpc('join_walk',{p_walk:S.w.id}));await load();render('home',true);toast(r==='completa'?'Se completó el cupo':'¡Te anotaste a la caminata grupal!')}
  if(a==='wleave'){t.disabled=true;await q(sb.rpc('salir_walk',{p_walk:S.w.id}));await load();render('home',true);toast('Te bajaste de la caminata grupal')}
+ /* --- caminata sugerida del día --- */
+ if(a==='plan-open')openPlan();
+ if(a==='plan-retry'){S.pos=null;await buildPlan()}
+ if(a==='plan-yes'||a==='plan-no'){t.disabled=true;await q(sb.rpc('responder_caminata_dia',{p_acepta:a==='plan-yes'}));await load();closeSheet();render('home',true);toast(a==='plan-yes'?'¡A caminar! Tus pasos se suman solos':'Listo, mañana te proponemos otra')}
+ /* --- gráfico y ranking --- */
+ if(a==='cper'){S.cp=t.dataset.v;document.querySelectorAll('#cper .tm').forEach(b=>b.classList.toggle('on',b===t));drawChart(true)}
+ if(a==='rkp'){S.rkp=t.dataset.v;document.querySelectorAll('#rper .tm').forEach(b=>b.classList.toggle('on',b===t));const r=await rankQ(S.rkp);if(r!==null)S.rk=r;drawRank()}
  }catch(err){const m=err&&err.message||'';const k=Object.keys(ERR).find(x=>m.includes(x));toast(k?ERR[k]:m||'Ocurrió un error');t.disabled=false}
 });
 document.addEventListener('input',e=>{if(e.target.id==='ok18')$('#go').disabled=!e.target.checked});
@@ -286,11 +518,12 @@ async function boot(){
  if(!session){render('login');return}
  S.uid=session.user.id;S.meta=session.user.user_metadata||{};S.ids=session.user.identities||[];
  await registrarEntrada();
- try{await load();render(S.p.acepto_terminos_at?'home':'consent')}catch(e){toast(e.message||'No se pudo cargar');render('login')}}
-/* Actualiza caminatas activas cada 15 s (si no hay ventana abierta) */
-setInterval(async()=>{if(document.hidden||!S.uid||view!=='home'||$('#sheet').classList.contains('on'))return;
- const b=sig();try{await load();if(sig()!==b)render('home',true)}catch(e){}},15000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.uid&&view==='home'&&!$('#sheet').classList.contains('on'))load().then(()=>render('home',true)).catch(()=>{})});
+ try{await load();const ok=!!S.p.acepto_terminos_at;render(ok?'home':'consent');if(ok)startHoy()}catch(e){toast(e.message||'No se pudo cargar');render('login')}}
+/* Actualiza caminatas, pasos y ranking cada 15 s (si no hay ventana abierta) */
+setInterval(async()=>{if(document.hidden||!S.uid||view!=='home'||S.building||$('#sheet').classList.contains('on'))return;
+ const b=sig();try{await load();if(sig()!==b)render('home',true);else softRefresh()}catch(e){}},15000);
+setInterval(tick,1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.uid&&view==='home'&&!S.building&&!$('#sheet').classList.contains('on'))load().then(()=>render('home',true)).catch(()=>{})});
 boot();
 </script>
 </body>
