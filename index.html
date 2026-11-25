@@ -84,41 +84,33 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .tm.on{background:var(--c);border-color:var(--c);color:#fff;transform:scale(1.05)} .tms.eq .tm{flex:1;padding:0}
 #qmap{height:170px}
 
-/* ---- Hero de pasos ---- */
-.hero{background:linear-gradient(135deg,var(--c2),var(--c));color:#fff;border-radius:28px;padding:22px 20px 20px;box-shadow:0 14px 32px rgba(54,128,247,.32)}
-.hero .big{color:#fff;font-size:52px}
+/* ---- Módulo de pasos ---- */
+.spc{background:#fff;border:1px solid var(--line);border-radius:28px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px}
+.spc .big{font-size:52px;color:var(--c2)}
+#heroIn{padding:0 4px}
 .hr1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.hl{font-size:14px;font-weight:700;opacity:.92;margin-top:6px}
-.trk{position:relative;height:58px;margin:22px 14px 0 4px}
-.trk::before{content:"";position:absolute;left:0;right:0;top:13px;border-top:2.5px dashed rgba(255,255,255,.45)}
-.trk u{position:absolute;left:0;top:11.5px;height:5px;border-radius:3px;background:#fff;text-decoration:none}
-.nd{position:absolute;top:0;width:28px;height:28px;border-radius:14px;border:2.5px solid rgba(255,255,255,.7);background:var(--c2);color:#fff;display:flex;align-items:center;justify-content:center}
-.nd.on{background:#fff;border-color:#fff;color:var(--c2)}
-.nd.cur{border-color:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.28)}
-.nd svg{display:block}
-.nd span{position:absolute;top:34px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;white-space:nowrap;color:#fff}
-.psr{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:14px;font-weight:800}
+.hl{font-size:14px;font-weight:700;color:var(--mut);margin-top:6px}
+.psr{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:14px;font-weight:800}
 .segs{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:8px}
-.segs i{height:10px;border-radius:5px;background:rgba(255,255,255,.25)}
-.hint{font-size:13px;font-weight:600;margin-top:10px;opacity:.96}
-
-/* ---- Gráfico ---- */
-.ch{display:grid;grid-template-columns:36px 1fr;grid-template-rows:176px auto;column-gap:6px;padding-top:20px}
-.ya{position:relative}
-.ya span{position:absolute;right:0;transform:translateY(50%);font-size:11px;font-weight:600;color:var(--mut)}
-.pl{position:relative;display:flex;align-items:stretch;gap:8px;border-bottom:1.5px solid var(--line)}
-.gl{position:absolute;left:0;right:0;border-top:1px dashed var(--line)}
-.gl.goal{border-top:1.5px dashed var(--ok);z-index:2}
-.gl.goal em{position:absolute;right:0;top:-16px;font:700 10px 'Plus Jakarta Sans',sans-serif;color:var(--ok);font-style:normal}
-.bc{position:relative;flex:1;display:flex;align-items:flex-end;justify-content:center;z-index:1}
-.bc i{position:relative;display:block;width:100%;max-width:30px;min-height:3px;border-radius:8px 8px 3px 3px;background:#9DBFFA;transition:height .9s cubic-bezier(.2,.8,.2,1)}
-.bc.cur i{background:linear-gradient(180deg,var(--c),var(--c2))}
-.bc i em{position:absolute;left:50%;top:-17px;transform:translateX(-50%);font:700 10px 'Plus Jakarta Sans',sans-serif;color:var(--ink);font-style:normal;white-space:nowrap}
-.xa{grid-column:2;display:flex;gap:8px}
-.xa span{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--mut);padding-top:7px}
-.xa span.on{color:var(--c2);font-weight:800}
-.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:600;color:var(--mut)}
-.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.segs i{height:10px;border-radius:5px;background:var(--soft)}
+.hint{font-size:13px;font-weight:600;margin-top:10px;color:var(--mut)}
+.sbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pills{display:flex;gap:8px;min-width:0}
+.pill{min-height:40px;padding:0 13px;border:1.5px solid var(--line);border-radius:20px;background:#fff;font:700 14px 'Plus Jakarta Sans',sans-serif;color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.pill.on{background:var(--c2);border-color:var(--c2);color:#fff}
+.scx{border:1.5px solid var(--line);border-radius:26px;padding:34px 10px 12px;background:#fff}
+.spl{position:relative;height:190px;display:flex;align-items:flex-end;gap:8px;padding:0 4px 0 30px}
+.sgl{position:absolute;left:0;right:0;border-top:2px dashed var(--line);z-index:0}
+.sgi{position:absolute;left:0;top:-14px;width:28px;height:28px;border-radius:14px;background:var(--c2);color:#fff;display:flex;align-items:center;justify-content:center}
+.sbc{position:relative;flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center;z-index:1}
+.sbc i{position:relative;display:block;width:100%;min-height:4px;border-radius:12px;background:#BFD6FC;transition:height .9s cubic-bezier(.2,.8,.2,1)}
+.sbc.cur i{background:var(--c)}
+.sbc i em{position:absolute;left:50%;top:-18px;transform:translateX(-50%);font:600 10px 'Plus Jakarta Sans',sans-serif;color:var(--mut);font-style:normal;white-space:nowrap}
+.sbc.cur i em{color:var(--c2);font-weight:800}
+.sxa{display:flex;gap:8px;padding:10px 4px 2px 30px}
+.sxa span{flex:1;text-align:center;font-size:15px;font-weight:600;color:var(--mut)}
+.sxa span.on{color:var(--c2);font-weight:800}
+.sxa.sm2 span{font-size:11px}
 
 /* ---- Hoy salís vos ---- */
 .wx{border-radius:22px;padding:16px;color:#fff;display:flex;flex-direction:column;gap:12px;overflow:hidden}
@@ -161,7 +153,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 const SUPABASE_URL='https://brlhcorgjnaipmokhmhj.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybGhjb3Jnam5haXBtb2tobWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MzAyMzgsImV4cCI6MjExMDIwNjIzOH0.49WI6fH9wxiYNgXo5jjaa4VwfvPOjx5Y_NLlIgx06v8';
 const TZ='America/Argentina/Buenos_Aires',DEF_POS=[-34.5745,-58.4150];
-const PPM=100,META=100000; /* pasos por minuto (igual que en el SQL) · meta por defecto de la caminata grupal */
+const PPM=100; /* pasos por minuto (igual que en el SQL) */
 const PASITO=10000,PASITOS_BEN=10,STEP_M=.75; /* 10.000 pasos = 1 pasito · 10 pasitos = beneficio · largo de paso (m) para armar el trayecto */
 const PREMIO={txt:'un premio sorpresa'}; /* cambiá el texto por tu beneficio real */
 const sb=window.supabase?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
@@ -183,39 +175,33 @@ const mapsLink=(a,b)=>`https://www.google.com/maps/dir/?api=1&destination=${a},$
 const gotLs=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const HAM='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
 let S={min:[],ca:[],dias:[]},view='login',PQ=null,PQM=null,LP=null;
-const REG=new Set();
 
 /* ============ DATOS ============ */
 const perfilOk=()=>!!(S.p&&S.p.edad>=18&&S.p.foto_cuerpo_url);
 const desdeDe=per=>per==='hoy'?hoyAR():per==='mes'?hoyAR().slice(0,8)+'01':lunes();
 const rankQ=per=>sb.rpc('ranking_pasos',{p_desde:desdeDe(per)}).then(r=>r.error?null:(r.data||[]),()=>null);
 async function load(){
- const uid=S.uid,now=new Date().toISOString();
- const [p,ca,dias,plan,wf,nu,rk]=await Promise.all([
+ const uid=S.uid;
+ const [p,ca,dias,plan,nu,rk]=await Promise.all([
   q(sb.from('profiles').select('*').eq('id',uid).single()),
   q(sb.rpc('caminatas_activas')),
   sb.rpc('mis_pasos_dia').then(r=>r.error?null:(r.data||[]),()=>null),
   sb.rpc('plan_de_hoy').then(r=>r.error?null:((r.data||[])[0]||null),()=>null),
-  q(sb.from('walks').select('*').eq('estado','publicada').gte('inicia_at',now).order('inicia_at').limit(1)),
   sb.rpc('usuarios_nuevos').then(r=>r.data||[],()=>[]),
   rankQ(S.rkp||'sem')]);
  if(!plan||!S.plan||plan.id!==S.plan.id)S.fin=false;
- S.t0=Date.now();S.p=p;S.ca=ca||[];S.dias=dias||[];S.sqlOk=dias!==null;S.plan=plan;S.w=wf[0]||null;S.ocu=0;S.yo=false;S.nu=nu;S.rk=rk;
- const hechas=S.ca.filter(c=>(c.estoy||c.es_mio)&&c.miembros.length>1&&new Date(c.inicia_at)<=new Date()&&!REG.has(c.id));
- if(hechas.length){try{await Promise.all(hechas.map(c=>{REG.add(c.id);return sb.rpc('registrar_caminata',{p_id:c.id})}));if(S.sqlOk){S.dias=await q(sb.rpc('mis_pasos_dia'));S.t0=Date.now()}}catch(e){console.warn(e)}}
+ S.t0=Date.now();S.p=p;S.ca=ca||[];S.dias=dias||[];S.sqlOk=dias!==null;S.plan=plan;S.nu=nu;S.rk=rk;
  const gf=gphoto();
  if(!S.p.foto_url&&gf){S.p.foto_url=gf;try{await q(sb.from('profiles').update({foto_url:gf}).eq('id',uid))}catch(e){console.warn(e)}}
  if(!S.p.acepto_terminos_at&&gotLs('consent')==='1'){const t=new Date().toISOString();
-  await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',uid));S.p.acepto_terminos_at=t;try{localStorage.removeItem('consent')}catch(e){}}
- if(S.w){const[st,sg]=await Promise.all([q(sb.from('walk_stats').select('*').eq('walk_id',S.w.id).maybeSingle()),q(sb.from('walk_signups').select('estado').eq('walk_id',S.w.id).eq('user_id',uid).maybeSingle())]);
-  S.ocu=st?st.ocupados:0;S.yo=!!sg&&sg.estado!=='cancelado'}}
+  await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',uid));S.p.acepto_terminos_at=t;try{localStorage.removeItem('consent')}catch(e){}}}
 const gphoto=()=>{const m=S.meta||{},i=(S.ids||[]).find(x=>x.provider==='google'),d=(i&&i.identity_data)||{},u=m.avatar_url||m.picture||d.avatar_url||d.picture||'';return u.replace(/=s\d+-c$/,'=s256-c')};
 /* Pasos: la base viene del servidor; lo que corre desde la última carga se suma acá para que el número suba solo */
 const liveD=()=>{const p=S.plan;if(!p||p.estado!=='aceptada')return 0;const m=p.pasos_meta||PASITO;return Math.max(0,Math.min(m,p.pasos+(Date.now()-S.t0)/60000*PPM)-p.pasos)};
 const enCurso=()=>{const p=S.plan;return !!p&&p.estado==='aceptada'&&p.pasos+liveD()<(p.pasos_meta||PASITO)};
 const pasosHoy=()=>{const d=S.dias.find(x=>x.dia===hoyAR());return Math.floor((d?d.pasos:0)+liveD())};
 const pasosTotal=()=>Math.floor(S.dias.reduce((a,b)=>a+b.pasos,0)+liveD());
-const sig=()=>JSON.stringify([S.ca,S.ocu,S.yo,S.w&&S.w.id,S.nu&&S.nu.length,S.plan&&[S.plan.id,S.plan.estado],S.dias.length,S.rk&&S.rk.length]);
+const sig=()=>JSON.stringify([S.ca,S.nu&&S.nu.length,S.plan&&[S.plan.id,S.plan.estado],S.dias.length,S.rk&&S.rk.length]);
 
 /* Registra una entrada a la app (máx. 1 cada 30 min por dispositivo, así recargar no infla el número) */
 async function registrarEntrada(){
@@ -226,39 +212,34 @@ async function registrarEntrada(){
 /* ============ VISTAS ============ */
 const fig=(u,n,cls='ph')=>u?`<img class="${cls}" src="${esc(u)}" referrerpolicy="no-referrer" alt="${esc(n)}">`:`<div class="${cls}">${esc((n||'?')[0])}</div>`;
 const mini=c=>`<button class="mini${c.estoy?' in':''}" data-act="open" data-id="${c.id}"><div style="position:relative;flex:none">${fig(c.foto_cuerpo_url||c.foto_url,c.nombre)}${c.foto_cuerpo_url&&c.foto_url?`<img class="gb" src="${esc(c.foto_url)}" referrerpolicy="no-referrer" alt="">`:''}</div><div class="tx"><span class="chip${new Date(c.inicia_at)<=new Date()?' live':''}" style="align-self:flex-start">${cuando(c)}</span><b>${esc(c.nombre)} ${esc(c.inicial)}., ${c.edad}</b><span class="mut">${esc(c.punto)}</span><span class="mut">${c.miembros.length} de ${c.cupo_max} van${c.estoy?' · estás dentro':''}</span></div></button>`;
-const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:24px"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><h1 class="rise" style="font-size:27px">Caminá 15 minutos<br>con alguien cerca.</h1><p class="rise mut" style="font-size:15px">Mirá quién sale a caminar entre las 18 y las 22, sumate o proponé tu caminata. Cuando juntes pasos, desbloqueás la caminata grupal del finde.</p><div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-act="terms">Términos y el descargo de responsabilidad</a>.</span></label><button class="btn" id="go" disabled data-act="${act}">${label}</button>${act==='accept'?'<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button>':''}</div></div>`;
+const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:center;align-items:center;padding-top:24px"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div><h1 class="rise" style="font-size:27px">Caminá 15 minutos<br>con alguien cerca.</h1><p class="rise mut" style="font-size:15px">Mirá quién sale a caminar entre las 18 y las 22, sumate o proponé tu caminata. Cada día te proponemos una caminata de 10.000 pasos. Con 10 pasitos, te llevás un beneficio.</p><div class="g12 rise" style="width:100%;margin-top:auto"><label class="chk"><input type="checkbox" id="ok18"><span>Tengo 18 años o más y acepto los <a href="#" data-act="terms">Términos y el descargo de responsabilidad</a>.</span></label><button class="btn" id="go" disabled data-act="${act}">${label}</button>${act==='accept'?'<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button>':''}</div></div>`;
 
-/* --- Hero: pasos del día + pasitos --- */
+/* --- Módulo de pasos (número + pasitos + gráfico) --- */
 const CK=[2500,5000,7500,10000];
-const CHECK='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-const GIFT='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12"/><path d="M12 9C10.5 5 7 5 7 7.5 7 9 9 9 12 9zM12 9c1.500-4 5-4 5-1.500C17 9 15 9 12 9z"/></svg>';
+const FLAG='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"/></svg>';
 function heroInner(){
- const h=pasosHoy(),tot=pasosTotal(),p=Math.floor(tot/PASITO),ok=p>=PASITOS_BEN,fr=(tot%PASITO)/PASITO*100,nx=CK.findIndex(v=>h<v),falta=PASITOS_BEN-p;
- return `<div class="hr1"><div><span class="big" id="stepsNum" data-count="${h}">${fmt(h)}</span><p class="hl">Pasos del día</p></div>${enCurso()?'<span class="chip live" style="background:#fff;color:var(--c2)">En vivo</span>':''}</div>
-<div class="trk"><u style="width:${Math.min(100,h/PASITO*100)}%"></u>${CK.map((v,i)=>`<div class="nd${h>=v?' on':''}${i===nx?' cur':''}" style="left:calc(${(i+1)*25}% - 14px)">${i===3?GIFT:h>=v?CHECK:''}<span>${kk(v,2)}</span></div>`).join('')}</div>
+ const h=pasosHoy(),tot=pasosTotal(),p=Math.floor(tot/PASITO),ok=p>=PASITOS_BEN,fr=(tot%PASITO)/PASITO*100,falta=PASITOS_BEN-p;
+ return `<div class="hr1"><div><span class="big" id="stepsNum" data-count="${h}">${fmt(h)}</span><p class="hl">Pasos del día</p></div>${enCurso()?'<span class="chip live">En vivo</span>':''}</div>
 <div class="psr"><span>Pasitos</span><span>${Math.min(p,PASITOS_BEN)} de ${PASITOS_BEN}</span></div>
-<div class="segs">${Array.from({length:PASITOS_BEN},(_,i)=>i<p?'<i style="background:#fff"></i>':i===p?`<i style="background:linear-gradient(90deg,#fff ${fr}%,rgba(255,255,255,.25) ${fr}%)"></i>`:'<i></i>').join('')}</div>
+<div class="segs">${Array.from({length:PASITOS_BEN},(_,i)=>i<p?'<i style="background:var(--c)"></i>':i===p?`<i style="background:linear-gradient(90deg,var(--c) ${fr}%,var(--soft) ${fr}%)"></i>`:'<i></i>').join('')}</div>
 <p class="hint">${ok?`¡Beneficio desbloqueado! Escribinos por el grupo de WhatsApp para reclamar ${esc(PREMIO.txt)}.`:`Cada ${fmt(PASITO)} pasos suman 1 pasito. Te ${falta===1?'falta 1 pasito':'faltan '+falta+' pasitos'} para ${esc(PREMIO.txt)}.`}</p>`}
-
-/* --- Gráfico de pasos --- */
-const DS=['dom','lun','mar','mié','jue','vie','sáb'],MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DS=['D','L','M','X','J','V','S'],MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 function chartData(per){
  const m=new Map(S.dias.map(d=>[d.dia,d.pasos])),hoy=hoyAR(),out=[];m.set(hoy,(m.get(hoy)||0)+liveD());
  if(per==='dia'){for(let i=6;i>=0;i--){const d=addD(hoy,-i);out.push({l:DS[new Date(d+'T12:00:00').getDay()],v:Math.floor(m.get(d)||0),cur:i===0})}}
  else if(per==='sem'){const l0=lunes();for(let i=5;i>=0;i--){const a=addD(l0,-7*i);let s=0;for(let k=0;k<7;k++)s+=m.get(addD(a,k))||0;out.push({l:a.slice(8)+'/'+a.slice(5,7),v:Math.floor(s),cur:i===0})}}
  else{const y=+hoy.slice(0,4),mo=+hoy.slice(5,7);for(let i=5;i>=0;i--){const d=new Date(y,mo-1-i,1),k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');let s=0;m.forEach((v,dd)=>{if(dd.startsWith(k))s+=v});out.push({l:MES[d.getMonth()],v:Math.floor(s),cur:i===0})}}
  return out}
-function niceTop(mx){const s=mx/4,e=Math.pow(10,Math.floor(Math.log10(s))),f=s/e,n=[1,1.5,2,2.5,3,4,5,6,7.5,10].find(x=>x>=f-1e-9);return n*e*4}
 function chartInner(anim){
- const per=S.cp||'dia',d=chartData(per),mn={dia:PASITO,sem:PASITO*3,mes:PASITO*10}[per],top=niceTop(Math.max(mn,...d.map(x=>x.v))),tot=d.reduce((a,b)=>a+b.v,0),n=d.length;
- const lbl={dia:'últimos 7 días',sem:'últimas 6 semanas',mes:'últimos 6 meses'}[per],avg={dia:'por día',sem:'por semana',mes:'por mes'}[per],ticks=[0,1,2,3,4].map(i=>top/4*i);
- return `<div class="row" style="justify-content:space-between;align-items:flex-end"><div><p class="mut">Total · ${lbl}</p><p style="font-size:24px;font-weight:800;letter-spacing:-.03em">${fmt(tot)}</p></div><div style="text-align:right"><p class="mut">Promedio ${avg}</p><p style="font-size:24px;font-weight:800;letter-spacing:-.03em;color:var(--c2)">${fmt(tot/n)}</p></div></div>
-<div class="ch"><div class="ya">${ticks.map(v=>`<span style="bottom:${v/top*100}%">${kk(v,2)}</span>`).join('')}</div>
-<div class="pl">${ticks.slice(1).map(v=>`<div class="gl" style="bottom:${v/top*100}%"></div>`).join('')}${per==='dia'?`<div class="gl goal" style="bottom:${PASITO/top*100}%"><em>Meta</em></div>`:''}${d.map(x=>{const h=x.v/top*100;return `<div class="bc${x.cur?' cur':''}"><i data-h="${h}" style="height:${anim?0:h}%">${x.v?`<em>${kk(x.v,1)}</em>`:''}</i></div>`}).join('')}</div>
-<div class="xa">${d.map(x=>`<span${x.cur?' class="on"':''}>${x.l}</span>`).join('')}</div></div>
-<div class="lg"><span><i style="background:linear-gradient(180deg,var(--c),var(--c2))"></i>Actual</span><span><i style="background:#9DBFFA"></i>Anteriores</span>${per==='dia'?'<span><i style="background:var(--ok)"></i>Meta diaria 10K</span>':''}</div>`}
-const chartCard=()=>`<div class="card g12 rise"><h2 style="margin:0">Tus pasos</h2><div class="tms eq" id="cper">${[['dia','Día'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.cp||'dia')===k?' on':''}" data-act="cper" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="chartIn">${chartInner(S.anim)}</div></div>`;
+ const per=S.cp||'dia',d=chartData(per),mn={dia:PASITO,sem:PASITO*3,mes:PASITO*10}[per],top=Math.max(mn,...d.map(x=>x.v))*1.15;
+ return `<div class="scx"><div class="spl">${per==='dia'?`<div class="sgl" style="bottom:${PASITO/top*100}%"><b class="sgi">${FLAG}</b></div>`:''}${d.map(x=>{const h=x.v/top*100;return `<div class="sbc${x.cur?' cur':''}"><i data-h="${h}" style="height:${anim?0:h}%">${x.v?`<em>${kk(x.v,1)}</em>`:''}</i></div>`}).join('')}</div><div class="sxa${per==='dia'?'':' sm2'}">${d.map(x=>`<span${x.cur?' class="on"':''}>${x.l}</span>`).join('')}</div></div>`}
+const chartCard=()=>`<div class="spc rise"><div id="heroIn">${heroInner()}</div><div class="sbar"><div class="pills" id="cper">${[['dia','Día'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="pill${(S.cp||'dia')===k?' on':''}" data-act="cper" data-v="${k}">${l}</button>`).join('')}</div><button class="link" data-act="actv" style="font-weight:800;white-space:nowrap">Ver actividad</button></div><div id="chartIn">${chartInner(S.anim)}</div></div>`;
 function drawChart(anim){const e=$('#chartIn');if(!e)return;e.innerHTML=chartInner(anim);if(anim)enhance(e)}
+function actSheet(){const d=chartData('dia'),tot=d.reduce((a,b)=>a+b.v,0),h=pasosHoy(),p=Math.floor(pasosTotal()/PASITO);
+ sheet(`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Tu actividad</h2><span class="chip">${Math.min(p,PASITOS_BEN)} de ${PASITOS_BEN} pasitos</span></div>
+<div class="st3"><div><b>${fmt(h)}</b><span>hoy</span></div><div><b>${fmt(tot)}</b><span>7 días</span></div><div><b>${fmt(tot/7)}</b><span>promedio</span></div></div>
+<div class="g12" style="gap:8px"><p class="mut">Hitos de hoy</p><div class="bar"><i style="width:${Math.min(100,h/PASITO*100)}%;transition:none"></i></div><div class="row" style="justify-content:space-between">${CK.map(v=>`<span class="chip${h>=v?' g':''}">${kk(v,2)}</span>`).join('')}</div></div>
+<button class="btn out" data-act="close">Cerrar</button>`)}
 
 /* --- Clima --- */
 const CLOUD='<path d="M20 46h26a10 10 0 0 0 1-19.9A14 14 0 0 0 20.5 29 9 9 0 0 0 20 46z" fill="#fff"/>';
@@ -357,24 +338,17 @@ function rankInner(){const r=S.rk||[];if(!r.length)return'<p class="mut">Todaví
 const rankCard=()=>S.rk===null?'':`<div class="card g12 rise"><h2 style="margin:0">Ranking de caminantes</h2><div class="tms eq" id="rper">${[['hoy','Hoy'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.rkp||'sem')===k?' on':''}" data-act="rkp" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="rkIn" style="gap:4px">${rankInner()}</div></div>`;
 function drawRank(){const e=$('#rkIn');if(e)e.innerHTML=rankInner()}
 
-/* --- Caminata grupal --- */
-function groupCard(){const w=S.w;if(!w)return `<div class="card rise"><h2>Caminata grupal</h2><p class="mut">Todavía no hay una caminata grupal publicada. Volvé pronto.</p></div>`;
- const pasos=pasosTotal(),meta=w.meta_pasos||META,u=pasos>=meta,libres=Math.max(0,w.cupo_max-S.ocu);
- const btn=S.yo?`<button class="btn out pop" data-act="wleave">✓ Estás anotado · Me bajo</button>`:!u?`<button class="btn" disabled>Se desbloquea con ${fmt(meta)} pasos</button>`:libres?`<button class="btn" data-act="wjoin">Anotarme a la caminata</button>`:`<button class="btn" disabled>Cupo completo</button>`;
- return `<div class="card g12 rise"><div><p class="mut">Caminata grupal</p><p style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:2px">${fecha(w.inicia_at)}, ${hora(w.inicia_at)}</p><p style="font-size:14px;margin-top:4px">${esc(w.lugar)}${w.punto_encuentro?' · '+esc(w.punto_encuentro):''}</p>${w.punto_lat!=null?`<a href="${mapsLink(w.punto_lat,w.punto_lng)}" target="_blank" rel="noopener" style="font-size:14px">Cómo llegar</a>`:''}</div><p style="font-size:14px">${esc(w.titulo)}. ${esc(w.incluye||'')}</p>
-<div class="bar"><i data-w="${Math.min(100,pasos/meta*100)}"></i></div><p style="font-size:14px;font-weight:600;color:var(--c2)">${u?'¡Meta cumplida! Ya podés anotarte.':`Te faltan ${fmt(meta-pasos)} pasos para desbloquearla`}</p><p class="mut">${S.ocu} de ${w.cupo_max} lugares ocupados</p>${btn}${w.sponsor?`<p class="mut" style="text-align:center">Con el apoyo de ${esc(w.sponsor)}</p>`:''}</div>`}
 const nuevos=()=>S.nu&&S.nu.length?`<div class="rise"><h2>Nuevos en Paseando</h2><div class="mbs">${S.nu.map(u=>`<div class="mb">${fig(u.foto_cuerpo_url||u.foto_url,u.nombre,'ph')}<span>${esc(u.nombre)} ${esc(u.inicial)}., ${u.edad}</span></div>`).join('')}</div></div>`:'';
 const V={
 login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
 home:()=>`<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div>
-<div class="hero rise"><div id="heroIn">${heroInner()}</div></div>
 ${chartCard()}
 <div id="hoy" class="rise">${hoyInner()}</div>
 ${rankCard()}
 <div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>${nuevos()}
 <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Sumarme o proponer</b> y proponé la primera.</p></div>`}</div>
-${groupCard()}<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`,
+<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`,
 terms:()=>`<div class="col"><div><button class="link" data-act="back">← Volver</button><h1>Términos y descargo</h1></div>${[['Edad','Solo participan personas de 18 años o más.'],['Participación voluntaria','Caminar al aire libre implica riesgos. Participás bajo tu propia responsabilidad.'],['Caminatas de 15 minutos','Paseando conecta personas que deciden caminar juntas y no verifica a nadie. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien.'],['Caminata sugerida y pasos','El trayecto diario es solo una sugerencia armada con mapas abiertos: caminá siempre atento al tránsito, por veredas y lugares iluminados, y si el clima no acompaña elegí otro momento. Los pasos son estimados: se calculan por el tiempo desde que confirmás la caminata (100 pasos por minuto) y no se miden con sensores.'],['Fotos y datos','Quienes ven tu caminata ven tu foto de cuerpo entero, nombre, inicial del apellido y edad, para saber con quién se encuentran. Si tu perfil está completo, también aparecés en la lista de nuevos usuarios que ven los demás. En el ranking de caminantes los demás ven tu nombre, inicial del apellido, foto de perfil y pasos. Usamos tu ubicación solo para armar tu caminata sugerida. El punto del mapa es público para las caminatas activas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Responsabilidad','El organizador no responde por lesiones, pérdidas ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto. Podemos retirar a quien no lo cumpla.']].map(t=>`<div><h2 style="font-size:16px;margin-bottom:4px">${t[0]}</h2><p style="font-size:14px;color:#2B3A55">${t[1]}</p></div>`).join('')}</div>`};
 
 /* ============ SHEETS ============ */
@@ -496,14 +470,13 @@ document.addEventListener('click',async e=>{
  if(a==='join')need(async()=>{await q(sb.rpc('sumarme_caminata',{p_id:id}));await load();render('home',true);openDetail(id);toast('¡Te sumaste!')});
  if(a==='leave'){const c=S.ca.find(x=>x.id===id);if(c&&c.es_mio&&!confirm('Si cancelás tu caminata, se cancela para todos. ¿Seguro?'))return;
   t.disabled=true;const r=await q(sb.rpc('bajarme_caminata',{p_id:id}));await load();render('home',true);if(r==='cancelada'){closeSheet();toast('Caminata cancelada')}else{openDetail(id);toast('Te bajaste de la caminata')}}
- if(a==='wjoin'){t.disabled=true;const r=await q(sb.rpc('join_walk',{p_walk:S.w.id}));await load();render('home',true);toast(r==='completa'?'Se completó el cupo':'¡Te anotaste a la caminata grupal!')}
- if(a==='wleave'){t.disabled=true;await q(sb.rpc('salir_walk',{p_walk:S.w.id}));await load();render('home',true);toast('Te bajaste de la caminata grupal')}
  /* --- caminata sugerida del día --- */
  if(a==='plan-open')openPlan();
  if(a==='plan-retry'){S.pos=null;await buildPlan()}
  if(a==='plan-yes'||a==='plan-no'){t.disabled=true;await q(sb.rpc('responder_caminata_dia',{p_acepta:a==='plan-yes'}));await load();closeSheet();render('home',true);toast(a==='plan-yes'?'¡A caminar! Tus pasos se suman solos':'Listo, mañana te proponemos otra')}
  /* --- gráfico y ranking --- */
- if(a==='cper'){S.cp=t.dataset.v;document.querySelectorAll('#cper .tm').forEach(b=>b.classList.toggle('on',b===t));drawChart(true)}
+ if(a==='cper'){S.cp=t.dataset.v;document.querySelectorAll('#cper .pill').forEach(b=>b.classList.toggle('on',b===t));drawChart(true)}
+ if(a==='actv')actSheet();
  if(a==='rkp'){S.rkp=t.dataset.v;document.querySelectorAll('#rper .tm').forEach(b=>b.classList.toggle('on',b===t));const r=await rankQ(S.rkp);if(r!==null)S.rk=r;drawRank()}
  }catch(err){const m=err&&err.message||'';const k=Object.keys(ERR).find(x=>m.includes(x));toast(k?ERR[k]:m||'Ocurrió un error');t.disabled=false}
 });
