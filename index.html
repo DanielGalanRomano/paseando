@@ -140,6 +140,49 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .rkr .stp{font-weight:800;font-size:14px;color:var(--c2)}
 .gap{text-align:center;color:var(--mut);letter-spacing:4px;line-height:.6}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
+
+/* ---- Compacto ---- */
+.col{gap:12px}
+.screen{padding-top:calc(env(safe-area-inset-top) + 24px)}
+.ban img{max-height:96px;object-fit:cover}
+h1{font-size:20px}
+.rise.row .av{width:34px;height:34px;border-radius:17px}
+
+/* Nuevos */
+.nv h2{font-size:14px;margin:0 0 6px}
+.nv .mbs{gap:8px;padding-bottom:0}
+.nv .mb{width:54px;font-size:10px;gap:2px}
+.nv .mb img,.nv .mb .ph{width:54px;height:66px;border-radius:10px;font-size:20px}
+
+/* Pasos */
+.spc{padding:12px;gap:8px;border-radius:20px}
+.spc .big{font-size:28px}
+.hr1{align-items:center}
+.hl1{display:flex;align-items:baseline;gap:8px}
+.hl{margin:0;font-size:13px}
+.psr{margin-top:0;font-size:12px}
+.segs{margin-top:4px}.segs i{height:6px;border-radius:3px}
+.pill{min-height:30px;padding:0 11px;font-size:12px}
+.sbar .link{font-size:13px;padding:0}
+.scx{padding:18px 6px 6px;border-radius:16px}
+.spl{height:52px;gap:6px;padding-left:24px}
+.sgi{width:20px;height:20px;top:-10px;border-radius:10px}.sgi svg{width:12px;height:12px}
+.sbc i em{top:-13px;font-size:9px}
+.sxa{padding:4px 4px 0 24px}.sxa span,.sxa.sm2 span{font-size:10px}
+
+/* Hoy salís vos */
+#hoy .card{padding:12px;gap:8px;border-radius:18px}
+#hoy h2{font-size:15px}
+.wx.wxc{flex-direction:row;align-items:center;padding:8px 12px;gap:10px;border-radius:14px}
+.wxc .tp{font-size:28px}
+.wxc svg{width:34px;height:34px}
+.wxc .wxi{flex:1;min-width:0}
+.wxc .wxi p{margin:0;font-size:12px;font-weight:700}
+.wxc .wxi small{font-size:11px;opacity:.9}
+.rtm svg{height:76px}
+.st3{gap:6px}.st3 div{padding:6px 4px;border-radius:10px}.st3 b{font-size:13px}.st3 span{font-size:11px}
+#hoy .btn{min-height:44px;font-size:14px}
+#hoy .bar{height:8px}
 </style>
 </head>
 <body>
@@ -218,11 +261,10 @@ const gate=(act,label)=>`<div class="col" style="min-height:100%;text-align:cent
 const CK=[2500,5000,7500,10000];
 const FLAG='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"/></svg>';
 function heroInner(){
- const h=pasosHoy(),tot=pasosTotal(),p=Math.floor(tot/PASITO),ok=p>=PASITOS_BEN,fr=(tot%PASITO)/PASITO*100,falta=PASITOS_BEN-p;
- return `<div class="hr1"><div><span class="big" id="stepsNum" data-count="${h}">${fmt(h)}</span><p class="hl">Pasos del día</p></div>${enCurso()?'<span class="chip live">En vivo</span>':''}</div>
+ const h=pasosHoy(),tot=pasosTotal(),p=Math.floor(tot/PASITO),fr=(tot%PASITO)/PASITO*100;
+ return `<div class="hr1"><div class="hl1"><span class="big" id="stepsNum" data-count="${h}">${fmt(h)}</span><span class="hl">pasos hoy</span></div>${enCurso()?'<span class="chip live">En vivo</span>':''}</div>
 <div class="psr"><span>Pasitos</span><span>${Math.min(p,PASITOS_BEN)} de ${PASITOS_BEN}</span></div>
-<div class="segs">${Array.from({length:PASITOS_BEN},(_,i)=>i<p?'<i style="background:var(--c)"></i>':i===p?`<i style="background:linear-gradient(90deg,var(--c) ${fr}%,var(--soft) ${fr}%)"></i>`:'<i></i>').join('')}</div>
-<p class="hint">${ok?`¡Beneficio desbloqueado! Escribinos por el grupo de WhatsApp para reclamar ${esc(PREMIO.txt)}.`:`Cada ${fmt(PASITO)} pasos suman 1 pasito. Te ${falta===1?'falta 1 pasito':'faltan '+falta+' pasitos'} para ${esc(PREMIO.txt)}.`}</p>`}
+<div class="segs">${Array.from({length:PASITOS_BEN},(_,i)=>i<p?'<i style="background:var(--c)"></i>':i===p?`<i style="background:linear-gradient(90deg,var(--c) ${fr}%,var(--soft) ${fr}%)"></i>`:'<i></i>').join('')}</div>`}
 const DS=['D','L','M','X','J','V','S'],MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 function chartData(per){
  const m=new Map(S.dias.map(d=>[d.dia,d.pasos])),hoy=hoyAR(),out=[];m.set(hoy,(m.get(hoy)||0)+liveD());
@@ -262,9 +304,9 @@ async function loadWx(){const p=S.pos;if(!p||(S.wx&&Date.now()-S.wx.t<30*60000))
   let mej=null,bs=1e9;for(let h=Math.max(nowH,6);h<=21;h++){const t=hr.temperature_2m[h],pr=hr.precipitation_probability[h]||0,cd=hr.weather_code[h];if(t==null)continue;const sc=pr+Math.abs(t-20)*3+(cd>=95?100:0);if(sc<bs){bs=sc;mej=h}}
   S.wx={t:Date.now(),temp:Math.round(c.temperature_2m),sens:Math.round(c.apparent_temperature),code:c.weather_code,viento:Math.round(c.wind_speed_10m),isDay:c.is_day===1,max:Math.round(dy.temperature_2m_max[0]),min:Math.round(dy.temperature_2m_min[0]),lluvia:dy.precipitation_probability_max[0]||0,mej};S.wxErr=false}
  catch(e){console.warn(e);S.wxErr=true}}
-function wxHTML(){const w=S.wx;if(!w)return S.wxErr?'':'<div class="sk" style="height:150px"></div>';
+function wxHTML(){const w=S.wx;if(!w)return S.wxErr?'':'<div class="sk" style="height:56px"></div>';
  const[txt,g]=WX(w.code),noche=!w.isDay&&(g==='sol'||g==='solnube'),k=noche?(g==='sol'?'luna':'solnube'):g,bg=noche?GR.noche:GR[g];
- return `<div class="wx" style="background:${bg}"><div class="wxt"><div><span class="tp">${w.temp}°</span><p>${txt} · sensación ${w.sens}°</p></div>${ICON[k]}</div><div class="wxs"><span>Viento ${w.viento} km/h</span><span>Lluvia ${w.lluvia}%</span><span>${w.mej!=null?'Mejor hora: '+w.mej+' h':'Mín '+w.min+'° · Máx '+w.max+'°'}</span></div><p class="wxm">${consejo(w)}</p></div>`}
+ return `<div class="wx wxc" style="background:${bg}"><span class="tp">${w.temp}°</span><div class="wxi"><p>${txt} · sensación ${w.sens}°</p><small>Viento ${w.viento} km/h · Lluvia ${w.lluvia}%${w.mej!=null?' · Mejor hora '+w.mej+' h':''}</small></div>${ICON[k]}</div>`}
 
 /* --- Trayecto: ubicación, ruta de ~10.000 pasos y vista previa --- */
 function getPos(){return new Promise(ok=>{
@@ -307,10 +349,10 @@ function hoyInner(){
  const chip=!pl?`<span class="chip">${fmt(m)} pasos</span>`:est==='aceptada'?(pl.pasos+liveD()>=m?'<span class="chip g">¡Hecha!</span>':'<span class="chip live">En marcha</span>'):est==='rechazada'?'<span class="chip">Otros planes</span>':'<span class="chip">Pendiente</span>';
  let body='';
  if(pl){body=`<div class="rtm" data-act="plan-open" style="cursor:pointer">${routeSvg(ptsDe(pl))}</div>${st3(pl)}`;
-  if(est==='propuesta')body+=`<button class="btn" data-act="plan-yes">La voy a hacer</button><button class="btn out" data-act="plan-no">Tengo otros planes</button><button class="link" data-act="plan-open" style="align-self:center">Ver el trayecto en el mapa</button>`;
+  if(est==='propuesta')body+=`<button class="btn" data-act="plan-yes">Empezar a caminar y sumar pasos en vivo</button><button class="btn out" data-act="plan-no">Tengo otros planes</button><button class="link" data-act="plan-open" style="align-self:center">Ver el trayecto en el mapa</button>`;
   else if(est==='rechazada')body+=`<p style="font-size:14px">Hoy tenés otros planes. Mañana te proponemos una caminata nueva.</p><button class="link" data-act="plan-open" style="align-self:flex-start">Cambié de idea</button>`;
   else{const v=Math.min(m,pl.pasos+liveD());body+=`<div class="g12" style="gap:8px"><b style="font-size:14px" id="hoyPt">${fmt(v)} de ${fmt(m)} pasos</b><div class="bar"><i id="hoyPb" style="width:${v/m*100}%;transition:none"></i></div></div><p class="mut">${v>=m?'¡Sumaste tu pasito de hoy! Mañana te proponemos otra caminata.':'Tus pasos se suman solos mientras caminás. Son estimados. ¡Disfrutá la salida!'}</p><button class="link" data-act="plan-open" style="align-self:flex-start">Ver el trayecto en el mapa</button>`}}
- else if(S.hoySt==='gps'||S.hoySt==='ruta')body=`<div class="sk" style="height:150px"></div><p class="mut">${S.hoySt==='gps'?'Buscando tu ubicación…':'Armando tu trayecto de '+fmt(m)+' pasos…'}</p>`;
+ else if(S.hoySt==='gps'||S.hoySt==='ruta')body=`<div class="sk" style="height:76px"></div><p class="mut">${S.hoySt==='gps'?'Buscando tu ubicación…':'Armando tu trayecto de '+fmt(m)+' pasos…'}</p>`;
  else if(S.hoyErr)body=`<p style="font-size:14px">${esc(S.hoyErr)}</p><button class="btn out" data-act="plan-retry">Reintentar</button>`;
  else body=`<button class="btn" data-act="plan-open">Armar mi caminata de hoy</button>`;
  return `<div class="card g12"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Hoy salís vos</h2>${chip}</div>${wxHTML()}${body}</div>`}
@@ -335,20 +377,18 @@ async function startHoy(){
 function rankInner(){const r=S.rk||[];if(!r.length)return'<p class="mut">Todavía nadie sumó pasos en este período. ¡Sé el primero!</p>';let last=0;
  return r.map(x=>{const g=last&&x.puesto-last>1?'<div class="gap">···</div>':'';last=x.puesto;const me=x.user_id===S.uid;
   return g+`<div class="rkr${me?' me':''}"><b class="pos p${x.puesto}">${x.puesto}</b>${fig(x.foto_url,x.nombre,'av')}<div class="nm">${esc(x.nombre)} ${esc(x.inicial)}.${me?' (vos)':''}</div><span class="stp">${fmt(x.pasos)}</span></div>`}).join('')}
-const rankCard=()=>S.rk===null?'':`<div class="card g12 rise"><h2 style="margin:0">Ranking de caminantes</h2><div class="tms eq" id="rper">${[['hoy','Hoy'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.rkp||'sem')===k?' on':''}" data-act="rkp" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="rkIn" style="gap:4px">${rankInner()}</div></div>`;
 function drawRank(){const e=$('#rkIn');if(e)e.innerHTML=rankInner()}
 
-const nuevos=()=>S.nu&&S.nu.length?`<div class="rise"><h2>Nuevos en Paseando</h2><div class="mbs">${S.nu.map(u=>`<div class="mb">${fig(u.foto_cuerpo_url||u.foto_url,u.nombre,'ph')}<span>${esc(u.nombre)} ${esc(u.inicial)}., ${u.edad}</span></div>`).join('')}</div></div>`:'';
+const nuevos=()=>S.nu&&S.nu.length?`<div class="rise nv"><h2>Nuevos en Paseando</h2><div class="mbs">${S.nu.map(u=>`<div class="mb">${fig(u.foto_cuerpo_url||u.foto_url,u.nombre,'ph')}<span>${esc(u.nombre)} ${esc(u.inicial)}., ${u.edad}</span></div>`).join('')}</div></div>`:'';
 const V={
 login:()=>gate('login','Continuar con Google'),
 consent:()=>gate('accept','Aceptar y continuar'),
 home:()=>`<div class="col"><div class="ban"><img src="encabezado.jpg" alt="Pateando" width="1200" height="400"></div>
+${nuevos()}
+<div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>
 ${chartCard()}
 <div id="hoy" class="rise">${hoyInner()}</div>
-${rankCard()}
-<div class="rise row">${fig(S.p.foto_url,S.p.nombre,'av')}<div><p class="mut">Hola, ${esc(S.p.nombre)}</p><h1>¿Quién camina hoy?</h1></div></div>${nuevos()}
-<div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Sumarme o proponer</b> y proponé la primera.</p></div>`}</div>
-<button class="link" data-act="logout" style="align-self:center">Cerrar sesión</button></div>`,
+<div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Caminatas activas</h2><span class="chip">18 a 22 h</span></div>${S.ca.length?`<div class="strip">${S.ca.map(mini).join('')}</div>`:`<div class="card rise"><p class="mut">No hay caminatas activas ahora. Tocá <b>Sumarme o proponer</b> y proponé la primera.</p></div>`}</div></div>`,
 terms:()=>`<div class="col"><div><button class="link" data-act="back">← Volver</button><h1>Términos y descargo</h1></div>${[['Edad','Solo participan personas de 18 años o más.'],['Participación voluntaria','Caminar al aire libre implica riesgos. Participás bajo tu propia responsabilidad.'],['Caminatas de 15 minutos','Paseando conecta personas que deciden caminar juntas y no verifica a nadie. Encontrate siempre en un lugar público y concurrido, avisale a alguien dónde vas y retirate si algo no te parece bien.'],['Caminata sugerida y pasos','El trayecto diario es solo una sugerencia armada con mapas abiertos: caminá siempre atento al tránsito, por veredas y lugares iluminados, y si el clima no acompaña elegí otro momento. Los pasos son estimados: se calculan por el tiempo desde que confirmás la caminata (100 pasos por minuto) y no se miden con sensores.'],['Fotos y datos','Quienes ven tu caminata ven tu foto de cuerpo entero, nombre, inicial del apellido y edad, para saber con quién se encuentran. Si tu perfil está completo, también aparecés en la lista de nuevos usuarios que ven los demás. En el ranking de caminantes los demás ven tu nombre, inicial del apellido, foto de perfil y pasos. Usamos tu ubicación solo para armar tu caminata sugerida. El punto del mapa es público para las caminatas activas. Tus datos se tratan según la Ley 25.326 y podés pedir su baja.'],['Responsabilidad','El organizador no responde por lesiones, pérdidas ni por lo que ocurra entre personas que se encuentran a través de la app, en la medida en que la ley lo permita.'],['Conducta','Se espera respeto. Podemos retirar a quien no lo cumpla.']].map(t=>`<div><h2 style="font-size:16px;margin-bottom:4px">${t[0]}</h2><p style="font-size:14px;color:#2B3A55">${t[1]}</p></div>`).join('')}</div>`};
 
 /* ============ SHEETS ============ */
@@ -371,7 +411,7 @@ async function openPlan(){
  sheet(`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Hoy salís vos</h2><span class="chip">${fmt(pl.pasos_meta||PASITO)} pasos</span></div>
 <p style="font-size:14px">${est==='aceptada'?'Este es tu trayecto de hoy':est==='rechazada'?'¿Cambiaste de idea? Este es tu trayecto':'Te propongo esta caminata para vos'}${w?` · ${w.temp}° ${WX(w.code)[0].toLowerCase()}`:''}.</p>
 <div id="pmap" class="map" style="height:210px"></div>${st3(pl)}${esAprox(pl)?'<p class="mut">Trayecto aproximado: no pudimos calcular las calles en este momento.</p>':''}
-${est==='aceptada'?'<button class="btn out" data-act="close">Cerrar</button>':`<button class="btn" data-act="plan-yes">La voy a hacer</button><button class="btn out" data-act="plan-no">Tengo otros planes</button><p class="mut" style="text-align:center">Si la confirmás, tus pasos se suman solos mientras caminás. Son estimados.</p>`}`,true);
+${est==='aceptada'?'<button class="btn out" data-act="close">Cerrar</button>':`<button class="btn" data-act="plan-yes">Empezar a caminar y sumar pasos en vivo</button><button class="btn out" data-act="plan-no">Tengo otros planes</button><p class="mut" style="text-align:center">Si la confirmás, tus pasos se suman solos mientras caminás. Son estimados.</p>`}`,true);
  loadLeaflet().then(()=>{if(!$('#pmap'))return;const pts=ptsDe(pl);if(pts.length<2)return;const m=mkMap('pmap',pl.lat,pl.lng,15),ln=L.polyline(pts,{color:'#3680F7',weight:5,opacity:.95,lineJoin:'round'}).addTo(m);
   L.circleMarker(pts[0],{radius:8,color:'#fff',weight:3,fillColor:'#1E54B8',fillOpacity:1}).addTo(m);m.fitBounds(ln.getBounds(),{padding:[22,22]});setTimeout(()=>{try{m.fitBounds(ln.getBounds(),{padding:[22,22]})}catch(e){}},550)}).catch(()=>{const el=$('#pmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
 function perfilSheet(){sheet(`<h2 style="margin:0">Tu perfil para caminar</h2><p style="font-size:14px">Para proponer o sumarte, la otra gente tiene que saber con quién se encuentra: subí una foto de cuerpo entero y tu edad.</p>
@@ -397,7 +437,8 @@ function newSheet(){const h=hoyAR();S.qd=slots(h).length?h:addD(h,1);S.qt='';S.q
  loadLeaflet().then(()=>{if(!$('#qmap'))return;const m=mkMap('qmap',DEF_POS[0],DEF_POS[1],15);let mk=null;
   const put=(a,b)=>{PQ={lat:a,lng:b};if(mk)mk.setLatLng([a,b]);else{mk=L.marker([a,b],{draggable:true}).addTo(m);mk.on('dragend',()=>{const p=mk.getLatLng();PQ={lat:p.lat,lng:p.lng};qGeo(p.lat,p.lng)})}qGeo(a,b)};
   m.on('click',ev=>put(ev.latlng.lat,ev.latlng.lng));qInfo();PQM={m,put}}).catch(()=>{const el=$('#qmap');if(el)el.innerHTML='<p class="mut" style="padding:16px">No se pudo cargar el mapa.</p>'})}
-function menuSheet(){const p=S.p||{};sheet(`<div class="row">${fig(p.foto_url,p.nombre,'av')}<div style="min-width:0"><b>${esc(p.nombre)} ${esc(p.apellido||'')}</b><p class="mut" style="overflow:hidden;text-overflow:ellipsis">${esc(p.email||'')}</p></div></div><button class="mi" data-act="perfil">Mi foto y mi edad</button><button class="mi" data-act="terms">Términos</button><button class="btn out" data-act="logout">Cerrar sesión</button>`)}
+function menuSheet(){const p=S.p||{};sheet(`<div class="row">${fig(p.foto_url,p.nombre,'av')}<div style="min-width:0"><b>${esc(p.nombre)} ${esc(p.apellido||'')}</b><p class="mut" style="overflow:hidden;text-overflow:ellipsis">${esc(p.email||'')}</p></div></div><button class="mi" data-act="perfil">Perfil (foto y edad)</button><button class="mi" data-act="rank">Ranking de caminantes</button><button class="mi" data-act="terms">Términos</button><button class="btn out" data-act="logout">Cerrar sesión</button>`)}
+function rankSheet(){sheet(`<h2 style="margin:0">Ranking de caminantes</h2><div class="tms eq" id="rper">${[['hoy','Hoy'],['sem','Semana'],['mes','Mes']].map(([k,l])=>`<button class="tm${(S.rkp||'sem')===k?' on':''}" data-act="rkp" data-v="${k}">${l}</button>`).join('')}</div><div class="g12" id="rkIn" style="gap:4px">${rankInner()}</div><button class="btn out" data-act="close">Cerrar</button>`)}
 function sopSheet(){sheet(`<h2 style="margin:0">Sumarme o proponer</h2>${S.ca.length?`<div class="g12">${S.ca.map(mini).join('')}</div>`:'<p class="mut">No hay caminatas activas ahora.</p>'}<button class="btn" data-act="newc">Proponer mi caminata</button><button class="link" data-act="close" style="text-align:center">Cerrar</button>`)}
 
 /* ============ MAPAS ============ */
@@ -451,6 +492,7 @@ document.addEventListener('click',async e=>{
  if(a==='accept'){const ts=new Date().toISOString();await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:ts}).eq('id',S.uid));S.p.acepto_terminos_at=ts;await load();render('home');startHoy()}
  if(a==='logout'){await sb.auth.signOut();S={min:[],ca:[],dias:[]};closeSheet();render('login')}
  if(a==='perfil')perfilSheet();
+ if(a==='rank')rankSheet();
  if(a==='savepf'){const ed=+$('#pe').value;if(!(ed>=18&&ed<=99)){toast('Tenés que tener 18 años o más');return}
   if(!S.p.foto_cuerpo_url){toast('Subí tu foto de cuerpo entero');return}
   t.disabled=true;await q(sb.from('profiles').update({edad:ed}).eq('id',S.uid));S.p.edad=ed;closeSheet();toast('Perfil listo');const f=S.after;S.after=null;if(f)f()}
@@ -473,7 +515,7 @@ document.addEventListener('click',async e=>{
  /* --- caminata sugerida del día --- */
  if(a==='plan-open')openPlan();
  if(a==='plan-retry'){S.pos=null;await buildPlan()}
- if(a==='plan-yes'||a==='plan-no'){t.disabled=true;await q(sb.rpc('responder_caminata_dia',{p_acepta:a==='plan-yes'}));await load();closeSheet();render('home',true);toast(a==='plan-yes'?'¡A caminar! Tus pasos se suman solos':'Listo, mañana te proponemos otra')}
+ if(a==='plan-yes'||a==='plan-no'){t.disabled=true;await q(sb.rpc('responder_caminata_dia',{p_acepta:a==='plan-yes'}));await load();closeSheet();render('home',true);toast(a==='plan-yes'?'¡Empezaste! Tus pasos se suman en vivo':'Listo, mañana te proponemos otra')}
  /* --- gráfico y ranking --- */
  if(a==='cper'){S.cp=t.dataset.v;document.querySelectorAll('#cper .pill').forEach(b=>b.classList.toggle('on',b===t));drawChart(true)}
  if(a==='actv')actSheet();
