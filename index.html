@@ -40,6 +40,9 @@ p{margin:0;line-height:1.5} a{color:var(--c2);font-weight:700} .mut{color:var(--
 .pc .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px} .pc b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .go{flex:none;background:var(--c);color:var(--on);font-weight:800;font-size:14px;border-radius:999px;padding:11px 18px}
 .go.off{background:var(--soft);color:var(--mut)}
+.pc.me{cursor:default;border-color:var(--c);box-shadow:0 0 0 2px #E3F4D2}
+.onl{display:flex;align-items:center;gap:6px;flex:none;font-size:13px;font-weight:800;color:var(--c2)}
+.onl i{width:10px;height:10px;border-radius:50%;background:var(--c)}
 .sk{border-radius:20px;height:108px;background:linear-gradient(90deg,#F2F2F2,#FAFAFA,#F2F2F2);background-size:200% 100%;animation:shim 1.3s infinite} @keyframes shim{to{background-position:-200% 0}}
 .av{width:44px;height:44px;border-radius:22px;background:var(--c);color:var(--on);font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;object-fit:cover}
 .slot{display:flex;align-items:center;justify-content:center;width:62%;aspect-ratio:3/4;margin:0 auto;border:2px dashed var(--c2);border-radius:22px;font-size:44px;color:var(--c2);cursor:pointer;overflow:hidden}
@@ -119,7 +122,7 @@ async function loadP(){
  if(!S.p.acepto_terminos_at&&gotLs('consent')==='1'){const t=new Date().toISOString();
   await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',S.uid));S.p.acepto_terminos_at=t;try{localStorage.removeItem('consent')}catch(e){}}}
 async function refChats(){try{const c=await q(sb.rpc('pc_mis_chats'));S.chats=c||[];if(S.chats[0])S.off=Date.parse(S.chats[0].ahora)-Date.now()}catch(e){console.warn(e)}}
-async function refGente(){try{S.gente=await q(sb.rpc('pc_gente_cerca',{p_radio:25}))||[]}catch(e){console.warn(e)}S.load=false;try{S.pts=await q(sb.rpc('pc_mis_puntos'))}catch(e){console.warn(e)}}
+async function refGente(){try{S.gente=await q(sb.rpc('pc_gente_cerca',{p_radio:25}))||[];S.ferr=false}catch(e){console.warn(e);S.ferr=true}S.load=false;try{S.pts=await q(sb.rpc('pc_mis_puntos'))}catch(e){console.warn(e)}}
 
 /* ============ VISTAS ============ */
 const fig=(u,n,cls)=>u?`<img class="${cls}" src="${esc(u)}" referrerpolicy="no-referrer" alt="${esc(n)}">`:`<div class="${cls}">${esc((n||'?')[0])}</div>`;
@@ -137,11 +140,12 @@ terms:()=>`<div class="col"><div><button class="link" data-act="back" style="pad
 
 function render(name){view=name;const el=$('#screen');el.classList.toggle('chatv',name==='chat');el.innerHTML=V[name]();el.scrollTop=0;
  $('#menuBtn').style.display=['home','photo','terms'].includes(name)?'flex':'none';$('#wa').style.display=name==='home'?'flex':'none';drawBub()}
+const mine=()=>{const p=S.p||{};return `<div class="pc me">${fig(p.foto_cuerpo_url,p.nombre,'pp')}<div class="tx"><b>${esc(p.nombre)} ${esc((p.apellido||'').charAt(0).toUpperCase())}.${p.edad?', '+p.edad:''} (vos)</b><span class="mut">Tu perfil</span></div><span class="onl"><i></i>En línea</span></div>`};
 function drawLista(){const e=$('#lista');if(!e)return;const g=S.gente;
  $('#gm').innerHTML=S.gerr?`<div class="card g12"><p>${esc(S.gerr)}</p><button class="btn" data-act="gps">Activar ubicación</button></div>`:'';
  if(S.gerr){e.innerHTML='';$('#cnt').textContent='Sin ubicación no podemos buscar gente';return}
- $('#cnt').textContent=S.load?'Buscando gente cerca…':g.length+(g.length===1?' persona en línea cerca tuyo':' personas en línea cerca tuyo');
- e.innerHTML=S.load?'<div class="sk"></div><div class="sk"></div>':g.length?g.map(card).join(''):'<div class="card"><p class="mut">Todavía no hay nadie en línea cerca. Dejá la app abierta: esta lista se actualiza sola.</p></div>'}
+ $('#cnt').textContent=S.load?'Buscando gente cerca…':!g.length?'Sos la primera persona en línea cerca tuyo':g.length+(g.length===1?' persona más en línea cerca tuyo':' personas más en línea cerca tuyo');
+ e.innerHTML=mine()+(S.load?'<div class="sk"></div><div class="sk"></div>':S.ferr?'<div class="card"><p class="mut">No pudimos cargar a la gente en línea. Revisá que el SQL se haya corrido completo en Supabase.</p></div>':g.length?g.map(card).join(''):'<div class="card"><p class="mut">Todavía no hay nadie más en línea cerca. Dejá la app abierta: esta lista se actualiza sola.</p></div>')}
 const STAR='<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#8FCE58" d="M12 2l3 6.500 7 .8-5.200 4.800 1.400 7L12 17.600 5.800 21l1.400-7L2 9.300l7-.8z"/></svg>';
 function drawPts(){const e=$('#pts');e.innerHTML=S.pts!=null?`${STAR}<span><b>${S.pts}</b> puntos</span>`:'';e.style.display=view==='home'&&S.pts!=null?'flex':'none'}
 function drawBub(){drawPts();$('#bub').innerHTML=view==='home'?S.chats.map(c=>`<button class="bb" data-act="chat" data-id="${c.id}" aria-label="Chat con ${esc(c.nombre)}${c.sin_leer>0?', '+c.sin_leer+' sin leer':''}">${fig(c.foto,c.nombre,'bi')}${c.sin_leer>0?`<span class="bd">${c.sin_leer}</span>`:''}</button>`).join(''):''}
