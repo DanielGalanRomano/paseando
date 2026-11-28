@@ -102,6 +102,7 @@ input:focus-visible,button:focus-visible{outline:3px solid var(--c2);outline-off
 const SUPABASE_URL='https://brlhcorgjnaipmokhmhj.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybGhjb3Jnam5haXBtb2tobWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MzAyMzgsImV4cCI6MjExMDIwNjIzOH0.49WI6fH9wxiYNgXo5jjaa4VwfvPOjx5Y_NLlIgx06v8';
 const CHAT_MS=15*60*1000;
+const CITY_KM=60; /* radio de búsqueda en km: 60 cubre toda la Ciudad y el Gran Buenos Aires. Cambiá este número para ampliar o reducir */
 const sb=window.supabase?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const $=(s,e=document)=>e.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -125,7 +126,7 @@ async function loadP(){
  if(!S.p.acepto_terminos_at&&gotLs('consent')==='1'){const t=new Date().toISOString();
   await q(sb.from('profiles').update({mayor_de_18:true,acepto_terminos_at:t}).eq('id',S.uid));S.p.acepto_terminos_at=t;try{localStorage.removeItem('consent')}catch(e){}}}
 async function refChats(){try{const c=await q(sb.rpc('pc_mis_chats'));S.chats=c||[];if(S.chats[0])S.off=Date.parse(S.chats[0].ahora)-Date.now()}catch(e){console.warn(e)}}
-async function refGente(){try{S.gente=await q(sb.rpc('pc_gente_cerca',{p_radio:25}))||[];S.ferr=''}catch(e){console.warn(e);S.ferr=e.message||'error'}S.load=false;try{S.pts=await q(sb.rpc('pc_mis_puntos'))}catch(e){console.warn(e)}}
+async function refGente(){try{S.gente=await q(sb.rpc('pc_gente_cerca',{p_radio:CITY_KM}))||[];S.ferr=''}catch(e){console.warn(e);S.ferr=e.message||'error'}S.load=false;try{S.pts=await q(sb.rpc('pc_mis_puntos'))}catch(e){console.warn(e)}}
 
 /* ============ VISTAS ============ */
 const fig=(u,n,cls)=>u?`<img class="${cls}" src="${esc(u)}" referrerpolicy="no-referrer" alt="${esc(n)}">`:`<div class="${cls}">${esc((n||'?')[0])}</div>`;
